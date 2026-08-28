@@ -57,10 +57,18 @@ img { max-width: 100%; display: block; }
 .map-panel__metrics span b { font-weight: 600; color: var(--paper); }
  
 /* floor water-quality pins (structure only — not wired to data or scripts yet) */
-.floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 0; margin: 0; }
+.floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation;}
 .floor-pin__body { width: 34px; height: 34px; background: #29b6e8; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
 .floor-pin__label { transform: rotate(45deg); font-family: var(--font-mono); font-weight: 700; font-size: 10px; color: #06323d; white-space: nowrap; }
 .floor-pin:hover .floor-pin__body { background: #1c9fd1; }
+
+/* เพิ่ม Effect ตอบสนองเมื่อใช้นิ้วแตะ (Tap) */
+.floor-pin:hover .floor-pin__body,
+.floor-pin:active .floor-pin__body { 
+  background: #1c9fd1; 
+  transform: scale(1.1) rotate(-45deg); /* หมุดจะขยายเล็กน้อยให้รู้ว่ากดติดแล้ว */
+  transition: transform 0.15s ease;
+}
 
 /* ===========================================================
    SYSTEM SELECTOR
