@@ -3,67 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <title>About Water Quality</title>
+  <link rel="stylesheet" href="style.css" />
+  
   <style>
-    body {font-family: sans-serif; padding: 40px; background-image: url('https://img.magnific.com/premium-vector/cloud-sky-background-blue-sky-with-mesh-clouds-pattern-realistic-summer-cloudspace-vector_555028-67.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;}
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+ 
+  :root { /* --- color tokens --- */ --ink: #0e2a2f; --ink-soft: #4c6367; --deep: #0b4f5c; --deep-2: #0e6577; --mist: #eaf3f2; --paper: #ffffff; --line: #d7e6e4; --good: #2f9e6e; --footer-bg: #0a2226; --footer-text: #cfe3e0; /* --- type --- */ --font-display: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'IBM Plex Mono', monospace; /* --- layout --- */ --max-w: 1200px; --radius: 10px; }
+ 
+  * { box-sizing: border-box; }
+ 
+  html, body { margin: 0; padding: 0; }
+ 
+    body { font-family: var(--font-body); color: var(--ink); background: #c9e1e6; -webkit-font-smoothing: antialiased; padding: 30px;}
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
     nav {text-align: center;}
+    .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
     li{ list-style: none; padding: 0; }
     table{background: #676767; text-align: center; padding: 0px; width: 90%; margin-bottom: 10px;}
     tr{background: #ffffff;}
     th{padding: 10px;}
     td{padding: 10px;}
     .poem{margin-left: 20px;}
-
-    .tab{background: #fff0ec; display: flex; align-items: end; padding: 30px; justify-content: end; margin: -50px; margin-bottom: 10px; position: relative; height: fit-content;}
-    .title{display:flex; align-items:center; font-weight:bold; color:#9090ff; position:absolute; left:30px; top:50%; transform:translateY(-50%); font-size:x-large;}
-    .menu{text-align: center; font-family: Arial, Helvetica, sans-serif; font-weight: bold; display: inline-block; margin: 10px; cursor: pointer; color: black; text-decoration: none;}
-    .hamburger{display: none; flex-direction: column; gap: 5px; cursor: pointer; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); z-index: 10;}
-    .hamburger span{width: 28px; height: 3px; background: #333333;}
-    .langchage{display: flex; font-weight: bold; color: #9090ff;}
-   
-    #menuList{display: flex;align-items: center;gap: 15px;}
-
-    @media (max-width: 940px){
-      .title{position:static; transform:none; justify-content:center; margin-bottom:10px;}
-      .tab {flex-direction: column; align-items: flex-start;}
-      .hamburger{display: flex;align-self: flex-end;}
-      .tab > div:not(.hamburger){display: none; flex-direction: column; width: 100%;}
-      .tab > div.open{display: flex;}
-      .menu{margin: 8px 0;}
-      #menuList{display: none; flex-direction: column; width: 100%;}
-      #menuList.open{display: flex;}
-      .menu{margin: 8px 0;}
-    }
     
+
+    /* ===========================================================
+   NAVBAR
+   =========================================================== */
+ 
+    .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; margin: -30px; margin-bottom: 0;}
+    .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .navbar__logo img { height: 56px; width: auto; }
+    .navbar__links { display: flex; align-items: center; gap: 36px; list-style: none; margin: 0; padding: 0; }
+    .navbar__links a { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
+    .navbar__links a:hover { color: var(--deep); }
+    .navbar__right { display: flex; align-items: center; gap: 28px; }
+    .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
+    .navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+
+ 
+    /* hamburger (checkbox-based, no script) */
+    .navbar__toggle { display: none; }
+    .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+    .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
+    
+
+    @media (max-width: 860px) {
+ 
+      .navbar__burger { display: flex; }
+      .navbar__links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); border-bottom: 2px solid var(--good); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+      .navbar__links li { width: 100%; }
+      .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
+      .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
+      .navbar__right { gap: 16px; }
+      .map-panel__image { height: 260px; }
+      .map-panel__metrics { gap: 14px; font-size: 12px; }
+      .detail-panel { padding: 22px 20px; }
+      .detail-panel__metrics { gap: 18px; font-size: 14px; }
+      .footer__inner { flex-direction: column; gap: 24px; }
+    }
+ 
+    @media (max-width: 480px) {
+ 
+      .navbar__inner { padding: 14px 16px; }
+      .wrap { padding: 0 16px; }
+      .system-select { align-items: flex-start; flex-direction: column; }
+      .map-panel__readout { padding: 14px 16px 16px; }
+    }
   </style>
 </head>
 
 <body> 
   
-  <div class="tab">
-    <div class="hamburger" onclick="document.getElementById('menuList').classList.toggle('open')">
-      <span></span>
-      <span></span>
-      <span></span>
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="navbar__inner">
+ 
+      <a href="index.html" class="navbar__logo">
+        <img src="achelouslogo.png" alt="ACHELOUS" />
+      </a>
+ 
+      <input type="checkbox" id="navToggle" class="navbar__toggle" />
+ 
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="aboutwqi.html">About Water Quality</a></li>
+        <li><a href="aboutproject.html">About The Project</a></li>
+        <li><a href="#">Filter</a></li>
+      </ul>
+ 
+      <div class="navbar__right">
+        <a href="login.html" class="navbar__login">Login</a>
+        <div class="navbar__lang">
+          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
+          <span>EN</span>
+        </div>
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+      </div>
+ 
     </div>
+  </header>
 
-    <div class="title">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu13ANFoKVLXOrArLDjHFLnOGkDHkcas08pLBs9tTgA&s=10" style="width: 100px; height: fit-content; margin-right: 10px; margin-top: 10px;"
-      <a> Achelous</a>
-    </div>
-
-    <div id="menuList">
-      <li><a class="menu" id="hom" href="index.html">Home</a></li>
-      <li><a class="menu" id="awq" href="aboutwqi.html">About Water Quality</a></li>
-      <li><a class="menu" id="atp" href="aboutproject.html">About The Project</a></li>
-
-      <button onclick="change()" id="lang" style="background: #ffe6e6; border-radius: 5px; cursor: pointer; display:flex; align-items:center; justify-content:center;">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbxxI1ei9W2UDTFPS_IKF0WCMwHOO2zHXSNBIlymgydw&s=10" style="width: 20px; height: 20px; border-radius: 100%; margin-right: 5px;" class="langchange">
-      <a class="langchange">TH</a>
-      </button>
-
-    </div>
-  </div>
-
+  
   <h1>About Water Quality</h1>
   <p>คำนำ</p>
 
