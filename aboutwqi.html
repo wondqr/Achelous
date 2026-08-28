@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>About Water Quality</title>
+  <style>
+    body {font-family: sans-serif; padding: 40px; background-image: url('https://img.magnific.com/premium-vector/cloud-sky-background-blue-sky-with-mesh-clouds-pattern-realistic-summer-cloudspace-vector_555028-67.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;}
+    nav {text-align: center;}
+    li{ list-style: none; padding: 0; }
+    table{background: #676767; text-align: center; padding: 0px; width: 90%; margin-bottom: 10px;}
+    tr{background: #ffffff;}
+    th{padding: 10px;}
+    td{padding: 10px;}
+    .poem{margin-left: 20px;}
+
+    .tab{background: #fff0ec; display: flex; align-items: end; padding: 30px; justify-content: end; margin: -50px; margin-bottom: 10px; position: relative; height: fit-content;}
+    .title{display:flex; align-items:center; font-weight:bold; color:#9090ff; position:absolute; left:30px; top:50%; transform:translateY(-50%); font-size:x-large;}
+    .menu{text-align: center; font-family: Arial, Helvetica, sans-serif; font-weight: bold; display: inline-block; margin: 10px; cursor: pointer; color: black; text-decoration: none;}
+    .hamburger{display: none; flex-direction: column; gap: 5px; cursor: pointer; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); z-index: 10;}
+    .hamburger span{width: 28px; height: 3px; background: #333333;}
+    .langchage{display: flex; font-weight: bold; color: #9090ff;}
+   
+    #menuList{display: flex;align-items: center;gap: 15px;}
+
+    @media (max-width: 940px){
+      .title{position:static; transform:none; justify-content:center; margin-bottom:10px;}
+      .tab {flex-direction: column; align-items: flex-start;}
+      .hamburger{display: flex;align-self: flex-end;}
+      .tab > div:not(.hamburger){display: none; flex-direction: column; width: 100%;}
+      .tab > div.open{display: flex;}
+      .menu{margin: 8px 0;}
+      #menuList{display: none; flex-direction: column; width: 100%;}
+      #menuList.open{display: flex;}
+      .menu{margin: 8px 0;}
+    }
+    
+  </style>
+</head>
+
+<body> 
+  
+  <div class="tab">
+    <div class="hamburger" onclick="document.getElementById('menuList').classList.toggle('open')">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="title">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu13ANFoKVLXOrArLDjHFLnOGkDHkcas08pLBs9tTgA&s=10" style="width: 100px; height: fit-content; margin-right: 10px; margin-top: 10px;"
+      <a> Achelous</a>
+    </div>
+
+    <div id="menuList">
+      <li><a class="menu" id="hom" href="index.html">Home</a></li>
+      <li><a class="menu" id="awq" href="aboutwqi.html">About Water Quality</a></li>
+      <li><a class="menu" id="atp" href="aboutproject.html">About The Project</a></li>
+
+      <button onclick="change()" id="lang" style="background: #ffe6e6; border-radius: 5px; cursor: pointer; display:flex; align-items:center; justify-content:center;">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbxxI1ei9W2UDTFPS_IKF0WCMwHOO2zHXSNBIlymgydw&s=10" style="width: 20px; height: 20px; border-radius: 100%; margin-right: 5px;" class="langchange">
+      <a class="langchange">TH</a>
+      </button>
+
+    </div>
+  </div>
+
+  <h1>About Water Quality</h1>
+  <p>คำนำ</p>
+
+  <div class="poem">
+
+    <h2>Temperature</h2>
+   <p>อุณหภูมิของน้ำคือค่าที่บ่งบอกถึงระดับพลังงานความร้อนเฉลี่ยของน้ำ วัดเป็นองศาเซลเซียส (°C) <br>- น้ำเย็น ควรมีอุณหภูมิประมาน 10 - 15 °C<br>- น้ำอุณหภูมิห้อง ควรมีอุณหภูมิประมาน 20 - 25<br>- น้ำอุ่น ควรมีอุณหภูมิประมาน 40 - 50 °C</p>
+
+
+    <h2>pH Value</h2>
+   <p>เป็นค่าที่บ่งบอกความเป็นกรด-เบสของสารละลาย โดยวัดจากความเข้มข้นของไอออนไฮโดรเจน (H⁺) มีสเกลตั้งแต่ 0 - 14<br>- pH < 7 = เป็นกรด<br>- pH = 7 = เป็นกลาง<br>- pH > 7 = เป็นเบส/ด่าง</p>
+
+
+    <h2>Total Dissolved Solids (TDS)</h2>
+    <p>คือปริมาณสารที่ละลายอยู่ในน้ำทั้งหมด ทั้งอนินทรีย์และอินทรีย์ เช่น แร่ธาตุ เกลือ โลหะ ไอออนต่างๆ มีหน่วยเป็น มิลลิกรัมต่อลิตร (mg/L) หรือ ppm (parts per million) ซึ่งมีค่าเท่ากัน</p>
+
+    <h2>Turbidity</h2>
+    <p>ความขุ่นคือค่าที่บ่งบอกถึงระดับความใสของน้ำ เกิดจากอนุภาคแขวนลอยที่กระเจิงแสง เช่น ตะกอนดิน ทราย จุลินทรีย์ หรือสารแขวนลอยอื่นๆ ที่ทำให้แสงผ่านน้ำไม่สะดวก มีหน่วยวัดเป็น NTU</p>
+    
+  </div>
+
+  <table>
+    <thead>
+      <tr style="background: #d4d4d4;">
+        <th>ตัววัดคุณภาพน้ำ</th>
+        <th>ค่าเฉลี่ยของน้ำที่ดี</th>
+        <th>ความสำคัญในบริบทคุณภาพน้ำ</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>Temperature</td>
+        <td>10 - 40 °C</td>
+        <td>- ส่งผลต่อปริมาณออกซิเจนละลายน้ำ <br> - มีผลต่ออัตราการเกิดปฏิกิริยาเคมีและกิจกรรมของจุลินทรีย์ในน้ำ <br> - ส่งผลต่อค่า pH และการนำไฟฟ้าทางอ้อม</td>
+      </tr>
+      <tr>
+        <td>pH Value</td>
+        <td>6.5 - 8.5</td>
+        <td>- ส่งผลต่อการละลายของโลหะหนัก <br> - เป็นสัญญาณเตือนการปนเปื้อนผิดปกติ</td>
+      </tr>
+      <tr>
+        <td>TDS Value</td>
+        <td>0 - 150 ppm</td>
+        <td>- ไม่ได้บอกชนิดของสารที่ปนเปื้อน TDS สูงอาจมาจากแร่ธาตุที่มีประโยชน์ หรือสารอันตรายก็ได้ <br> - มีผลต่อรสชาติ TDS สูงมากจะรู้สึกกร่อยหรือมีรสแปลกปลอม</td>
+      </tr>
+      <tr>
+        <td>Turbidity</td>
+        <td> < 1 NTU </td>
+        <td>- บ่งชี้การปนเปื้อนของจุลินทรีย์ <br> - ใช้เป็นสัญญาณเตือนเบื้องต้นว่าน้ำอาจมีปัญหาการปนเปื้อนก่อนตรวจค่าอื่นละเอียดขึ้น</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Water Assessment Criteria</h3>
+
+  <table>
+    <thead>
+      <tr style="background: #d4d4d4;">
+        <th>Water Quality</th>
+        <th>Temperature Sensor</th>
+        <th>pH Sensor</th>
+        <th>TDS Sensor (ppm)</th>
+        <td>Turbidity Sensor</td>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td style="color: #8c52ff;">Clean</td>
+        <td>10 - 40 °C</td>
+        <td>6.5 - 8.5</td>
+        <td>0 - 150 ppm</td>
+        <td> < 1 NTU</td>
+      </tr>
+      <tr>
+        <td style="color: #00df69;">Nearly Clean</td>
+        <td>10 - 40 °C</td>
+        <td>5.5 - 6.5 or 8.5 - 9.5</td>
+        <td>151 - 300 ppm</td>
+        <td>1 - 10 NTU</td>
+      </tr>
+      <tr>
+        <td style="color: #d18d40;">Dirty</td>
+        <td>10 - 40 °C</td>
+        <td>4.5 - 5.5 or 9.5 - 10.5</td>
+        <td>301 - 600 ppm</td>
+        <td>11 - 50 NTU</td>
+      </tr>
+      <tr>
+        <td style="color: #b22f00;">Very Dirty</td>
+        <td>10 - 40 °C</td>
+        <td> < 4.5 or > 10.5 </td>
+        <td> > 600 ppm</td>
+        <td> > 50 NTU</td>
+      </tr>
+    </tbody>
+  </table>
+
+  </div>
+</body>

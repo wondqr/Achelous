@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>About The Project</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px;  background-image: url('https://img.magnific.com/premium-vector/cloud-sky-background-blue-sky-with-mesh-clouds-pattern-realistic-summer-cloudspace-vector_555028-67.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;}
+    li{ list-style: none; padding: 0; }
+    nav {text-align: center;}
+    .card { display: inline-block; background: #b0b0b0; margin: 10px; width: 250px; padding-top: 10px;padding-bottom: 10px; border-radius: 10px; text-align: center;}
+    .article { font-size: 24px; font-weight: bold ; color: #000000;}
+    .tab{background: #fff0ec; display: flex; align-items: end; padding: 30px; justify-content: end; margin: -50px; margin-bottom: 10px; position: relative; height: fit-content;}
+    .title{display:flex; align-items:center; font-weight:bold; color:#9090ff; position:absolute; left:30px; top:50%; transform:translateY(-50%); font-size:x-large;}
+    .menu{text-align: center; font-family: Arial, Helvetica, sans-serif; font-weight: bold; display: inline-block; margin: 10px; cursor: pointer; color: black; text-decoration: none;}
+    .hamburger{display: none; flex-direction: column; gap: 5px; cursor: pointer; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); z-index: 10;}
+    .hamburger span{width: 28px; height: 3px; background: #333333;}
+    .langchage{display: flex; font-weight: bold; color: #9090ff;}
+   
+    #menuList{display: flex;align-items: center;gap: 15px;}
+
+    @media (max-width: 940px){
+      .title{position:static; transform:none; justify-content:center; margin-bottom:10px;}
+      .tab {flex-direction: column; align-items: flex-start;}
+      .hamburger{display: flex;align-self: flex-end;}
+      .tab > div:not(.hamburger){display: none; flex-direction: column; width: 100%;}
+      .tab > div.open{display: flex;}
+      .menu{margin: 8px 0;}
+      #menuList{display: none; flex-direction: column; width: 100%;}
+      #menuList.open{display: flex;}
+      .menu{margin: 8px 0;}
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="tab">
+    <div class="hamburger" onclick="document.getElementById('menuList').classList.toggle('open')">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="title">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu13ANFoKVLXOrArLDjHFLnOGkDHkcas08pLBs9tTgA&s=10" style="width: 100px; height: fit-content; margin-right: 10px; margin-top: 10px;"
+      <a> Achelous</a>
+    </div>
+
+    <div id="menuList">
+      <li><a class="menu" id="hom" href="index.html">Home</a></li>
+      <li><a class="menu" id="awq" href="about wqi.html">About Water Quality</a></li>
+      <li><a class="menu" id="atp" href="about proj.html">About The Project</a></li>
+
+      <button onclick="change()" style="background: #ffe6e6; border-radius: 5px; cursor: pointer; display:flex; align-items:center; justify-content:center;">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbxxI1ei9W2UDTFPS_IKF0WCMwHOO2zHXSNBIlymgydw&s=10" style="width: 20px; height: 20px; border-radius: 100%; margin-right: 5px;" class="langchange">
+      <a class="langchange" id="lan">TH</a>
+      </button>
+
+    </div>
+  </div>
+  
+  <h1 style="color: #3b34ff; text-align: center;">About The Project</h1>
+  <h2 id="Rationaleh">Rationale</h2>
+  <p id="Rationalep">   In today’s world, water is essential for daily life and many industries, However, water from natural sources in some areas can be unreliable. Sometimes, the water is already clean enough and doesn’t need to be filtered.
+Current filter systems let the water run through the filters all the time, whether it is clean or dirty. This causes filters to clog up quickly and wear out fast, making uses pay for filter replacements more often than necessary. Our team came up with an idea to develop a Smart 2-Step Water Quality Checking System with IoT. We use sensors to measure pH, TDS, Temperature and Turbidity before the water reaches the filter. If the water is already clean: The system opens a valve to send the water straight to the storage tank without using filter, which saves filter life. If the water is dirty: The system switches the valve to send water through the filter first and then the system checks the water quality one more time and send it to the storage tank. Users can also view real-time water quality and system status on website anytime.
+</p>
+ 
+  <h2>Objectives</h2>
+  <p>1. To notify users of filters lifespan and calculate the estimated replacement date.<br>
+2. To inform users of the water quality in different areas.<br>
+3. To extend the operational lifespan of the water filters.<br>
+4. To record and store water quality data across different locations.
+</p>
+
+  <h2>Definitionsolids</h2>
+  <p>1. IoT-Based Smart Water Quality Monitoring System 
+- refers to an automated electronic system developed using microcontrollers, sensors, and electric valves to measure water quality parameters in real-time and display the status updates on a web dashboard.<br>
+2. pH - A scale used to specify the acidity or alkalinity of an aqueous solution.<br>
+3. TDS (Total Dissolved Solids) - A measurement representing the total concentration of dissolved organic and inorganic substances contained in a liquid<br>
+4. Turbidity - The measure of cloudiness of a fluid caused by individual suspended solids or sediment particles.<br>
+5. Water Quality Sensors - Hardware modules integrated into the system to capture real-time quality of water.<br>
+6. Solenoid / Proportional Electric Valve System - An automated valve configuration controlled by a microcontroller to switch water flow between direct bypass and the filtration.<br>
+</p>
+
+  <h2>References</h2>
+
+  <p>Quality Standards for Tap Water and Water for Consumption<br>
+<a href="https://www.mwa.co.th/wp-content/uploads/2023/03/%E0%B9%80%E0%B8%81%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%81%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%94%E0%B8%84%E0%B8%B8%E0%B8%93%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2-1110-65.pdf">- เกณฑ์กำหนดคุณภาพน้ำประปา-1110-65.pdf</a><br>
+World Health Organization Drinking-Water Quality Standards <br>
+<a href="https://www.who.int/publications/i/item/9789240121225">- Guidelines for drinking-water quality: fourth edition incorporating the first, second and third addenda </a><br><br>
+
+Data sheets of sensor<br>
+ESP 32 <a href="https://www.espressif.com/en/products/socs/esp32">- ESP32 Wi-Fi & Bluetooth SoC | Espressif Systems </a><br>
+TDS <a href="https://geeksvalley.com/wp-content/uploads/2021/06/Analog-TDS-Sensor.pdf">- Analog-TDS-Sensor.pdf </a><br>
+pH <a href="https://cimpleo.com/blog/arduino-ph-meter-using-ph-4502c/">- Arduino pH Meter with PH-4502C: Wiring, Calibration & Code Guide | CimpleO Group </a><br>
+Temperature <a href="https://www.analog.com/en/products/ds18b20.html">- DS18B20 Datasheet and Product Info | Analog Devices </a><br>
+Turbidity <a href="https://innovatorsguru.com/ts-300b-arduino-turbidity-sensor/">- TS-300B | High Quality Arduino Turbidity Sensor </a><br>
+Water pressure <a href="https://www.scribd.com/document/472686689/1-SENSOR-pdf">- Water Pressure Sensor G1/4 1.2Mpa Datasheet | PDF </a><br>
+Water flow <a href="https://cdn-shop.adafruit.com/product-files/828/C898+datasheet.pdf">- https://cdn-shop.adafruit.com/product-files/828/C898+datasheet.pdf </a><br><br>
+
+Filtration<br>
+PP <a href="https://www.siamcoolermart.com/what-is-pp-sediment/">- ไส้กรองหยาบ (PP Sediment) คืออะไร ทำงานอย่างไร? - Siamcoolermart </a><br>
+CTO <a href="https://www.waterfilterthailand.com/content/35875/%E0%B8%A3%E0%B8%B9%E0%B9%89%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B9%84%E0%B8%A1%E0%B9%88-%E0%B9%84%E0%B8%AA%E0%B9%89%E0%B8%81%E0%B8%A3%E0%B8%AD%E0%B8%87-cto-%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD-carbon-block-%E0%B8%94%E0%B8%B5%E0%B8%AD%E0%B8%A2%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%84%E0%B8%A3"> - รู้หรือไม่ ไส้กรอง CTO หรือ Carbon Block ดีอย่างไร? </a>
+
+</body>

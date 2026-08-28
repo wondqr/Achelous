@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+  <meta charset="UTF-8">
+  <title>Project Members</title>
+  <style>
+    body{text-align: center; background-image: url('https://img.magnific.com/premium-vector/cloud-sky-background-blue-sky-with-mesh-clouds-pattern-realistic-summer-cloudspace-vector_555028-67.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: sans-serif;}
+    li{ list-style: none; padding: 0; }
+    .card{display: inline-block; background: #bbbbbb; width: 400px; padding: 5px; border-radius: 10px;}
+    .tab{background: #fff0ec; display: flex; align-items: end; padding: 30px; justify-content: end; margin: -8px; margin-bottom: 10px; position: relative; height: fit-content;}
+    .title{display:flex; align-items:center; font-weight:bold; color:#9090ff; position:absolute; left:30px; top:50%; transform:translateY(-50%); font-size:x-large;}
+    .menu{text-align: center; font-family: Arial, Helvetica, sans-serif; font-weight: bold; display: inline-block; margin: 10px; cursor: pointer; color: black; text-decoration: none;}
+    .hamburger{display: none; flex-direction: column; gap: 5px; cursor: pointer; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); z-index: 10;}
+    .hamburger span{width: 28px; height: 3px; background: #333333;}
+    .langchage{display: flex; font-weight: bold; color: #9090ff;}
+   
+    #menuList{display: flex;align-items: center;gap: 15px;}
+
+    @media (max-width: 940px){
+      .title{position:static; transform:none; justify-content:center; margin-bottom:10px;}
+      .tab {flex-direction: column; align-items: flex-start;}
+      .hamburger{display: flex;align-self: flex-end;}
+      .tab > div:not(.hamburger){display: none; flex-direction: column; width: 100%;}
+      .tab > div.open{display: flex;}
+      .menu{margin: 8px 0;}
+      #menuList{display: none; flex-direction: column; width: 100%;}
+      #menuList.open{display: flex;}
+      .menu{margin: 8px 0;}
+    }
+
+  </style>
+
+</head>
+
+<body> 
+
+  <div class="tab">
+    <div class="hamburger" onclick="document.getElementById('menuList').classList.toggle('open')">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="title">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu13ANFoKVLXOrArLDjHFLnOGkDHkcas08pLBs9tTgA&s=10" style="width: 100px; height: fit-content; margin-right: 10px; margin-top: 10px;"
+      <a> Achelous</a>
+    </div>
+
+    <div id="menuList">
+      <li><a class="menu" id="hom" href="index.html">Home</a></li>
+      <li><a class="menu" id="awq" href="about wqi.html">About Water Quality</a></li>
+      <li><a class="menu" id="atp" href="about proj.html">About The Project</a></li>
+
+      <button onclick="change()" id="lang" style="background: #ffe6e6; border-radius: 5px; cursor: pointer; display:flex; align-items:center; justify-content:center;">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbxxI1ei9W2UDTFPS_IKF0WCMwHOO2zHXSNBIlymgydw&s=10" style="width: 20px; height: 20px; border-radius: 100%; margin-right: 5px;" class="langchange">
+      <a class="langchange">TH</a>
+      </button>
+
+    </div>
+  </div>
+
+  <div class="card" style="background: #0ea891; padding-bottom: 1px; margin: 10px;"><h1>ผู้จัดทำ</h1></div><br>
+  <div class="card">
+  <h3>นาย สิปปวิชญ์ คงกตัญญูสกุล  รหัส	55277</h3>
+  <h3>นาย ธัชกฤช อมาตยกุล	รหัส	55593</h3>
+  <h3>นาย ณัฐธีร์ วิมลพัฒนธรรม	รหัส	55612</h3>
+  <h3>นาย นันทพัทธ์ ภาสุกุลพิพัฒน์	รหัส	55721</h3>
+  <h3>นาย ภคิน ยุววัฒน์	รหัส	55826</h3>
+  </div>
+
+</body>
