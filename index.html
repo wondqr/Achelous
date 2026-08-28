@@ -1,201 +1,230 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Water Quality Index</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACHELOUS — Smart Water Quality Monitoring</title>
+<link rel="stylesheet" href="style.css" />
 
-  <style>
 
-    body {background-image: url('https://img.magnific.com/premium-vector/cloud-sky-background-blue-sky-with-mesh-clouds-pattern-realistic-summer-cloudspace-vector_555028-67.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: sans-serif;}
-    li{ list-style: none; padding: 0; }
-    .tab{background: #fff0ec; display: flex; align-items: end; padding: 30px; justify-content: end; margin: -10px; margin-bottom: 20px; position: relative; height: fit-content; box-shadow: 0 4px 12px rgba(0,0,0,0.2);}
-    .title{display:flex; align-items:center; font-weight:bold; color:#9090ff; position:absolute; left:30px; top:50%; transform:translateY(-50%);}
-    .menu{text-align: center; font-family: Arial, Helvetica, sans-serif; font-weight: bold; display: inline-block; margin: 10px; cursor: pointer; color: black; text-decoration: none;}
-    .hamburger{display: none; flex-direction: column; gap: 5px; cursor: pointer; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); z-index: 10;}
-    .hamburger span{width: 28px; height: 3px; background: #333333;}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+ 
+:root { /* --- color tokens --- */ --ink: #0e2a2f; --ink-soft: #4c6367; --deep: #0b4f5c; --deep-2: #0e6577; --mist: #eaf3f2; --paper: #ffffff; --line: #d7e6e4; --good: #2f9e6e; --footer-bg: #0a2226; --footer-text: #cfe3e0; /* --- type --- */ --font-display: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'IBM Plex Mono', monospace; /* --- layout --- */ --max-w: 1200px; --radius: 10px; }
+ 
+* { box-sizing: border-box; }
+ 
+html, body { margin: 0; padding: 0; }
+ 
+body { font-family: var(--font-body); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+ 
+a { color: inherit; text-decoration: none; }
+ 
+img { max-width: 100%; display: block; }
+ 
+.wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+ 
+/* ===========================================================
+   NAVBAR
+   =========================================================== */
+ 
+.navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; }
+.navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.navbar__logo img { height: 56px; width: auto; }
+.navbar__links { display: flex; align-items: center; gap: 36px; list-style: none; margin: 0; padding: 0; }
+.navbar__links a { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
+.navbar__links a:hover { color: var(--deep); }
+.navbar__right { display: flex; align-items: center; gap: 28px; }
+.navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
+.navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
 
-    .language{background: #ffe6e6; border-radius: 5px; cursor: pointer; display:flex; align-items:center; justify-content:center; min-width: 76px; padding: 2px;}
-    .langchage{display: flex; font-weight: bold; color: #9090ff;}
-    .lang-dropdown {position: relative; display: inline-block;}
-    .lang-list {display: none; position: absolute; top: 100%; left: 0; background: #efadc0; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 10px; min-width: 67px; z-index: 10;}
-    .lang-dropdown.open .lang-list {display: block;}
-    .lang-list a {display: block; padding: 8px 12px; text-decoration: none; color: #333;}
-    .lang-list a:hover {background: #f0f0f0;}
+ 
+/* hamburger (checkbox-based, no script) */
+.navbar__toggle { display: none; }
+.navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+.navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
+ 
+/* ===========================================================
+   HERO / MAP SECTION
+   =========================================================== */
+ 
+.hero { padding: 40px 0 32px; }
+.map-panel { position: relative; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--mist); }
+.map-panel__image { width: 100%; height: 420px; object-fit: cover; display: block; }
+.map-panel__readout { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 24px 20px; background: linear-gradient(to top, rgba(10, 34, 38, 0.82), rgba(10, 34, 38, 0.15)); color: var(--paper); }
+.map-panel__average { font-family: var(--font-mono); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 10px; }
+.map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: var(--mist); }
+.map-panel__metrics span b { font-weight: 600; color: var(--paper); }
+ 
+/* ===========================================================
+   SYSTEM SELECTOR
+   =========================================================== */
+ 
+.system-select { padding: 28px 0 4px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.system-select__label { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.system-chip { font-family: var(--font-display); font-weight: 500; font-size: 14px; padding: 10px 20px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); } 
+.system-chip--active { border-color: var(--deep); color: var(--deep); background: var(--mist); }
+.system-chip--add { color: var(--ink-soft); border-style: dashed; }
+ 
+/* ===========================================================
+   DETAIL PANEL (readout detail, visible by default)
+   =========================================================== */
+ 
+.detail-panel { margin: 24px 0 48px; border: 1px solid var(--good); border-radius: var(--radius); background: var(--mist); padding: 28px 32px; }
+.detail-panel__average { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--deep); margin: 0 0 20px; }
+.detail-panel__metrics { display: flex; flex-wrap: wrap; gap: 32px; font-family: var(--font-mono); font-size: 15px; color: var(--ink-soft); }
+.detail-panel__metrics b { font-weight: 600; color: var(--ink); }
+ 
+/* ===========================================================
+   FOOTER
+   =========================================================== */
+ 
+.footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px;}
+.footer__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+.footer__logos { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.footer__logo { height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.footer__logo img { height: 50px;}
+.footer__members h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 12px; color: var(--paper); }
+.footer__members ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.footer__members li { font-family: var(--font-mono); font-size: 13px; color: var(--footer-text); }
+.footer__members li::before { content: '— '; color: var(--good); }
+ 
+/* ===========================================================
+   RESPONSIVE
+   =========================================================== */
+ 
+@media (max-width: 860px) {
+ 
+  .navbar__burger { display: flex; }
+  .navbar__links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); border-bottom: 2px solid var(--good); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .navbar__links li { width: 100%; }
+  .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
+  .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
+  .navbar__right { gap: 16px; }
+  .map-panel__image { height: 260px; }
+  .map-panel__metrics { gap: 14px; font-size: 12px; }
+  .detail-panel { padding: 22px 20px; }
+  .detail-panel__metrics { gap: 18px; font-size: 14px; }
+  .footer__inner { flex-direction: column; gap: 24px; }
+}
+ 
+@media (max-width: 480px) {
+ 
+  .navbar__inner { padding: 14px 16px; }
+  .wrap { padding: 0 16px; }
+  .system-select { align-items: flex-start; flex-direction: column; }
+  .map-panel__readout { padding: 14px 16px 16px; }
+}
+</style>
 
-    .label{font-size: small;}
-    .value{font-size: small;}
 
-    .container {display: flex; gap: 40px;}
-    .building {display: flex; flex-direction: column; gap: 15px;}
-    .ac2003 {display: flex; align-items: center; gap: 10px;}
-    .box2003 {background: #a9a9a9; width: 200px; height: 70px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold;}
-    .flr {background: #e0e0e0; width: 180px; height: 55px; cursor: pointer; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);}
-    .arrow {font-size: 20px; margin-left: 20%;}
-    .avqcard {flex: 1;}
-    .avq {background: #5fc2ff; width: 70%; height: 150px; margin-left: 10%; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; display:flex; flex-direction:column; }
-    .content1{display:none; gap:20px; margin-top:30px; justify-content:center;}
-    .content2{display:none; gap:20px; margin-top:30px; justify-content:center;}
-    .card1{background:#5ce1e6; width:15%; height:80px; display:inline-block; padding:10px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:18px;}
-    .card2{background:#a8ffc6; width:15%; height:80px; display:inline-block; padding:10px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:18px;}
-   
-    #menuList{display: flex;align-items: center;gap: 15px;}
-
-    @media (max-width: 940px){
-      .title{position:static; transform:none; justify-content:center; margin-bottom:10px;}
-      .tab {flex-direction: column; align-items: flex-start;}
-      .hamburger{display: flex;align-self: flex-end;}
-      .tab > div:not(.hamburger){display: none; flex-direction: column; width: 100%;}
-      .tab > div.open{display: flex;}
-      .menu{margin: 8px 0;}
-      #menuList{display: none; flex-direction: column; width: 100%;}
-      #menuList.open{display: flex;}
-      .menu{margin: 8px 0;}
-    }
-
-  </style>
 </head>
-
-
 <body>
-
-  <div class="tab">
-    <div class="hamburger" onclick="document.getElementById('menuList').classList.toggle('open')">
-      <span></span>
-      <span></span>
-      <span></span>
+ 
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="navbar__inner">
+ 
+      <a href="#" class="navbar__logo">
+        <img src="achelouslogo.png" alt="ACHELOUS" />
+      </a>
+ 
+      <input type="checkbox" id="navToggle" class="navbar__toggle" />
+ 
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="aboutwqi.html">About Water Quality</a></li>
+        <li><a href="aboutproject.html">About The Project</a></li>
+        <li><a href="#">Filter</a></li>
+      </ul>
+ 
+      <div class="navbar__right">
+        <a href="login.html" class="navbar__login">Login</a>
+        <div class="navbar__lang">
+          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
+          <span>EN</span>
+        </div>
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+      </div>
+ 
     </div>
-
-    <li><a href="index.html">
-    <div class="title">
-      <img src="achelouslogo.png" style="width: 100px; height: fit-content; margin-right: 10px; margin-top: 10px;"
-    </div>
-    </a></li>
-
-    <div id="menuList">
-      <li><a class="menu" id="hom" href="index.html">Home</a></li>
-      <li><a class="menu" id="awq" href="aboutwqi.html">About Water Quality</a></li>
-      <li><a class="menu" id="atp" href="aboutproject.html">About The Project</a></li>
-      <li><a class="menu" id="log" href="#" style="color: blue;">Log In</a></li>
-
-      <div class="lang-dropdown">
-        <button class="language" onclick="this.parentElement.classList.toggle('open')">
-          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" id="flag" style="width: 20px; height: 20px; border-radius: 100%; margin-right: 5px;" class="langchange">
-          <a class="langchange" id="lan">EN</a>
-        </button>
-
-        <div class="lang-list">
-          <a href="#">English</a>
-          <a href="#">한국의</a>
-          <a href="#">ไทย</a>
+  </header>
+ 
+  <main class="wrap">
+ 
+    <!-- ===================== MAP ===================== -->
+    <section class="hero">
+      <div class="map-panel">
+        <img
+          class="map-panel__image"
+          src="https://www.assumption.ac.th/assets/img/admission/admis-13.jpg"
+          alt="Assumption Map"
+        />
+ 
+        <div class="map-panel__readout">
+          <p class="map-panel__average">Average: -- %</p>
+          <div class="map-panel__metrics">
+            <span>Temp: <b>--</b> °C</span>
+            <span>pH: <b>--</b></span>
+            <span>TDS: <b>--</b> ppm</span>
+            <span>Turbidity: <b>--</b> NTU</span>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="building">
-      <div class="ac2003">
-        <span class="arrow">▶</span>
-        <div onclick="showsen1()" id="f2" class="flr">Floor 2</div>
+    </section>
+ 
+    <!-- ===================== SYSTEM SELECTOR ===================== -->
+    <section class="system-select">
+      <span class="system-select__label">Your System &rsaquo;</span>
+      <button class="system-chip system-chip--active" type="button">System 1</button>
+      <button class="system-chip system-chip--add" type="button">+ Add your system</button>
+    </section>
+ 
+    <!-- ===================== DETAIL PANEL ===================== -->
+    <section class="detail-panel">
+      <p class="detail-panel__average">Average: -- %</p>
+      <div class="detail-panel__metrics">
+        <span>Temp: <b>--</b> °C</span>
+        <span>pH: <b>--</b></span>
+        <span>TDS: <b>--</b> ppm </span>
+        <span>Turbidity: <b>--</b> NTU</span>
       </div>
-      <div class="ac2003">
-        <span class="arrow">▶</span>
-        <div onclick="showsen2()" class="flr" id="f3">Floor 3</div>
+    </section>
+    
+    <img src="scale1.png" style="height: 60px; display: block; margin: 0 auto;"></img>
+  </main>
+ 
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer__inner">
+ 
+      <div class="footer__logos">
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROFLsdPfJZyzJvjvQ90IgWpEHezULWv5E7d-S0AWXKRg&s=10"></div>
+        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
+        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_g_1.png"></div>
+        <div class="footer__logo"><img src="AClogo.png"></div>
+        <div class="footer__logo"><img src="dreammakerspace.png"></div>
+        <div class="footer__logo"><img src="achelousblack.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoN-wySTxfsoeqVvahuf5DUycmNyl6WhhVz5K4CvA7ek4OIQFF1yfFz-E&s=10"></div>
       </div>
-    </div>
-
-    <div class="avqcard">
-      <div class="avq">
-        <div id="avtitle" style="font-size: large; font-weight: bold;">Water Quality (%)</div><br>
-        <div id="avvalue" style="font-size: large;">--</div>
+ 
+      <div class="footer__members">
+        <h3>Project Members</h3>
+        <ul>
+          <li>Mr.Nantapat Pasukulpipat</li>
+          <li>Mr.Nutthee Vimolpattanatham</li>
+          <li>Mr.Pakin Yuwawat</li>
+          <li>Mr.Sippawich Kongkatonyoosakul</li>
+          <li>Mr.Thatkrit Amatyakul</li>
+        </ul>
       </div>
+ 
     </div>
-  </div>
-
-
-  <div class="content1" id="sen1">
-    <div class="card1">
-      <div class="label" id="temptitle1" >Temperature (°C) </div><br>
-      <div class="value" id="temperature">--</div>
-      </div>
-    <div class="card1">
-      <div class="label">pH </div><br>
-      <div class="value" id="ph">--</div>
-    </div>
-    <div class="card1">
-      <div class="label" id="tdstitle1">Total Dissolved Solids (ppm)</div><br>
-      <div class="value" id="tds">--</div>
-    </div>
-    <div class="card1">
-      <div class="label" id="turbiditytitle1">Turbidity (NTU)</div><br>
-      <div class="value" id="turbidity">--</div>
-    </div>
-  </div>
-
-  <div class="content2" id="sen2">
-    <div class="card2">
-      <div class="label" id="temptitle2" >Temperature (°C) </div><br>
-      <div class="value" id="temperature">--</div>
-      </div>
-    <div class="card2">
-      <div class="label">pH </div><br>
-      <div class="value" id="ph">--</div>
-    </div>
-    <div class="card2">
-      <div class="label" id="tdstitle2">Total Dissolved Solids (ppm)</div><br>
-      <div class="value" id="tds">--</div>
-    </div>
-    <div class="card2">
-      <div class="label" id="turbiditytitle2">Turbidity (NTU)</div><br>
-      <div class="value" id="turbidity">--</div>
-    </div>
-  </div>
-
-  <img src="scale3.png" style="display:block; width:600px; max-width:90%; margin:10px auto 0 auto;">
-
-  <!-- โหลด socket.io client จาก server เดียวกัน -->
-  <script src="/socket.io/socket.io.js"></script>
-
-  <script>
-    const socket = io(); // เชื่อมต่อกับ server อัตโนมัติ
-
-    // ทุกครั้งที่ server ส่ง event 'sensorData' มา ให้เอาไปแสดงผล
-    socket.on('sensorData', (data) => {
-      document.getElementById('temperature').textContent = data.temperature;
-      document.getElementById('ph').textContent = data.ph;
-      document.getElementById('tds').textContent = data.tds;
-      document.getElementById('turbidity').textContent = data.turbidity;
-    });
-  </script>
-  <script>
-   let state = true;
-
-   function change() {
-     document.getElementById('lan').textContent = state ? 'EN' : 'TH';
-     document.getElementById('hom').textContent = state ? 'หน้าแรก' : 'Home';
-     document.getElementById('awq').textContent = state ? 'เกี่ยวกับคุณภาพของน้ำ' : 'About Water Quality';
-     document.getElementById('atp').textContent = state ? 'เกี่ยวกับโครงงาน' : 'About The Project';
-     document.getElementById('log').textContent = state ? 'เข้าสู่ระบบ' : 'Log In';
-
-    }
-  </script>
-
-  <script>
-    function showsen1() {
-  const el = document.getElementById('sen1');
-  el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-
-  document.getElementById('sen2').style.display='none'
-}
-  </script>
-
-  <script>
-    function showsen2() {
-  const el = document.getElementById('sen2');
-  el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-
-  document.getElementById('sen1').style.display='none'
-}
-  </script>
-
+  </footer>
+ 
 </body>
+</html>
