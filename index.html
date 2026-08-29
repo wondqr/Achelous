@@ -58,12 +58,8 @@ img { max-width: 100%; display: block; }
 .map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
 .map-panel__metrics span b { font-weight: bold; color: black; }
  
-/* metrics show/hide toggle (checkbox-hack, no script) — button only appears on narrow screens */
-.metrics-toggle { display: none; }
-.metrics-toggle-label { display: none; }
- 
 /* WQI water-droplet mascot (structure only — number is a static placeholder for now) */
-.wqi-droplet { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); width: 70px; z-index: 20; text-align: center; }
+.wqi-droplet { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); width: 50px; z-index: 20; text-align: center; }
 .wqi-droplet img { width: 100%; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
 .wqi-droplet__value { position: absolute; left: 50%; top: 62%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
  
@@ -122,22 +118,19 @@ img { max-width: 100%; display: block; }
 @media (max-width: 860px) {
  
   .navbar__burger { display: flex; }
-  .navbar__links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); border-bottom: 2px solid var(--good); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .navbar__inner { flex-wrap: wrap; }
+  .navbar__logo { order: 1; }
+  .navbar__right { order: 2; gap: 16px; }
+  .navbar__links { order: 3; flex-basis: 100%; width: 100%; position: static; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
   .navbar__links li { width: 100%; }
   .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
   .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
-  .navbar__right { gap: 16px; }
   .map-panel__readout {height: fit-content ; padding: 5px; padding-bottom: 0;}
   .map-panel__image { height: 260px; }
   .map-panel__metrics { display: none; }
-  .metrics-toggle-label { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--deep); cursor: pointer; padding: 6px 4px; user-select: none; }
-  .metrics-toggle-arrow { display: inline-block; transition: transform 0.2s ease; }
-  .metrics-toggle:checked ~ .map-panel__metrics { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; }
-  .metrics-toggle:checked ~ .metrics-toggle-label .metrics-toggle-arrow { transform: rotate(180deg); }
   .detail-panel { padding: 22px 20px; }
   .detail-panel__metrics { gap: 18px; font-size: 14px; }
   .footer__inner { flex-direction: column; gap: 24px; }
-  .wqi-droplet { position: absolute; left: 65%;}
 }
  
 @media (max-width: 480px) {
@@ -201,22 +194,22 @@ img { max-width: 100%; display: block; }
 
           <!-- floor pins: position (left/top) is % of image size, adjust later once real coordinates are confirmed -->
           <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality">
-            <span class="floor-pin__body" style="background: #62d8ff;"><span class="floor-pin__label">17</span></span>
+            <span class="floor-pin__body" style="background: #2fa7d8;"><span class="floor-pin__label">17</span></span>
           </button> 
           <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality">
-            <span class="floor-pin__body" style="background: #ffde59;"><span class="floor-pin__label">53</span></span>
+            <span class="floor-pin__body" style="background: #d9a800;"><span class="floor-pin__label">53</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality">
-            <span class="floor-pin__body" style="background: #99e17a;"><span class="floor-pin__label">42</span></span>
+            <span class="floor-pin__body" style="background: #5fa14b;"><span class="floor-pin__label">42</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality">
-            <span class="floor-pin__body" style="background: #62d8ff;"><span class="floor-pin__label">24</span></span>
+            <span class="floor-pin__body" style="background: #2fa7d8;"><span class="floor-pin__label">24</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality">
-            <span class="floor-pin__body" style="background: #62d8ff;"><span class="floor-pin__label">20</span></span>
+            <span class="floor-pin__body" style="background: #2fa7d8;"><span class="floor-pin__label">20</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality">
-            <span class="floor-pin__body" style="background: #99e17a;"><span class="floor-pin__label">38</span></span>
+            <span class="floor-pin__body" style="background: #5fa14b;"><span class="floor-pin__label">38</span></span>
           </button>
         </div>
 
@@ -224,15 +217,11 @@ img { max-width: 100%; display: block; }
           <span style="font-family: var(--font-mono); font-weight: 900;">Floor 2  </span>
           <span style="font-family: var(--font-mono); font-weight: 900; color: #7bb562;"> Clean</span><br><br>
           <p class="map-panel__average">WQI: 38 </p>
-
-          <input type="checkbox" id="metricsToggle" class="metrics-toggle">
-          <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
-
           <div class="map-panel__metrics">
-            <span>Temp: <b>22</b> °C</span>
-            <span>pH: <b>7.5</b></span>
-            <span>TDS: <b>206</b> ppm</span>
-            <span>Turbidity: <b>2.0</b> NTU</span>
+            <span>Temp: <b>--</b> °C</span>
+            <span>pH: <b>--</b></span>
+            <span>TDS: <b>--</b> ppm</span>
+            <span>Turbidity: <b>--</b> NTU</span>
           </div>
         </div>
 
