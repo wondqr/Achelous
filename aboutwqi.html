@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Water Quality</title>
   <link rel="stylesheet" href="style.css" />
  
@@ -37,7 +38,7 @@
   a { color: inherit; text-decoration: none; }
   img { max-width: 100%; display: block; }
   nav { text-align: center; }
-  .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 clamp(18px, 5vw, 24px); }
+  .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; }
   li { list-style: none; padding: 0; }
  
   /* ===========================================================
@@ -69,8 +70,7 @@
   }
  
   @media (max-width: 480px) {
-    .navbar__inner { padding: 14px 16px; }
-    .wrap { padding: 0 16px; }
+    .navbar__inner { padding: 14px 24px; }
   }
  
   /* ===========================================================
@@ -95,6 +95,11 @@
  
   @media (max-width: 720px) {
     .param-grid { grid-template-columns: 1fr; }}
+
+  @media (max-width: 480px) {
+    .hero { padding: 28px 22px; }
+    .param-card { padding: 18px 18px; }
+   }
  
   /* tables */
   .table-block { margin-bottom: 44px; }
