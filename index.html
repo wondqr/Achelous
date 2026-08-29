@@ -58,10 +58,10 @@ img { max-width: 100%; display: block; }
 .map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
 .map-panel__metrics span b { font-weight: bold; color: black; }
  
-/* water-quality scale marker (structure only — static placeholder, not wired to real WQI value yet) */
-.scale-wrap { position: relative; display: table; margin: 0 auto; }
-.scale-marker { position: absolute; left: 30%; top: 42%; bottom: 8%; width: 4px; background: var(--ink); border-radius: 2px; transform: translateX(-50%); box-shadow: 0 0 0 1px rgba(255,255,255,0.9); }
-.scale-marker::before { content: ''; position: absolute; bottom: -7px; left: 50%;margin-bottom: -4px; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid var(--ink); }
+/* WQI water-droplet mascot (structure only — number is a static placeholder for now) */
+.wqi-droplet { position: absolute; left: 50%; bottom: 1%; transform: translateX(-50%); width: 50px; height: 70px; z-index: 20; text-align: center; }
+.wqi-droplet img { width: 100%; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
+.wqi-droplet__value { position: absolute; left: 50%; top: 62%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
  
 /* floor water-quality pins (structure only — not wired to data or scripts yet) */
 .floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation;}
@@ -192,29 +192,29 @@ img { max-width: 100%; display: block; }
 
           <!-- floor pins: position (left/top) is % of image size, adjust later once real coordinates are confirmed -->
           <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality">
-            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+            <span class="floor-pin__body"><span class="floor-pin__label">17</span></span>
           </button> 
           <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality">
-            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+            <span class="floor-pin__body"><span class="floor-pin__label">53</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality">
-            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+            <span class="floor-pin__body"><span class="floor-pin__label">42</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality">
-            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+            <span class="floor-pin__body"><span class="floor-pin__label">24</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality">
-            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+            <span class="floor-pin__body"><span class="floor-pin__label">20</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality">
-            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+            <span class="floor-pin__body"><span class="floor-pin__label">38</span></span>
           </button>
         </div>
 
         <div class="map-panel__readout">
           <span style="font-family: var(--font-mono); font-weight: 900;">Floor 2  </span>
-          <span style="font-family: var(--font-mono); font-weight: 900; color: #7bb562;"> Quality : Clean</span><br><br>
-          <p class="map-panel__average">WQI: -- </p>
+          <span style="font-family: var(--font-mono); font-weight: 900; color: #7bb562;"> Clean</span><br><br>
+          <p class="map-panel__average">WQI: 38 </p>
           <div class="map-panel__metrics">
             <span>Temp: <b>--</b> °C</span>
             <span>pH: <b>--</b></span>
@@ -222,14 +222,16 @@ img { max-width: 100%; display: block; }
             <span>Turbidity: <b>--</b> NTU</span>
           </div>
         </div>
+
+        <!-- WQI droplet mascot: swap src for other quality states later (e.g. dirty.png). Number is a static placeholder. -->
+        <div class="wqi-droplet">
+          <img src="scclean.png" alt="Water quality mascot">
+          <span class="wqi-droplet__value">38</span>
+        </div>
       </div>
     </section>
 
-    <div class="scale-wrap">
-      <img src="scale1.png" style="height: 60px; display: block; margin: 0 auto;">
-      <!-- placeholder marker: currently fixed at center (normal). Move left/top % once wired to real WQI -->
-      <div class="scale-marker" aria-hidden="true"></div>
-    </div>
+    <img src="scale1.png" style="height: 60px; display: block; margin: 0 auto;">
 
     <!-- ===================== SYSTEM SELECTOR ===================== -->
     <section class="system-select">
