@@ -16,7 +16,7 @@
  
 html, body { margin: 0; padding: 0; }
  
-body { font-family: var(--font-body); color: var(--ink); background: #ececec; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-body); color: var(--ink); background: #efeeee; -webkit-font-smoothing: antialiased; }
  
 a { color: inherit; text-decoration: none; }
  
@@ -53,14 +53,14 @@ img { max-width: 100%; display: block; }
 .map-panel__zoom { position: relative; width: 100%; touch-action: none; transform-origin: center center; will-change: transform; cursor: grab; }
 .map-panel__zoom:active { cursor: grabbing; }
 .map-panel__image { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-.map-panel__readout { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 24px 20px; background: linear-gradient(to top, rgba(10, 34, 38, 0.82), rgba(10, 34, 38, 0.15)); color: var(--paper); }
-.map-panel__average { font-family: var(--font-mono); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 10px; }
-.map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: var(--mist); }
-.map-panel__metrics span b { font-weight: 600; color: var(--paper); }
+.map-panel__readout { position: absolute; left: 0; right: 0; bottom: 0; padding: 17px 24px 20px; background: linear-gradient(to top, rgb(205, 205, 205), rgb(255, 255, 255)); color: black; }
+.map-panel__average { font-family: var(--font-mono); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 10px; color: black; }
+.map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
+.map-panel__metrics span b { font-weight: bold; color: black; }
  
 /* floor water-quality pins (structure only — not wired to data or scripts yet) */
 .floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation;}
-.floor-pin__body { width: 34px; height: 34px; background: #29b6e8; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
+.floor-pin__body { width: 28px; height: 28px; background: #29b6e8; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
 .floor-pin__label { transform: rotate(45deg); font-family: var(--font-mono); font-weight: 700; font-size: 10px; color: #06323d; white-space: nowrap; }
 .floor-pin:hover .floor-pin__body { background: #1c9fd1; }
 
@@ -198,12 +198,14 @@ img { max-width: 100%; display: block; }
           <button type="button" class="floor-pin" style="left: 15.0%; top: 70.3%;" aria-label="Floor 3 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 14.5%; top: 81.7%;" aria-label="Floor 2 water quality">
+          <button type="button" class="floor-pin" style="left: 14.5%; top: 83%;" aria-label="Floor 2 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
         </div>
 
         <div class="map-panel__readout">
+          <span style="font-family: var(--font-mono); font-weight: 900;">Floor 2  </span>
+          <span style="font-family: var(--font-mono); font-weight: 900; color: #7bb562;"> Quality : Clean</span><br><br>
           <p class="map-panel__average">WQI: -- </p>
           <div class="map-panel__metrics">
             <span>Temp: <b>--</b> °C</span>
@@ -224,6 +226,7 @@ img { max-width: 100%; display: block; }
  
     <!-- ===================== DETAIL PANEL ===================== -->
     <section class="detail-panel">
+      <p class="detail-panel__average" style="color: #7bb562;">Quality: Clean </p>
       <p class="detail-panel__average">WQI: -- </p>
       <div class="detail-panel__metrics">
         <span>Temp: <b>--</b> °C</span>
