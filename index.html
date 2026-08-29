@@ -52,7 +52,7 @@ img { max-width: 100%; display: block; }
 .map-panel { position: relative; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--mist); }
 .map-panel__zoom { position: relative; width: 100%; touch-action: none; transform-origin: center center; will-change: transform; cursor: grab; }
 .map-panel__zoom:active { cursor: grabbing; }
-.map-panel__image { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.map-panel__image { width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; pointer-events: none; }
 .map-panel__readout { position: absolute; left: 0; right: 0; bottom: 0; padding: 17px 24px 20px; background: linear-gradient(to top, rgb(205, 205, 205), rgb(255, 255, 255)); color: black; }
 .map-panel__average { font-family: var(--font-mono); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 10px; color: black; }
 .map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
@@ -117,7 +117,7 @@ img { max-width: 100%; display: block; }
   .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
   .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
   .navbar__right { gap: 16px; }
-  .map-panel__readout {height: 70px; padding: 5px;}
+  .map-panel__readout {height: fit-content ; padding: 5px; padding-bottom: 0;}
   .map-panel__image { height: 260px; }
   .map-panel__metrics { display: none; }
   .detail-panel { padding: 22px 20px; }
@@ -185,22 +185,22 @@ img { max-width: 100%; display: block; }
           />
 
           <!-- floor pins: position (left/top) is % of image size, adjust later once real coordinates are confirmed -->
-          <button type="button" class="floor-pin" style="left: 19%; top: 8%;" aria-label="Floor 8 water quality">
+          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button> 
-          <button type="button" class="floor-pin" style="left: 16%; top: 18%;" aria-label="Floor 7 water quality">
+          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 16%; top: 45.0%;" aria-label="Floor 5 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 15.5%; top: 58.8%;" aria-label="Floor 4 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 15.0%; top: 70.3%;" aria-label="Floor 3 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 14.5%; top: 83%;" aria-label="Floor 2 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
         </div>
