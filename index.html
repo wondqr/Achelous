@@ -16,7 +16,7 @@
  
 html, body { margin: 0; padding: 0; }
  
-body { font-family: var(--font-body); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-body); color: var(--ink); background: #ececec; -webkit-font-smoothing: antialiased; }
  
 a { color: inherit; text-decoration: none; }
  
@@ -50,7 +50,9 @@ img { max-width: 100%; display: block; }
  
 .hero { padding: 40px 0 32px; }
 .map-panel { position: relative; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--mist); }
-.map-panel__image { width: 100%; height: 100%; object-fit: cover; display: block; }
+.map-panel__zoom { position: relative; width: 100%; touch-action: none; transform-origin: center center; will-change: transform; cursor: grab; }
+.map-panel__zoom:active { cursor: grabbing; }
+.map-panel__image { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 .map-panel__readout { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 24px 20px; background: linear-gradient(to top, rgba(10, 34, 38, 0.82), rgba(10, 34, 38, 0.15)); color: var(--paper); }
 .map-panel__average { font-family: var(--font-mono); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 10px; }
 .map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: var(--mist); }
@@ -172,13 +174,35 @@ img { max-width: 100%; display: block; }
  
     <!-- ===================== MAP ===================== -->
     <section class="hero">
-      <div class="map-panel">
-        <img
-          class="map-panel__image"
-          src="ac2003.jpg"
-          alt="Assumption Map"
-        />
- 
+      <div class="map-panel" id="mapPanel">
+        <div class="map-panel__zoom" id="mapZoom">
+          <img
+            class="map-panel__image"
+            src="ac2003.jpg"
+            alt="Assumption Map"
+          />
+
+          <!-- floor pins: position (left/top) is % of image size, adjust later once real coordinates are confirmed -->
+          <button type="button" class="floor-pin" style="left: 19%; top: 8%;" aria-label="Floor 8 water quality">
+            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+          </button>
+          <button type="button" class="floor-pin" style="left: 16%; top: 18%;" aria-label="Floor 7 water quality">
+            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+          </button>
+          <button type="button" class="floor-pin" style="left: 16%; top: 45.0%;" aria-label="Floor 5 water quality">
+            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+          </button>
+          <button type="button" class="floor-pin" style="left: 15.5%; top: 58.8%;" aria-label="Floor 4 water quality">
+            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+          </button>
+          <button type="button" class="floor-pin" style="left: 15.0%; top: 70.3%;" aria-label="Floor 3 water quality">
+            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+          </button>
+          <button type="button" class="floor-pin" style="left: 14.5%; top: 81.7%;" aria-label="Floor 2 water quality">
+            <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
+          </button>
+        </div>
+
         <div class="map-panel__readout">
           <p class="map-panel__average">Average: -- %</p>
           <div class="map-panel__metrics">
@@ -188,26 +212,6 @@ img { max-width: 100%; display: block; }
             <span>Turbidity: <b>--</b> NTU</span>
           </div>
         </div>
-
-        <!-- floor pins: position (left/top) is % of image size, adjust later once real coordinates are confirmed -->
-        <button type="button" class="floor-pin" style="left: 16%; top: 8%;" aria-label="Floor 8 water quality">
-          <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
-        </button>
-        <button type="button" class="floor-pin" style="left: 16%; top: 22%;" aria-label="Floor 7 water quality">
-          <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
-        </button>
-        <button type="button" class="floor-pin" style="left: 16%; top: 45.0%;" aria-label="Floor 5 water quality">
-          <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
-        </button>
-        <button type="button" class="floor-pin" style="left: 15.5%; top: 58.8%;" aria-label="Floor 4 water quality">
-          <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
-        </button>
-        <button type="button" class="floor-pin" style="left: 15.0%; top: 70.3%;" aria-label="Floor 3 water quality">
-          <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
-        </button>
-        <button type="button" class="floor-pin" style="left: 14.5%; top: 81.7%;" aria-label="Floor 2 water quality">
-          <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
-        </button>
       </div>
     </section>
  
@@ -239,7 +243,7 @@ img { max-width: 100%; display: block; }
       <div class="footer__logos">
         <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROFLsdPfJZyzJvjvQ90IgWpEHezULWv5E7d-S0AWXKRg&s=10"></div>
         <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
-        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_g_1.png"></div>
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
         <div class="footer__logo"><img src="AClogo.png"></div>
         <div class="footer__logo"><img src="dreammakerspace.png"></div>
         <div class="footer__logo"><img src="achelousblack.png" alt="logo" /></div>
@@ -260,5 +264,109 @@ img { max-width: 100%; display: block; }
     </div>
   </footer>
  
+  <!-- ===================== MAP ZOOM/PAN SCRIPT ===================== -->
+  <!-- Self-contained: only controls #mapPanel / #mapZoom. Nothing else on the page is affected. -->
+  <script>
+  (function () {
+    var viewport = document.getElementById('mapPanel');
+    var zoomEl = document.getElementById('mapZoom');
+    if (!viewport || !zoomEl) return;
+
+    var scale = 1, minScale = 1, maxScale = 4;
+    var originX = 0, originY = 0;
+    var pointers = new Map();
+    var lastDist = null;
+    var isPanning = false;
+    var panStart = { x: 0, y: 0 };
+    var originStart = { x: 0, y: 0 };
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+    function mid(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
+
+    function applyTransform() {
+      var vw = viewport.clientWidth, vh = viewport.clientHeight;
+      var maxX = Math.max(0, (vw * scale - vw) / 2);
+      var maxY = Math.max(0, (vh * scale - vh) / 2);
+      originX = clamp(originX, -maxX, maxX);
+      originY = clamp(originY, -maxY, maxY);
+      zoomEl.style.transform = 'translate(' + originX + 'px,' + originY + 'px) scale(' + scale + ')';
+    }
+
+    function resetZoom() {
+      scale = 1; originX = 0; originY = 0;
+      applyTransform();
+    }
+
+    function zoomAround(clientX, clientY, newScale) {
+      var rect = viewport.getBoundingClientRect();
+      var cx = clientX - rect.left - rect.width / 2;
+      var cy = clientY - rect.top - rect.height / 2;
+      newScale = clamp(newScale, minScale, maxScale);
+      originX += (cx - originX) * (1 - newScale / scale);
+      originY += (cy - originY) * (1 - newScale / scale);
+      scale = newScale;
+      applyTransform();
+    }
+
+    zoomEl.addEventListener('pointerdown', function (e) {
+      zoomEl.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 1) {
+        isPanning = true;
+        panStart = { x: e.clientX, y: e.clientY };
+        originStart = { x: originX, y: originY };
+      } else if (pointers.size === 2) {
+        isPanning = false;
+        var pts = Array.from(pointers.values());
+        lastDist = dist(pts[0], pts[1]);
+      }
+    });
+
+    zoomEl.addEventListener('pointermove', function (e) {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        var newDist = dist(pts[0], pts[1]);
+        var m = mid(pts[0], pts[1]);
+        if (lastDist) {
+          zoomAround(m.x, m.y, scale * (newDist / lastDist));
+        }
+        lastDist = newDist;
+      } else if (pointers.size === 1 && isPanning && scale > 1) {
+        originX = originStart.x + (e.clientX - panStart.x);
+        originY = originStart.y + (e.clientY - panStart.y);
+        applyTransform();
+      }
+    });
+
+    function endPointer(e) {
+      pointers.delete(e.pointerId);
+      if (pointers.size < 2) lastDist = null;
+      if (pointers.size === 0) isPanning = false;
+    }
+    zoomEl.addEventListener('pointerup', endPointer);
+    zoomEl.addEventListener('pointercancel', endPointer);
+    zoomEl.addEventListener('pointerleave', endPointer);
+
+    // desktop mouse-wheel zoom
+    viewport.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      zoomAround(e.clientX, e.clientY, scale * (1 - e.deltaY * 0.0015));
+    }, { passive: false });
+
+    // double-click / double-tap toggles zoom in/out
+    viewport.addEventListener('dblclick', function (e) {
+      if (scale > 1) {
+        resetZoom();
+      } else {
+        zoomAround(e.clientX, e.clientY, 2.5);
+      }
+    });
+  })();
+  </script>
+
 </body>
 </html>
