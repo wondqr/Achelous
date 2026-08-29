@@ -58,6 +58,11 @@ img { max-width: 100%; display: block; }
 .map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
 .map-panel__metrics span b { font-weight: bold; color: black; }
  
+/* water-quality scale marker (structure only — static placeholder, not wired to real WQI value yet) */
+.scale-wrap { position: relative; display: table; margin: 0 auto; }
+.scale-marker { position: absolute; left: 30%; top: 42%; bottom: 8%; width: 4px; background: var(--ink); border-radius: 2px; transform: translateX(-50%); box-shadow: 0 0 0 1px rgba(255,255,255,0.9); }
+.scale-marker::before { content: ''; position: absolute; bottom: -7px; left: 50%;margin-bottom: -4px; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid var(--ink); }
+ 
 /* floor water-quality pins (structure only — not wired to data or scripts yet) */
 .floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation;}
 .floor-pin__body { width: 28px; height: 28px; background: #29b6e8; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
@@ -79,14 +84,15 @@ img { max-width: 100%; display: block; }
 .system-select { padding: 28px 0 4px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .system-select__label { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
 .system-chip { font-family: var(--font-display); font-weight: 500; font-size: 14px; padding: 10px 20px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); } 
-.system-chip--active { border-color: var(--deep); color: var(--deep); background: var(--mist); }
-.system-chip--add { color: var(--ink-soft); border-style: dashed; }
+.system-chip--login {border-color: var(--deep); color: var(--deep); background: var(--mist); }
+.system-chip--active {display: none; border-color: var(--deep); color: var(--deep); background: var(--mist); }
+.system-chip--add {display: none; color: var(--ink-soft); border-style: dashed; }
  
 /* ===========================================================
-   DETAIL PANEL (readout detail, visible by default)
+   DETAIL PANEL (readout detail, visible by default) ตัด none ออกได้เลย
    =========================================================== */
  
-.detail-panel { margin: 24px 0 48px; border: 1px solid var(--good); border-radius: var(--radius); background: var(--mist); padding: 28px 32px; }
+.detail-panel {display: none; margin: 24px 0 48px; border: 1px solid var(--good); border-radius: var(--radius); background: var(--mist); padding: 28px 32px; }
 .detail-panel__average { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--deep); margin: 0 0 20px; }
 .detail-panel__metrics { display: flex; flex-wrap: wrap; gap: 32px; font-family: var(--font-mono); font-size: 15px; color: var(--ink-soft); }
 .detail-panel__metrics b { font-weight: 600; color: var(--ink); }
@@ -218,10 +224,17 @@ img { max-width: 100%; display: block; }
         </div>
       </div>
     </section>
- 
+
+    <div class="scale-wrap">
+      <img src="scale1.png" style="height: 60px; display: block; margin: 0 auto;">
+      <!-- placeholder marker: currently fixed at center (normal). Move left/top % once wired to real WQI -->
+      <div class="scale-marker" aria-hidden="true"></div>
+    </div>
+
     <!-- ===================== SYSTEM SELECTOR ===================== -->
     <section class="system-select">
       <span class="system-select__label">Your System &rsaquo;</span>
+      <a class="system-chip system-chip--login" type="button" href="login.html">Log in to add your system</a>
       <button class="system-chip system-chip--active" type="button">System 1</button>
       <button class="system-chip system-chip--add" type="button">+ Add your system</button>
     </section>
@@ -238,7 +251,7 @@ img { max-width: 100%; display: block; }
       </div>
     </section>
     
-    <img src="scale1.png" style="height: 60px; display: block; margin: 0 auto;"></img>
+    
   </main>
  
   <!-- ===================== FOOTER ===================== -->
@@ -246,13 +259,13 @@ img { max-width: 100%; display: block; }
     <div class="footer__inner">
  
       <div class="footer__logos">
-        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROFLsdPfJZyzJvjvQ90IgWpEHezULWv5E7d-S0AWXKRg&s=10"></div>
+        <div class="footer__logo"><img src="Thailand.png"></div>
         <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
         <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
         <div class="footer__logo"><img src="AClogo.png"></div>
-        <div class="footer__logo"><img src="dreammakerspace.png"></div>
-        <div class="footer__logo"><img src="achelousblack.png" alt="logo" /></div>
-        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoN-wySTxfsoeqVvahuf5DUycmNyl6WhhVz5K4CvA7ek4OIQFF1yfFz-E&s=10"></div>
+        <div class="footer__logo"><img src="dreammakertransp.png"></div>
+        <div class="footer__logo"><img src="achelousbtransp.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="siiflogo.png"></div>
       </div>
  
       <div class="footer__members">
