@@ -58,8 +58,12 @@ img { max-width: 100%; display: block; }
 .map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
 .map-panel__metrics span b { font-weight: bold; color: black; }
  
+/* metrics show/hide toggle (checkbox-hack, no script) — button only appears on narrow screens */
+.metrics-toggle { display: none; }
+.metrics-toggle-label { display: none; }
+ 
 /* WQI water-droplet mascot (structure only — number is a static placeholder for now) */
-.wqi-droplet { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); width: 50px; z-index: 20; text-align: center; }
+.wqi-droplet { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); width: 70px; z-index: 20; text-align: center; }
 .wqi-droplet img { width: 100%; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
 .wqi-droplet__value { position: absolute; left: 50%; top: 62%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
  
@@ -126,6 +130,10 @@ img { max-width: 100%; display: block; }
   .map-panel__readout {height: fit-content ; padding: 5px; padding-bottom: 0;}
   .map-panel__image { height: 260px; }
   .map-panel__metrics { display: none; }
+  .metrics-toggle-label { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--deep); cursor: pointer; padding: 6px 4px; user-select: none; }
+  .metrics-toggle-arrow { display: inline-block; transition: transform 0.2s ease; }
+  .metrics-toggle:checked ~ .map-panel__metrics { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; }
+  .metrics-toggle:checked ~ .metrics-toggle-label .metrics-toggle-arrow { transform: rotate(180deg); }
   .detail-panel { padding: 22px 20px; }
   .detail-panel__metrics { gap: 18px; font-size: 14px; }
   .footer__inner { flex-direction: column; gap: 24px; }
@@ -215,11 +223,15 @@ img { max-width: 100%; display: block; }
           <span style="font-family: var(--font-mono); font-weight: 900;">Floor 2  </span>
           <span style="font-family: var(--font-mono); font-weight: 900; color: #7bb562;"> Clean</span><br><br>
           <p class="map-panel__average">WQI: 38 </p>
+
+          <input type="checkbox" id="metricsToggle" class="metrics-toggle">
+          <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
+
           <div class="map-panel__metrics">
-            <span>Temp: <b>--</b> °C</span>
-            <span>pH: <b>--</b></span>
-            <span>TDS: <b>--</b> ppm</span>
-            <span>Turbidity: <b>--</b> NTU</span>
+            <span>Temp: <b>22</b> °C</span>
+            <span>pH: <b>7.5</b></span>
+            <span>TDS: <b>206</b> ppm</span>
+            <span>Turbidity: <b>2.0</b> NTU</span>
           </div>
         </div>
 
