@@ -1,78 +1,126 @@
 <!DOCTYPE html>
 <html lang="th">
+ 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About The Project</title>
   <link rel="stylesheet" href="style.css" />
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
  
-  :root { /* --- color tokens --- */ --ink: #0e2a2f; --ink-soft: #4c6367; --deep: #0b4f5c; --deep-2: #0e6577; --mist: #eaf3f2; --paper: #ffffff; --line: #d7e6e4; --good: #2f9e6e; --footer-bg: #0a2226; --footer-text: #cfe3e0; /* --- type --- */ --font-display: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'IBM Plex Mono', monospace; /* --- layout --- */ --max-w: 1200px; --radius: 10px; }
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+ 
+  :root {
+    /* --- color tokens --- */
+    --ink: #0e2a2f;
+    --ink-soft: #4c6367;
+    --deep: #0b4f5c;
+    --deep-2: #0e6577;
+    --mist: #eaf3f2;
+    --paper: #ffffff;
+    --line: #d7e6e4;
+    --good: #2f9e6e;
+    --footer-bg: #0a2226;
+    --footer-text: #cfe3e0;
+    /* --- type --- */
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    /* --- layout --- */
+    --max-w: 1200px;
+    --radius: 10px;
+  }
  
   * { box-sizing: border-box; }
- 
   html, body { margin: 0; padding: 0; }
  
-    body { font-family: var(--font-body); color: var(--ink); background: #efeeee; -webkit-font-smoothing: antialiased; padding: 30px;}
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    nav {text-align: center;}
-    .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
-
-    li{ list-style: none; padding: 0; }
-    nav {text-align: center;}
-    .card { display: inline-block; background: #b0b0b0; margin: 10px; width: 250px; padding-top: 10px;padding-bottom: 10px; border-radius: 10px; text-align: center;}
-    .article { font-size: 24px; font-weight: bold ; color: #000000;}
-   
-    /* ===========================================================
-        NAVBAR
-    =========================================================== */
+  body { font-family: var(--font-body); color: var(--ink); background: #efeeee; -webkit-font-smoothing: antialiased; }
  
-    .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; margin: -30px; margin-bottom: 0;}
-    .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-    .navbar__logo img { height: 56px; width: auto; }
-    .navbar__links { display: flex; align-items: center; gap: 36px; list-style: none; margin: 0; padding: 0; }
-    .navbar__links a { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
-    .navbar__links a:hover { color: var(--deep); }
-    .navbar__right { display: flex; align-items: center; gap: 28px; }
-    .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
-    .navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
-
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  nav { text-align: center; }
+  .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; }
+  li { list-style: none; padding: 0; }
  
-    /* hamburger (checkbox-based, no script) */
-    .navbar__toggle { display: none; }
-    .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
-    .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
-    
-
-    @media (max-width: 860px) {
+  /* ===========================================================
+   NAVBAR
+   =========================================================== */
  
-      .navbar__burger { display: flex; }
-      .navbar__links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); border-bottom: 2px solid var(--good); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
-      .navbar__links li { width: 100%; }
-      .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
-      .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
-      .navbar__right { gap: 16px; }
-      .map-panel__image { height: 260px; }
-      .map-panel__metrics { gap: 14px; font-size: 12px; }
-      .detail-panel { padding: 22px 20px; }
-      .detail-panel__metrics { gap: 18px; font-size: 14px; }
-      .footer__inner { flex-direction: column; gap: 24px; }
-    }
+  .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; }
+  .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .navbar__logo img { height: 56px; width: auto; }
+  .navbar__links { display: flex; align-items: center; gap: 36px; list-style: none; margin: 0; padding: 0; }
+  .navbar__links a { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
+  .navbar__links a:hover { color: var(--deep); }
+  .navbar__right { display: flex; align-items: center; gap: 28px; }
+  .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
+  .navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
  
-    @media (max-width: 480px) {
+  /* hamburger (checkbox-based, no script) */
+  .navbar__toggle { display: none; }
+  .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+  .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
  
-      .navbar__inner { padding: 14px 16px; }
-      .wrap { padding: 0 16px; }
-      .system-select { align-items: flex-start; flex-direction: column; }
-      .map-panel__readout { padding: 14px 16px 16px; }
-    }
+  @media (max-width: 860px) {
+ 
+    .navbar__burger { display: flex; }
+    .navbar__inner { flex-wrap: wrap; }
+    .navbar__logo { order: 1; }
+    .navbar__links { order: 3; flex-basis: 100%; width: 100%; position: static; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+    .navbar__links li { width: 100%; }
+    .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
+    .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
+    .navbar__right { order: 2; gap: 16px; }
+  }
+ 
+  @media (max-width: 480px) {
+ 
+    .navbar__inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+  }
+ 
+  /* ===========================================================
+     PAGE CONTENT
+     =========================================================== */
+ 
+  .page { padding: 40px 0 64px; }
+ 
+  .hero { background: var(--deep); color: #fff; border-radius: var(--radius); padding: 40px 36px; margin-bottom: 36px; text-align: center; }
+  .hero h1 { font-family: var(--font-display); font-size: 32px; margin: 0; }
+ 
+  .content-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 28px; margin-bottom: 28px; }
+  .content-card h2 { font-family: var(--font-display); font-size: 20px; color: var(--deep); margin: 0 0 14px; }
+  .content-card p { font-size: 14.5px; line-height: 1.8; color: var(--ink-soft); margin: 0; }
+  .content-card a { color: var(--deep-2); text-decoration: underline; }
+  .content-card a:hover { color: var(--deep); }
+ 
+  @media (max-width: 480px) {
+    .hero { padding: 28px 22px; }
+    .content-card { padding: 20px 20px; }
+  }
+ 
+  /* ===========================================================
+   FOOTER
+   =========================================================== */
+ 
+  .footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px; }
+  .footer__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+  .footer__logos { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer__logo { height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .footer__logo img { height: 50px; }
+  .footer__members h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 12px; color: var(--paper); }
+  .footer__members ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .footer__members li { font-family: var(--font-mono); font-size: 13px; color: var(--footer-text); }
+  .footer__members li::before { content: '— '; color: var(--good); }
+ 
+  @media (max-width: 860px) {
+    .footer__inner { flex-direction: column; gap: 24px; }
+  }
   </style>
 </head>
-
+ 
 <body>
-
+ 
   <!-- ===================== NAVBAR ===================== -->
   <header class="navbar">
     <div class="navbar__inner">
@@ -94,7 +142,7 @@
       <div class="navbar__right">
         <a href="login.html" class="navbar__login">Login</a>
         <div class="navbar__lang">
-          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
+          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;" />
           <span>EN</span>
         </div>
         <label for="navToggle" class="navbar__burger" aria-label="Open menu">
@@ -106,22 +154,33 @@
  
     </div>
   </header>
-  
-  <h1 style="color: #3b34ff; text-align: center;">About The Project</h1>
-  <h2 id="Rationaleh">Rationale</h2>
-  <p id="Rationalep">   In today’s world, water is essential for daily life and many industries, However, water from natural sources in some areas can be unreliable. Sometimes, the water is already clean enough and doesn’t need to be filtered.
+ 
+  <!-- ===================== PAGE CONTENT ===================== -->
+  <main class="wrap page">
+ 
+    <section class="hero">
+      <h1>About The Project</h1>
+    </section>
+ 
+    <section class="content-card">
+      <h2 id="Rationaleh">Rationale</h2>
+      <p id="Rationalep">   In today’s world, water is essential for daily life and many industries, However, water from natural sources in some areas can be unreliable. Sometimes, the water is already clean enough and doesn’t need to be filtered.
 Current filter systems let the water run through the filters all the time, whether it is clean or dirty. This causes filters to clog up quickly and wear out fast, making uses pay for filter replacements more often than necessary. Our team came up with an idea to develop a Smart 2-Step Water Quality Checking System with IoT. We use sensors to measure pH, TDS, Temperature and Turbidity before the water reaches the filter. If the water is already clean: The system opens a valve to send the water straight to the storage tank without using filter, which saves filter life. If the water is dirty: The system switches the valve to send water through the filter first and then the system checks the water quality one more time and send it to the storage tank. Users can also view real-time water quality and system status on website anytime.
 </p>
+    </section>
  
-  <h2>Objectives</h2>
-  <p>1. To notify users of filters lifespan and calculate the estimated replacement date.<br>
+    <section class="content-card">
+      <h2>Objectives</h2>
+      <p>1. To notify users of filters lifespan and calculate the estimated replacement date.<br>
 2. To inform users of the water quality in different areas.<br>
 3. To extend the operational lifespan of the water filters.<br>
 4. To record and store water quality data across different locations.
 </p>
-
-  <h2>Definitionsolids</h2>
-  <p>1. IoT-Based Smart Water Quality Monitoring System 
+    </section>
+ 
+    <section class="content-card">
+      <h2>Definitionsolids</h2>
+      <p>1. IoT-Based Smart Water Quality Monitoring System 
 - refers to an automated electronic system developed using microcontrollers, sensors, and electric valves to measure water quality parameters in real-time and display the status updates on a web dashboard.<br>
 2. pH - A scale used to specify the acidity or alkalinity of an aqueous solution.<br>
 3. TDS (Total Dissolved Solids) - A measurement representing the total concentration of dissolved organic and inorganic substances contained in a liquid<br>
@@ -129,14 +188,15 @@ Current filter systems let the water run through the filters all the time, wheth
 5. Water Quality Sensors - Hardware modules integrated into the system to capture real-time quality of water.<br>
 6. Solenoid / Proportional Electric Valve System - An automated valve configuration controlled by a microcontroller to switch water flow between direct bypass and the filtration.<br>
 </p>
-
-  <h2>References</h2>
-
-  <p>Quality Standards for Tap Water and Water for Consumption<br>
+    </section>
+ 
+    <section class="content-card">
+      <h2>References</h2>
+      <p>Quality Standards for Tap Water and Water for Consumption<br>
 <a href="https://www.mwa.co.th/wp-content/uploads/2023/03/%E0%B9%80%E0%B8%81%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%81%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%94%E0%B8%84%E0%B8%B8%E0%B8%93%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2-1110-65.pdf">- เกณฑ์กำหนดคุณภาพน้ำประปา-1110-65.pdf</a><br>
 World Health Organization Drinking-Water Quality Standards <br>
 <a href="https://www.who.int/publications/i/item/9789240121225">- Guidelines for drinking-water quality: fourth edition incorporating the first, second and third addenda </a><br><br>
-
+ 
 Data sheets of sensor<br>
 ESP 32 <a href="https://www.espressif.com/en/products/socs/esp32">- ESP32 Wi-Fi & Bluetooth SoC | Espressif Systems </a><br>
 TDS <a href="https://geeksvalley.com/wp-content/uploads/2021/06/Analog-TDS-Sensor.pdf">- Analog-TDS-Sensor.pdf </a><br>
@@ -145,9 +205,42 @@ Temperature <a href="https://www.analog.com/en/products/ds18b20.html">- DS18B20 
 Turbidity <a href="https://innovatorsguru.com/ts-300b-arduino-turbidity-sensor/">- TS-300B | High Quality Arduino Turbidity Sensor </a><br>
 Water pressure <a href="https://www.scribd.com/document/472686689/1-SENSOR-pdf">- Water Pressure Sensor G1/4 1.2Mpa Datasheet | PDF </a><br>
 Water flow <a href="https://cdn-shop.adafruit.com/product-files/828/C898+datasheet.pdf">- https://cdn-shop.adafruit.com/product-files/828/C898+datasheet.pdf </a><br><br>
-
+ 
 Filtration<br>
 PP <a href="https://www.siamcoolermart.com/what-is-pp-sediment/">- ไส้กรองหยาบ (PP Sediment) คืออะไร ทำงานอย่างไร? - Siamcoolermart </a><br>
 CTO <a href="https://www.waterfilterthailand.com/content/35875/%E0%B8%A3%E0%B8%B9%E0%B9%89%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD%E0%B9%84%E0%B8%A1%E0%B9%88-%E0%B9%84%E0%B8%AA%E0%B9%89%E0%B8%81%E0%B8%A3%E0%B8%AD%E0%B8%87-cto-%E0%B8%AB%E0%B8%A3%E0%B8%B7%E0%B8%AD-carbon-block-%E0%B8%94%E0%B8%B5%E0%B8%AD%E0%B8%A2%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B9%84%E0%B8%A3"> - รู้หรือไม่ ไส้กรอง CTO หรือ Carbon Block ดีอย่างไร? </a>
-
+</p>
+    </section>
+ 
+  </main>
+ 
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer__inner">
+ 
+      <div class="footer__logos">
+        <div class="footer__logo"><img src="Thailand.png"></div>
+        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
+        <div class="footer__logo"><img src="AClogo.png"></div>
+        <div class="footer__logo"><img src="dreammakertransp.png"></div>
+        <div class="footer__logo"><img src="achelousbtransp.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="siiflogo.png"></div>
+      </div>
+ 
+      <div class="footer__members">
+        <h3>Project Members</h3>
+        <ul>
+          <li>Mr.Nantapat Pasukulpipat</li>
+          <li>Mr.Nutthee Vimolpattanatham</li>
+          <li>Mr.Pakin Yuwawat</li>
+          <li>Mr.Sippawich Kongkatonyoosakul</li>
+          <li>Mr.Thatkrit Amatyakul</li>
+        </ul>
+      </div>
+ 
+    </div>
+  </footer>
+ 
 </body>
+</html>

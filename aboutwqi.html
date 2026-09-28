@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,8 +43,8 @@
   li { list-style: none; padding: 0; }
  
   /* ===========================================================
-     NAVBAR
-     =========================================================== */
+   NAVBAR
+   =========================================================== */
  
   .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; }
   .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -54,24 +55,46 @@
   .navbar__right { display: flex; align-items: center; gap: 28px; }
   .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
   .navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+
  
   /* hamburger (checkbox-based, no script) */
   .navbar__toggle { display: none; }
   .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
   .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
+  
+  /* ===========================================================
+   FOOTER
+   =========================================================== */
+ 
+    .footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px;}
+    .footer__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .footer__logos { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .footer__logo { height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .footer__logo img { height: 50px;}
+    .footer__members h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 12px; color: var(--paper); }
+    .footer__members ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .footer__members li { font-family: var(--font-mono); font-size: 13px; color: var(--footer-text); }
+    .footer__members li::before { content: '— '; color: var(--good); }
  
   @media (max-width: 860px) {
+ 
     .navbar__burger { display: flex; }
-    .navbar__links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); border-bottom: 2px solid var(--good); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+    .navbar__inner { flex-wrap: wrap; }
+    .navbar__logo { order: 1; }
+    .navbar__links { order: 3; flex-basis: 100%; width: 100%; position: static; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
     .navbar__links li { width: 100%; }
     .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
     .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
-    .navbar__right { gap: 16px; }
-  }
+    .navbar__right { order: 2; gap: 16px; }
+}
  
-  @media (max-width: 480px) {
-    .navbar__inner { padding: 14px 24px; }
-  }
+    @media (max-width: 480px) {
+ 
+    .navbar__inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .system-select { align-items: flex-start; flex-direction: column; }
+    .map-panel__readout { padding: 14px 16px 16px; }
+    }
  
   /* ===========================================================
      PAGE CONTENT
@@ -217,17 +240,17 @@
           <tbody>
             <tr>
               <td>Temperature</td>
-              <td>5 – 40 °C</td>
+              <td>5 - 40 °C</td>
               <td>Affects dissolved oxygen, chemical reaction rates, microbial activity, and indirectly pH and conductivity.</td>
             </tr>
             <tr>
               <td>pH Value</td>
-              <td>6.5 – 8.5</td>
+              <td>6.5 - 8.5</td>
               <td>Affects heavy metal solubility and acts as an early warning sign of contamination.</td>
             </tr>
             <tr>
               <td>TDS Value</td>
-              <td>0 – 150 ppm</td>
+              <td>0 - 150 ppm</td>
               <td>Doesn't identify specific contaminants — high TDS may come from harmless minerals or harmful substances — but can affect taste.</td>
             </tr>
             <tr>
@@ -256,31 +279,31 @@
           <tbody>
             <tr>
               <td><span class="quality-badge quality-badge--very-clean">Very Clean</span></td>
-              <td>5 – 40 °C</td>
-              <td>6.5 – 8.5</td>
-              <td>0 – 100 ppm</td>
+              <td>5 - 40 °C</td>
+              <td>6.5 - 8.5</td>
+              <td>0 - 100 ppm</td>
               <td>&lt; 0.5 NTU</td>
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--clean">Clean</span></td>
-              <td>5 – 40 °C</td>
-              <td>6.5 – 8.5</td>
-              <td>101 – 150 ppm</td>
-              <td>0.5 – 0.99 NTU</td>
+              <td>5 - 40 °C</td>
+              <td>6.5 - 8.5</td>
+              <td>101 - 150 ppm</td>
+              <td>0.5 - 0.99 NTU</td>
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--normal">Normal</span></td>
-              <td>5 – 40 °C</td>
-              <td>5.5 – 6.5 or 8.5 – 9.5</td>
-              <td>151 – 300 ppm</td>
-              <td>1 – 10 NTU</td>
+              <td>5 - 40 °C</td>
+              <td>5.5 - 6.5 or 8.5 - 9.5</td>
+              <td>151 - 300 ppm</td>
+              <td>1 - 10 NTU</td>
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
               <td>&gt; 40 °C</td>
               <td>4.0 - 5.5 or 9.5 - 10.5</td>
-              <td>301 – 500 ppm</td>
-              <td>11 – 20 NTU</td>
+              <td>301 - 500 ppm</td>
+              <td>11 - 20 NTU</td>
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
@@ -295,6 +318,34 @@
     </section>
  
   </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer__inner">
+ 
+      <div class="footer__logos">
+        <div class="footer__logo"><img src="Thailand.png"></div>
+        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
+        <div class="footer__logo"><img src="AClogo.png"></div>
+        <div class="footer__logo"><img src="dreammakertransp.png"></div>
+        <div class="footer__logo"><img src="achelousbtransp.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="siiflogo.png"></div>
+      </div>
+ 
+      <div class="footer__members">
+        <h3>Project Members</h3>
+        <ul>
+          <li>Mr.Nantapat Pasukulpipat</li>
+          <li>Mr.Nutthee Vimolpattanatham</li>
+          <li>Mr.Pakin Yuwawat</li>
+          <li>Mr.Sippawich Kongkatonyoosakul</li>
+          <li>Mr.Thatkrit Amatyakul</li>
+        </ul>
+      </div>
+ 
+    </div>
+  </footer>
  
 </body>
-</html>
+</html> 

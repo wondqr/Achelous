@@ -63,15 +63,23 @@ img { max-width: 100%; display: block; }
 .metrics-toggle-label { display: none; }
  
 /* WQI water-droplet mascot (structure only — number is a static placeholder for now) */
-.wqi-droplet { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); width: 70px; z-index: 20; text-align: center; }
+.wqi-droplet { position: absolute; left: 50%; bottom: 2%; transform: translateX(-50%); width: 70px; z-index: 20; text-align: center; }
 .wqi-droplet img { width: 100%; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
-.wqi-droplet__value { position: absolute; left: 50%; top: 62%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+.wqi-droplet__value { position: absolute; left: 50%; top: 70%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 25px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
  
 /* floor water-quality pins (structure only — not wired to data or scripts yet) */
 .floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation;}
 .floor-pin__body { width: 28px; height: 28px; background: #29b6e8; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
 .floor-pin__label { transform: rotate(45deg); font-family: var(--font-mono); font-weight: 700; font-size: 10px; color: #06323d; white-space: nowrap; }
 .floor-pin:hover .floor-pin__body { background: #1c9fd1; }
+ 
+/* selected pin gets a distinct ring so it's visually different from the rest */
+.floor-pin--active .floor-pin__body { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--deep), 0 2px 6px rgba(0,0,0,0.35); }
+ 
+/* readout show/hide group + close button */
+.map-panel__readout-group.is-hidden { display: none; }
+.readout-close { position: absolute; top: 6px; right: 8px; width: 26px; height: 26px; border: none; background: rgba(0,0,0,0.08); border-radius: 50%; color: var(--ink); font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.readout-close:hover { background: rgba(0,0,0,0.18); }
 
 /* เพิ่ม Effect ตอบสนองเมื่อใช้นิ้วแตะ (Tap) */
 .floor-pin:hover .floor-pin__body,
@@ -202,46 +210,55 @@ img { max-width: 100%; display: block; }
           />
 
           <!-- floor pins: position (left/top) is % of image size, adjust later once real coordinates are confirmed -->
-          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality">
+          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality"
+            data-floor="8" data-wqi="17" data-temp="24.5" data-ph="7.2" data-tds="85" data-turb="0.3">
             <span class="floor-pin__body" style="background: #62d8ff;"><span class="floor-pin__label">17</span></span>
           </button> 
-          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality">
+          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality"
+            data-floor="7" data-wqi="53" data-temp="29.0" data-ph="8.8" data-tds="240" data-turb="6.5">
             <span class="floor-pin__body" style="background: #ffde59;"><span class="floor-pin__label">53</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality"
+            data-floor="5" data-wqi="42" data-temp="28.0" data-ph="6.0" data-tds="200" data-turb="4.0">
             <span class="floor-pin__body" style="background: #99e17a;"><span class="floor-pin__label">42</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality"
+            data-floor="4" data-wqi="24" data-temp="25.0" data-ph="7.5" data-tds="120" data-turb="0.8">
             <span class="floor-pin__body" style="background: #62d8ff;"><span class="floor-pin__label">24</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality">
+          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality"
+            data-floor="3" data-wqi="20" data-temp="23.5" data-ph="7.0" data-tds="95" data-turb="0.4">
             <span class="floor-pin__body" style="background: #62d8ff;"><span class="floor-pin__label">20</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality">
+          <button type="button" class="floor-pin floor-pin--active" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality"
+            data-floor="2" data-wqi="38" data-temp="26.5" data-ph="7.3" data-tds="140" data-turb="0.9">
             <span class="floor-pin__body" style="background: #99e17a;"><span class="floor-pin__label">38</span></span>
           </button>
         </div>
 
-        <div class="map-panel__readout">
-          <span style="font-family: var(--font-mono); font-weight: 800;">Floor 2 : </span>
-          <span style="font-family: var(--font-mono); font-weight: 900; "> Clean</span><br><br>
-          <p class="map-panel__average">WQI: 38 </p>
+        <div class="map-panel__readout-group" id="mapReadoutGroup">
+          <div class="map-panel__readout">
+            <button type="button" class="readout-close" id="readoutClose" aria-label="Close water quality panel">&times;</button>
+            <span style="font-family: var(--font-mono); font-weight: 900;">Floor <span id="readoutFloor">2</span> : </span>
+            <span id="readoutQuality" style="font-family: var(--font-mono); font-weight: 900; color: #5fa14b;"> Clean</span><br><br>
+            <p class="map-panel__average">WQI: <span id="readoutWqi">38</span></p>
 
-          <input type="checkbox" id="metricsToggle" class="metrics-toggle">
-          <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
+            <input type="checkbox" id="metricsToggle" class="metrics-toggle">
+            <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
 
-          <div class="map-panel__metrics">
-            <span>Temp: <b>22</b> °C</span>
-            <span>pH: <b>7.5</b></span>
-            <span>TDS: <b>206</b> ppm</span>
-            <span>Turbidity: <b>2.0</b> NTU</span>
+            <div class="map-panel__metrics">
+              <span>Temp: <b id="readoutTemp">--</b> °C</span>
+              <span>pH: <b id="readoutPh">--</b></span>
+              <span>TDS: <b id="readoutTds">--</b> ppm</span>
+              <span>Turbidity: <b id="readoutTurb">--</b> NTU</span>
+            </div>
           </div>
-        </div>
 
-        <!-- WQI droplet mascot: swap src for other quality states later (e.g. dirty.png). Number is a static placeholder. -->
-        <div class="wqi-droplet">
-          <img src="scclean.png" alt="Water quality mascot">
-          <span class="wqi-droplet__value">38</span>
+          <!-- WQI droplet mascot: swap src for other quality states later (e.g. dirty.png). Number updates per pin clicked. -->
+          <div class="wqi-droplet">
+            <img src="glassclean.png" alt="Water quality mascot">
+            <span class="wqi-droplet__value" id="dropletValue">38</span>
+          </div>
         </div>
       </div>
     </section>
@@ -281,7 +298,7 @@ img { max-width: 100%; display: block; }
         <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
         <div class="footer__logo"><img src="AClogo.png"></div>
         <div class="footer__logo"><img src="dreammakertransp.png"></div>
-        <div class="footer__logo"><img src="achelousbtransp.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="achelouslogo.png" alt="logo" /></div>
         <div class="footer__logo"><img src="siiflogo.png"></div>
       </div>
  
@@ -345,6 +362,7 @@ img { max-width: 100%; display: block; }
     }
 
     zoomEl.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.floor-pin')) return; // let pin buttons handle their own click, unaffected by pan/zoom
       zoomEl.setPointerCapture(e.pointerId);
       pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (pointers.size === 1) {
@@ -400,6 +418,64 @@ img { max-width: 100%; display: block; }
         zoomAround(e.clientX, e.clientY, 2.5);
       }
     });
+  })();
+  </script>
+
+  <!-- ===================== FLOOR PIN READOUT SCRIPT ===================== -->
+  <!-- Self-contained: only controls the pins + water-quality readout panel. Nothing else is affected. -->
+  <script>
+  (function () {
+    var pins = document.querySelectorAll('.floor-pin');
+    var readoutGroup = document.getElementById('mapReadoutGroup');
+    var closeBtn = document.getElementById('readoutClose');
+    var elFloor = document.getElementById('readoutFloor');
+    var elQuality = document.getElementById('readoutQuality');
+    var elWqi = document.getElementById('readoutWqi');
+    var elTemp = document.getElementById('readoutTemp');
+    var elPh = document.getElementById('readoutPh');
+    var elTds = document.getElementById('readoutTds');
+    var elTurb = document.getElementById('readoutTurb');
+    var elDroplet = document.getElementById('dropletValue');
+    if (!pins.length || !readoutGroup) return;
+
+    // WQI brackets — same colors used for the quality badges on the About Water Quality page
+    function qualityFromWqi(wqi) {
+      if (wqi <= 20) return { label: 'Very Clean', color: '#2fa7d8' };
+      if (wqi <= 40) return { label: 'Clean', color: '#5fa14b' };
+      if (wqi <= 60) return { label: 'Normal', color: '#d9a800' };
+      if (wqi <= 80) return { label: 'Dirty', color: '#d6413a' };
+      return { label: 'Very Dirty', color: '#6b1fad' };
+    }
+
+    function showPin(pin) {
+      var wqi = parseFloat(pin.getAttribute('data-wqi'));
+      var q = qualityFromWqi(wqi);
+
+      elFloor.textContent = pin.getAttribute('data-floor');
+      elQuality.textContent = ' ' + q.label;
+      elQuality.style.color = q.color;
+      elWqi.textContent = wqi;
+      elTemp.textContent = pin.getAttribute('data-temp');
+      elPh.textContent = pin.getAttribute('data-ph');
+      elTds.textContent = pin.getAttribute('data-tds');
+      elTurb.textContent = pin.getAttribute('data-turb');
+      if (elDroplet) elDroplet.textContent = wqi;
+
+      pins.forEach(function (p) { p.classList.remove('floor-pin--active'); });
+      pin.classList.add('floor-pin--active');
+
+      readoutGroup.classList.remove('is-hidden');
+    }
+
+    pins.forEach(function (pin) {
+      pin.addEventListener('click', function () { showPin(pin); });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        readoutGroup.classList.add('is-hidden');
+      });
+    }
   })();
   </script>
 
