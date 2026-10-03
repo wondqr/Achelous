@@ -3,8 +3,8 @@
 #include <DallasTemperature.h>
 
 // ----- Pin assignments (ปรับตามการต่อสายจริง) -----
-#define PIN_DS18B20   4   // OneWire data — ต้องมีตัวต้านทาน pull-up 4.7k โอห์ม ไป 3.3V
-#define PIN_PH        34  // ADC1_CH6, analog input only
+#define PIN_DS18B20   4   // OneWire data — ต้องมีตัวต้านทาน pull-up 4.7k โอห์ม ไป 3.3V//Temp
+#define PIN_PH        37  // ADC1_CH6, analog input only
 #define PIN_TDS       35  // ADC1_CH7, analog input only
 #define PIN_TURBIDITY 32  // ADC1_CH4
 
