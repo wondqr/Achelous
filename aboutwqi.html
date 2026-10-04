@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Water Quality</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
  
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
@@ -270,6 +271,7 @@
           <thead>
             <tr>
               <th>Water Quality</th>
+              <th>WQI</th>
               <th>Temperature</th>
               <th>pH</th>
               <th>TDS</th>
@@ -279,6 +281,7 @@
           <tbody>
             <tr>
               <td><span class="quality-badge quality-badge--very-clean">Very Clean</span></td>
+              <td>85 - 100</td>
               <td>5 - 40 °C</td>
               <td>6.5 - 8.5</td>
               <td>0 - 100 ppm</td>
@@ -286,6 +289,7 @@
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--clean">Clean</span></td>
+              <td>70 - 84</td>
               <td>5 - 40 °C</td>
               <td>6.5 - 8.5</td>
               <td>101 - 150 ppm</td>
@@ -293,6 +297,7 @@
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--normal">Normal</span></td>
+              <td>50 - 69</td>
               <td>5 - 40 °C</td>
               <td>5.5 - 6.5 or 8.5 - 9.5</td>
               <td>151 - 300 ppm</td>
@@ -300,6 +305,7 @@
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
+              <td>25 - 49</td>
               <td>&gt; 40 °C</td>
               <td>4.0 - 5.5 or 9.5 - 10.5</td>
               <td>301 - 500 ppm</td>
@@ -307,6 +313,7 @@
             </tr>
             <tr>
               <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
+              <td>0 - 24</td>
               <td>&gt; 50 °C</td>
               <td>&lt; 4.0 or &gt; 10.5</td>
               <td>&gt; 500 ppm</td>
@@ -314,6 +321,13 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Calculation of the daily air quality index</h2>
+      <div class="param-card">
+          <p>$$WQI = \sum (q_i \times w_i)$$</p>
       </div>
     </section>
  

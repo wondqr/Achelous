@@ -1,12 +1,22 @@
 #include <Arduino.h>
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-// ----- Pin assignments (ปรับตามการต่อสายจริง) -----
-#define PIN_DS18B20   4   // OneWire data — ต้องมีตัวต้านทาน pull-up 4.7k โอห์ม ไป 3.3V//Temp
-#define PIN_PH        37  // ADC1_CH6, analog input only
-#define PIN_TDS       35  // ADC1_CH7, analog input only
-#define PIN_TURBIDITY 32  // ADC1_CH4
+// ----- WiFi -----
+const char* WIFI_SSID     = "ABCD";
+const char* WIFI_PASSWORD = "1234";
+
+// ----- Backend (Render) -----
+const char* SERVER_URL = "https://achelous-1.onrender.com/api/sensor";
+
+// ----- Pin assignments สำหรับ ESP32-S3-WROOM-1 (ปลอดภัยทุกรุ่น ไม่ชนกับ flash/PSRAM) -----
+#define PIN_DS18B20   4   // OneWire data — ต้องมีตัวต้านทาน pull-up 4.7k ไป 3.3V
+#define PIN_PH        1   // ADC1_CH0
+#define PIN_TDS       2   // ADC1_CH1
+#define PIN_TURBIDITY 5   // ADC1_CH4
 
 // ⚠️ โมดูล pH/TDS/Turbidity ส่วนใหญ่จ่ายสัญญาณ analog สูงสุด 5V
 // แต่ขา ADC ของ ESP32 รับได้ไม่เกิน 3.3V — ต้องมีวงจรแบ่งแรงดัน (voltage divider)
@@ -15,15 +25,32 @@
 OneWire oneWire(PIN_DS18B20);
 DallasTemperature tempSensor(&oneWire);
 
-const unsigned long SEND_INTERVAL_MS = 1000;
+const unsigned long SEND_INTERVAL_MS = 2000;
 unsigned long lastSend = 0;
+
+void connectWiFi() {
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+  Serial.print("Connected, IP: ");
+  Serial.println(WiFi.localIP());
+}
 
 void setup() {
   Serial.begin(115200);
   tempSensor.begin();
+  connectWiFi();
 }
 
 void loop() {
+  if (WiFi.status() != WL_CONNECTED) {
+    connectWiFi();
+  }
+
   unsigned long now = millis();
   if (now - lastSend >= SEND_INTERVAL_MS) {
     lastSend = now;
@@ -36,15 +63,24 @@ void loop() {
     int tdsRaw  = analogRead(PIN_TDS);
     int turbRaw = analogRead(PIN_TURBIDITY);
 
-    // ส่งเป็น JSON บรรทัดเดียว ให้เว็บอ่านผ่าน Web Serial API
-    Serial.print("{\"temp\":");
-    Serial.print(tempC, 1);
-    Serial.print(",\"ph\":");
-    Serial.print(phRaw);
-    Serial.print(",\"tds\":");
-    Serial.print(tdsRaw);
-    Serial.print(",\"turb\":");
-    Serial.print(turbRaw);
-    Serial.println("}");
+    String json = "{\"temp\":" + String(tempC, 1) +
+                  ",\"ph\":" + String(phRaw) +
+                  ",\"tds\":" + String(tdsRaw) +
+                  ",\"turb\":" + String(turbRaw) + "}";
+
+    WiFiClientSecure client;
+    client.setInsecure(); // ข้ามการตรวจ certificate — โอเคสำหรับทดสอบ
+
+    HTTPClient http;
+    http.begin(client, SERVER_URL);
+    http.addHeader("Content-Type", "application/json");
+    int httpCode = http.POST(json);
+
+    Serial.print("POST -> ");
+    Serial.print(httpCode);
+    Serial.print(" | ");
+    Serial.println(json);
+
+    http.end();
   }
 }
