@@ -80,11 +80,12 @@ img { max-width: 100%; display: block; }
 .map-panel__readout-group.is-hidden { display: none; }
 .readout-close { position: absolute; top: 6px; right: 8px; width: 26px; height: 26px; border: none; background: rgba(0,0,0,0.08); border-radius: 50%; color: var(--ink); font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .readout-close:hover { background: rgba(0,0,0,0.18); }
- 
-/* live-sensor Web Serial connect button (floor 2 test only, raw ADC values, no calibration yet) */
-.serial-connect-btn { display: block; font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--deep); background: var(--paper); color: var(--deep); cursor: pointer; margin: 8px 0; }
-.serial-connect-btn:hover { background: var(--mist); }
-.serial-connect-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* live-sensor status badge (floor 2 test only, raw ADC values, no calibration yet) */
+.live-status-badge { display: inline-block; font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin: 8px 0; }
+.live-status-badge--connecting { border: 1px solid var(--line); background: var(--mist); color: var(--ink-soft); }
+.live-status-badge--live { border: 1px solid var(--good); background: #eafaf1; color: var(--good); }
+.live-status-badge--offline { border: 1px solid #d6413a; background: #fdecea; color: #d6413a; }
 
 /* เพิ่ม Effect ตอบสนองเมื่อใช้นิ้วแตะ (Tap) */
 .floor-pin:hover .floor-pin__body,
@@ -257,8 +258,7 @@ img { max-width: 100%; display: block; }
               <span>TDS: <b id="readoutTds">--</b> ppm</span>
               <span>Turbidity: <b id="readoutTurb">--</b> NTU</span>
             </div>
-            
-            <button type="button" id="serialConnectBtn" class="serial-connect-btn">🔌 Connect Sensor (Serial)</button>
+            <span id="liveStatusBadge" class="live-status-badge live-status-badge--connecting">⚪ Connecting to live feed…</span>
           </div>
 
           <!-- WQI droplet mascot: swap src for other quality states later (e.g. dirty.png). Number updates per pin clicked. -->
@@ -486,67 +486,50 @@ img { max-width: 100%; display: block; }
   })();
   </script>
 
-  <!-- ===================== LIVE SENSOR (WEB SERIAL) SCRIPT ===================== -->
-  <!-- Self-contained: Floor 2 test only. Reads JSON lines from ESP32 over USB serial -->
-  <!-- and overwrites Floor 2's Temp/pH/TDS/Turbidity. WQI/quality stay as the demo values for now. -->
+  <!-- ===================== LIVE SENSOR (SOCKET.IO) SCRIPT ===================== -->
+  <!-- Self-contained: Floor 2 test only. Connects to the Render backend automatically   -->
+  <!-- (no button needed — unlike Web Serial, this needs no user gesture) and overwrites -->
+  <!-- Floor 2's Temp/pH/TDS/Turbidity live. WQI/quality stay as the demo values for now. -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script>
   (function () {
-    var connectBtn = document.getElementById('serialConnectBtn');
+    var BACKEND_URL = 'https://achelous-1.onrender.com';
+
+    var badge = document.getElementById('liveStatusBadge');
     var elTemp = document.getElementById('readoutTemp');
     var elPh = document.getElementById('readoutPh');
     var elTds = document.getElementById('readoutTds');
     var elTurb = document.getElementById('readoutTurb');
-    if (!connectBtn) return;
+    if (!badge || typeof io === 'undefined') return;
 
-    connectBtn.addEventListener('click', function () {
-      if (!('serial' in navigator)) {
-        alert('เบราว์เซอร์นี้ไม่รองรับ Web Serial API — ใช้ Chrome หรือ Edge บนคอมพิวเตอร์');
-        return;
-      }
+    function setBadge(state, text) {
+      badge.className = 'live-status-badge live-status-badge--' + state;
+      badge.textContent = text;
+    }
 
-      navigator.serial.requestPort()
-        .then(function (port) {
-          return port.open({ baudRate: 115200 }).then(function () { return port; });
-        })
-        .then(function (port) {
-          connectBtn.textContent = 'Connected';
-          connectBtn.disabled = true;
+    var socket = io(BACKEND_URL, { transports: ['websocket', 'polling'] });
 
-          // show Floor 2's panel (its own demo WQI/quality stays as-is)
-          var floor2Pin = document.querySelector('.floor-pin[data-floor="2"]');
-          if (floor2Pin) floor2Pin.click();
+    socket.on('connect', function () {
+      setBadge('live', '🟢 Live');
+      // show Floor 2's panel (its own demo WQI/quality stays as-is)
+      var floor2Pin = document.querySelector('.floor-pin[data-floor="2"]');
+      if (floor2Pin && !floor2Pin.classList.contains('floor-pin--active')) floor2Pin.click();
+    });
 
-          var reader = port.readable.getReader();
-          var decoder = new TextDecoder();
-          var buffer = '';
+    socket.on('disconnect', function () {
+      setBadge('offline', '🔴 Offline — reconnecting…');
+    });
 
-          function readLoop() {
-            reader.read().then(function (result) {
-              if (result.done) return;
-              buffer += decoder.decode(result.value, { stream: true });
-              var lines = buffer.split('\n');
-              buffer = lines.pop();
-              lines.forEach(function (line) {
-                line = line.trim();
-                if (!line) return;
-                try {
-                  var data = JSON.parse(line);
-                  if (elTemp && 'temp' in data) elTemp.textContent = data.temp;
-                  if (elPh && 'ph' in data) elPh.textContent = data.ph;
-                  if (elTds && 'tds' in data) elTds.textContent = data.tds;
-                  if (elTurb && 'turb' in data) elTurb.textContent = data.turb;
-                } catch (err) { /* ignore a malformed/partial line */ }
-              });
-              readLoop();
-            });
-          }
-          readLoop();
-        })
-        .catch(function (err) {
-          alert('เชื่อมต่อไม่สำเร็จ: ' + err.message);
-          connectBtn.textContent = '🔌 Connect Sensor (Serial)';
-          connectBtn.disabled = false;
-        });
+    socket.on('connect_error', function () {
+      setBadge('offline', '🔴 Connection failed');
+    });
+
+    socket.on('sensor-data', function (data) {
+      if (!data) return;
+      if (elTemp && 'temp' in data) elTemp.textContent = data.temp;
+      if (elPh && 'ph' in data) elPh.textContent = data.ph;
+      if (elTds && 'tds' in data) elTds.textContent = data.tds;
+      if (elTurb && 'turb' in data) elTurb.textContent = data.turb;
     });
   })();
   </script>
