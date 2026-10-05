@@ -82,6 +82,15 @@ img { max-width: 100%; display: block; }
     .chart .empty { font-family: var(--font-body); font-size: 14px; fill: var(--ink-soft); }
     @media (max-width: 480px) { .hero { padding: 28px 22px; } .content-card { padding: 20px; } }
 
+    .range__input { position: absolute; opacity: 0; pointer-events: none; }
+    .range-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0 16px; }
+    .range-tabs label { font-family: var(--font-display); font-size: 15px; font-weight: 500; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 8px 26px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .range-tabs label:hover { border-color: var(--deep-2); }
+    #r-hourly:checked ~ .range-tabs label[for="r-hourly"], #r-daily:checked ~ .range-tabs label[for="r-daily"], #r-monthly:checked ~ .range-tabs label[for="r-monthly"] { background: var(--deep-2); border-color: var(--deep-2); color: #fff; }
+    .range__input:focus-visible ~ .range-tabs { outline: 2px solid var(--good); outline-offset: 4px; border-radius: 999px; }
+    .chart .xl { display: none; }
+    #r-hourly:checked ~ .chart .x-hourly, #r-daily:checked ~ .chart .x-daily, #r-monthly:checked ~ .chart .x-monthly { display: inline; }
+
     /* ===========================================================
    FOOTER
    =========================================================== */
@@ -174,12 +183,23 @@ img { max-width: 100%; display: block; }
       </div>
     </section>
 
-    <section class="content-card">
+        <section class="content-card">
       <div class="chart-head">
         <h2>Water Quality Index (WQI)</h2>
         <span class="badge">Floor 2</span>
       </div>
-      <p class="sub">Score from 0 (poor) to 100 (excellent) over time.</p>
+      <p class="sub">Score from 0 (poor) to 100 (excellent).</p>
+
+      <input type="radio" name="range" id="r-hourly" class="range__input" checked>
+      <input type="radio" name="range" id="r-daily" class="range__input">
+      <input type="radio" name="range" id="r-monthly" class="range__input">
+
+      <div class="range-tabs">
+        <label for="r-hourly">Hourly</label>
+        <label for="r-daily">Daily</label>
+        <label for="r-monthly">Monthly</label>
+      </div>
+
       <svg class="chart" viewBox="0 0 640 280" role="img" aria-label="WQI chart">
         <text class="title" x="12" y="20">WQI</text>
         <g class="grid">
@@ -193,36 +213,27 @@ img { max-width: 100%; display: block; }
         </g>
         <line class="axis" x1="60" y1="30" x2="60" y2="230"/>
         <line class="axis" x1="60" y1="230" x2="620" y2="230"/>
-        <g text-anchor="middle">
-          <text x="120" y="254">6 AM</text><text x="260" y="254">7 AM</text>
-          <text x="400" y="254">8 AM</text><text x="540" y="254">9 AM</text>
-        </g>
-        <text class="empty" x="340" y="135" text-anchor="middle">No data to display yet</text>
-      </svg>
-    </section>
 
-    <section class="content-card">
-      <div class="chart-head">
-        <h2>Temperature</h2>
-        <span class="badge">Floor 2</span>
-      </div>
-      <p class="sub">Water temperature in °C over time.</p>
-      <svg class="chart" viewBox="0 0 640 280" role="img" aria-label="Temperature chart">
-        <text class="title" x="12" y="20">Temp (°C)</text>
-        <g class="grid">
-          <line x1="60" y1="30" x2="620" y2="30"/><line x1="60" y1="80" x2="620" y2="80"/>
-          <line x1="60" y1="130" x2="620" y2="130"/><line x1="60" y1="180" x2="620" y2="180"/>
+        <!-- Hourly: last 12 hours -->
+        <g class="xl x-hourly" text-anchor="middle">
+          <text x="85" y="254">2 AM</text><text x="132" y="254">3 AM</text><text x="178" y="254">4 AM</text><text x="225" y="254">5 AM</text>
+          <text x="272" y="254">6 AM</text><text x="318" y="254">7 AM</text><text x="365" y="254">8 AM</text><text x="412" y="254">9 AM</text>
+          <text x="458" y="254">10 AM</text><text x="505" y="254">11 AM</text><text x="552" y="254">12 PM</text><text x="598" y="254">1 PM</text>
         </g>
-        <g text-anchor="end">
-          <text x="50" y="34">40</text><text x="50" y="84">30</text><text x="50" y="134">20</text>
-          <text x="50" y="184">10</text><text x="50" y="234">0</text>
+
+        <!-- Daily: last 7 days -->
+        <g class="xl x-daily" text-anchor="middle">
+          <text x="100" y="254">29 Sep</text><text x="180" y="254">30 Sep</text><text x="260" y="254">1 Oct</text><text x="340" y="254">2 Oct</text>
+          <text x="420" y="254">3 Oct</text><text x="500" y="254">4 Oct</text><text x="580" y="254">5 Oct</text>
         </g>
-        <line class="axis" x1="60" y1="30" x2="60" y2="230"/>
-        <line class="axis" x1="60" y1="230" x2="620" y2="230"/>
-        <g text-anchor="middle">
-          <text x="120" y="254">6 AM</text><text x="260" y="254">7 AM</text>
-          <text x="400" y="254">8 AM</text><text x="540" y="254">9 AM</text>
+
+        <!-- Monthly: last 12 months -->
+        <g class="xl x-monthly" text-anchor="middle">
+          <text x="83" y="254">Nov</text><text x="130" y="254">Dec</text><text x="177" y="254">Jan</text><text x="223" y="254">Feb</text>
+          <text x="270" y="254">Mar</text><text x="317" y="254">Apr</text><text x="363" y="254">May</text><text x="410" y="254">Jun</text>
+          <text x="457" y="254">Jul</text><text x="503" y="254">Aug</text><text x="550" y="254">Sep</text><text x="597" y="254">Oct</text>
         </g>
+
         <text class="empty" x="340" y="135" text-anchor="middle">No data to display yet</text>
       </svg>
     </section>
