@@ -237,8 +237,10 @@ img { max-width: 100%; display: block; }
             data-floor="3" data-temp="23.5" data-ph="7.0" data-tds="95" data-turb="0.4">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
+          <!-- Floor 2 has a real sensor attached — no demo data attributes here on purpose. -->
+          <!-- Its numbers only ever come from the live Socket.io feed, never a fallback.     -->
           <button type="button" class="floor-pin floor-pin--active" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality"
-            data-floor="2" data-temp="26.5" data-ph="7.3" data-tds="140" data-turb="0.9">
+            data-floor="2" data-live="true">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
         </div>
@@ -247,8 +249,8 @@ img { max-width: 100%; display: block; }
           <div class="map-panel__readout">
             <button type="button" class="readout-close" id="readoutClose" aria-label="Close water quality panel">&times;</button>
             <span style="font-family: var(--font-mono); font-weight: 900;">Floor <span id="readoutFloor">2</span> : </span>
-            <span id="readoutQuality" style="font-family: var(--font-mono); font-weight: 900; color: #2fa7d8;"> Very Clean</span><br><br>
-            <p class="map-panel__average">WQI: <span id="readoutWqi">85</span></p>
+            <span id="readoutQuality" style="font-family: var(--font-mono); font-weight: 900; color: var(--ink-soft);"> --</span><br><br>
+            <p class="map-panel__average">WQI: <span id="readoutWqi">--</span></p>
 
             <input type="checkbox" id="metricsToggle" class="metrics-toggle">
             <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
@@ -264,8 +266,8 @@ img { max-width: 100%; display: block; }
 
           <!-- WQI droplet mascot: swap src for other quality states later (e.g. dirty.png). Number updates per pin clicked. -->
           <div class="wqi-droplet">
-            <img src="glassveryclean.png" alt="Water quality mascot" id="dropletImg">
-            <span class="wqi-droplet__value" id="dropletValue">85</span>
+            <img src="glassclean.png" alt="Water quality mascot" id="dropletImg">
+            <span class="wqi-droplet__value" id="dropletValue">--</span>
           </div>
         </div>
       </div>
@@ -502,7 +504,12 @@ img { max-width: 100%; display: block; }
     var elDropletImg = document.getElementById('dropletImg');
     if (!pins.length || !readoutGroup) return;
 
+    function hasDemoData(pin) {
+      return pin.hasAttribute('data-temp'); // live pins (e.g. Floor 2) have none until real data arrives
+    }
+
     function readPinWQI(pin) {
+      if (!hasDemoData(pin)) return null; // no data yet — caller shows "--"
       return window.ACHELOUS_computeWQI(
         pin.getAttribute('data-temp'),
         pin.getAttribute('data-ph'),
@@ -512,8 +519,10 @@ img { max-width: 100%; display: block; }
     }
 
     // paint every pin's number + color on load, so the map reflects real computed values
+    // (live pins with no data yet just keep their "--" / default color)
     pins.forEach(function (pin) {
       var q = readPinWQI(pin);
+      if (!q) return;
       pin.querySelector('.floor-pin__label').textContent = q.wqi;
       pin.querySelector('.floor-pin__body').style.background = q.color;
     });
@@ -522,15 +531,27 @@ img { max-width: 100%; display: block; }
       var q = readPinWQI(pin);
 
       elFloor.textContent = pin.getAttribute('data-floor');
-      elQuality.textContent = ' ' + q.label;
-      elQuality.style.color = q.color;
-      elWqi.textContent = q.wqi;
-      elTemp.textContent = pin.getAttribute('data-temp');
-      elPh.textContent = pin.getAttribute('data-ph');
-      elTds.textContent = pin.getAttribute('data-tds');
-      elTurb.textContent = pin.getAttribute('data-turb');
-      if (elDroplet) elDroplet.textContent = q.wqi;
-      if (elDropletImg) elDropletImg.src = q.glass;
+      if (q) {
+        elQuality.textContent = ' ' + q.label;
+        elQuality.style.color = q.color;
+        elWqi.textContent = q.wqi;
+        elTemp.textContent = pin.getAttribute('data-temp');
+        elPh.textContent = pin.getAttribute('data-ph');
+        elTds.textContent = pin.getAttribute('data-tds');
+        elTurb.textContent = pin.getAttribute('data-turb');
+        if (elDroplet) elDroplet.textContent = q.wqi;
+        if (elDropletImg) elDropletImg.src = q.glass;
+      } else {
+        // live pin with no reading yet — show honest placeholders, not demo numbers
+        elQuality.textContent = ' --';
+        elQuality.style.color = 'var(--ink-soft)';
+        elWqi.textContent = '--';
+        elTemp.textContent = '--';
+        elPh.textContent = '--';
+        elTds.textContent = '--';
+        elTurb.textContent = '--';
+        if (elDroplet) elDroplet.textContent = '--';
+      }
 
       pins.forEach(function (p) { p.classList.remove('floor-pin--active'); });
       pin.classList.add('floor-pin--active');
