@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACHELOUS</title>
+<link rel="stylesheet" href="style.css" />
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+ 
+:root { /* --- color tokens --- */ 
+    --ink: #0e2a2f; 
+    --ink-soft: #4c6367; 
+    --deep: #0b4f5c; 
+    --deep-2: #0e6577; 
+    --mist: #eaf3f2; 
+    --paper: #ffffff; 
+    --line: #d7e6e4; 
+    --good: #2f9e6e; 
+    --footer-bg: #0a2226; 
+    --footer-text: #cfe3e0; 
+    /* --- type --- */ 
+    --font-display: 'Space Grotesk', sans-serif; 
+    --font-body: 'Inter', sans-serif; 
+    --font-mono: 'IBM Plex Mono', monospace; 
+    /* --- layout --- */ 
+    --max-w: 1200px; --radius: 10px; }
+ 
+* { box-sizing: border-box; }
+ 
+html, body { margin: 0; padding: 0; }
+ 
+body { font-family: var(--font-body); color: var(--ink); background: #efeeee; -webkit-font-smoothing: antialiased; }
+ 
+a { color: inherit; text-decoration: none; }
+ 
+img { max-width: 100%; display: block; }
+ 
+.wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+ 
+/* ===========================================================
+   NAVBAR
+   =========================================================== */
+ 
+    .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; }
+    .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .navbar__logo img { height: 56px; width: auto; }
+    .navbar__links { display: flex; align-items: center; gap: 36px; list-style: none; margin: 0; padding: 0; }
+    .navbar__links a { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
+    .navbar__links a:hover { color: var(--deep); }
+    .navbar__right { display: flex; align-items: center; gap: 28px; }
+    .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
+    .navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+
+ 
+    /* hamburger (checkbox-based, no script) */
+    .navbar__toggle { display: none; }
+    .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+    .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
+
+    /* PAGE CONTENT */
+    .page { padding: 40px 0 64px; }
+    .hero { background: var(--deep); color: #fff; border-radius: var(--radius); padding: 40px 36px; margin-bottom: 28px; text-align: center; }
+    .hero h1 { font-family: var(--font-display); font-size: 32px; margin: 0 0 8px; }
+    .hero p { margin: 0; font-size: 15px; color: var(--footer-text); }
+    .content-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 28px; margin-bottom: 28px; }
+    .content-card h2 { font-family: var(--font-display); font-size: 20px; color: var(--deep); margin: 0 0 4px; }
+    .content-card .sub { font-size: 14px; color: var(--ink-soft); margin: 0 0 16px; }
+    .system-select { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .system-select label { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--deep); }
+    .system-select select { font-family: var(--font-body); font-size: 16px; color: var(--ink); background: var(--mist); border: 2px solid var(--line); border-radius: var(--radius); padding: 10px 40px 10px 16px; min-width: 220px; cursor: pointer; }
+    .system-select select:focus { outline: none; border-color: var(--good); }
+    .chart-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .badge { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--good); background: var(--mist); border-radius: 999px; padding: 4px 12px; }
+    .chart { width: 100%; height: auto; background: var(--mist); border-radius: var(--radius); }
+    .chart .grid { stroke: var(--line); stroke-width: 1; }
+    .chart .axis { stroke: var(--ink-soft); stroke-width: 2; }
+    .chart text { font-family: var(--font-mono); font-size: 12px; fill: var(--ink-soft); }
+    .chart .title { font-family: var(--font-display); font-size: 13px; font-weight: 600; fill: var(--deep); }
+    .chart .empty { font-family: var(--font-body); font-size: 14px; fill: var(--ink-soft); }
+    @media (max-width: 480px) { .hero { padding: 28px 22px; } .content-card { padding: 20px; } }
+
+    /* ===========================================================
+   FOOTER
+   =========================================================== */
+ 
+    .footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px;}
+    .footer__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .footer__logos { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .footer__logo { height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .footer__logo img { height: 50px;}
+    .footer__members h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 12px; color: var(--paper); }
+    .footer__members ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .footer__members li { font-family: var(--font-mono); font-size: 13px; color: var(--footer-text); }
+    .footer__members li::before { content: '— '; color: var(--good); }
+
+    @media (max-width: 860px) {
+ 
+    .navbar__burger { display: flex; }
+    .navbar__inner { flex-wrap: wrap; }
+    .navbar__logo { order: 1; }
+    .navbar__links { order: 3; flex-basis: 100%; width: 100%; position: static; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+    .navbar__links li { width: 100%; }
+    .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
+    .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
+    .navbar__right { order: 2; gap: 16px; }
+}
+ 
+    @media (max-width: 480px) {
+ 
+    .navbar__inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .system-select { align-items: flex-start; flex-direction: column; }
+    .map-panel__readout { padding: 14px 16px 16px; }
+}
+</style>
+</head>
+
+<body>
+ 
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="navbar__inner">
+ 
+      <a href="index.html" class="navbar__logo">
+        <img src="achelouslogo.png" alt="ACHELOUS" />
+      </a>
+ 
+      <input type="checkbox" id="navToggle" class="navbar__toggle" />
+ 
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="archiveddata.html">Archived Data</a></li>
+        <li><a href="aboutwqi.html">About Water Quality</a></li>
+        <li><a href="aboutproject.html">About The Project</a></li>
+        <li><a href="#">Filter</a></li>
+      </ul>
+ 
+      <div class="navbar__right">
+        <a href="login.html" class="navbar__login">Login</a>
+        <div class="navbar__lang">
+          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
+          <span>EN</span>
+        </div>
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+      </div>
+ 
+    </div>
+  </header>
+
+    <!-- ===================== PAGE CONTENT ===================== -->
+  <main class="wrap page">
+
+    <section class="hero">
+      <h1>Archived Data</h1>
+    </section>
+
+    <section class="content-card">
+      <h2>Choose a location</h2>
+      <p class="sub">Pick a floor to see its recorded data.</p>
+      <div class="system-select">
+        <label for="floor">Location</label>
+        <select id="floor">
+          <option selected>Floor 2</option>
+          <option>Floor 3</option>
+          <option>Floor 4</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="content-card">
+      <div class="chart-head">
+        <h2>Water Quality Index (WQI)</h2>
+        <span class="badge">Floor 2</span>
+      </div>
+      <p class="sub">Score from 0 (poor) to 100 (excellent) over time.</p>
+      <svg class="chart" viewBox="0 0 640 280" role="img" aria-label="WQI chart">
+        <text class="title" x="12" y="20">WQI</text>
+        <g class="grid">
+          <line x1="60" y1="30" x2="620" y2="30"/><line x1="60" y1="70" x2="620" y2="70"/>
+          <line x1="60" y1="110" x2="620" y2="110"/><line x1="60" y1="150" x2="620" y2="150"/>
+          <line x1="60" y1="190" x2="620" y2="190"/>
+        </g>
+        <g text-anchor="end">
+          <text x="50" y="34">100</text><text x="50" y="74">80</text><text x="50" y="114">60</text>
+          <text x="50" y="154">40</text><text x="50" y="194">20</text><text x="50" y="234">0</text>
+        </g>
+        <line class="axis" x1="60" y1="30" x2="60" y2="230"/>
+        <line class="axis" x1="60" y1="230" x2="620" y2="230"/>
+        <g text-anchor="middle">
+          <text x="120" y="254">6 AM</text><text x="260" y="254">7 AM</text>
+          <text x="400" y="254">8 AM</text><text x="540" y="254">9 AM</text>
+        </g>
+        <text class="empty" x="340" y="135" text-anchor="middle">No data to display yet</text>
+      </svg>
+    </section>
+
+    <section class="content-card">
+      <div class="chart-head">
+        <h2>Temperature</h2>
+        <span class="badge">Floor 2</span>
+      </div>
+      <p class="sub">Water temperature in °C over time.</p>
+      <svg class="chart" viewBox="0 0 640 280" role="img" aria-label="Temperature chart">
+        <text class="title" x="12" y="20">Temp (°C)</text>
+        <g class="grid">
+          <line x1="60" y1="30" x2="620" y2="30"/><line x1="60" y1="80" x2="620" y2="80"/>
+          <line x1="60" y1="130" x2="620" y2="130"/><line x1="60" y1="180" x2="620" y2="180"/>
+        </g>
+        <g text-anchor="end">
+          <text x="50" y="34">40</text><text x="50" y="84">30</text><text x="50" y="134">20</text>
+          <text x="50" y="184">10</text><text x="50" y="234">0</text>
+        </g>
+        <line class="axis" x1="60" y1="30" x2="60" y2="230"/>
+        <line class="axis" x1="60" y1="230" x2="620" y2="230"/>
+        <g text-anchor="middle">
+          <text x="120" y="254">6 AM</text><text x="260" y="254">7 AM</text>
+          <text x="400" y="254">8 AM</text><text x="540" y="254">9 AM</text>
+        </g>
+        <text class="empty" x="340" y="135" text-anchor="middle">No data to display yet</text>
+      </svg>
+    </section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer__inner">
+ 
+      <div class="footer__logos">
+        <div class="footer__logo"><img src="Thailand.png"></div>
+        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
+        <div class="footer__logo"><img src="AClogo.png"></div>
+        <div class="footer__logo"><img src="dreammakertransp.png"></div>
+        <div class="footer__logo"><img src="achelouslogo.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="siiflogo.png"></div>
+      </div>
+ 
+      <div class="footer__members">
+        <h3>Project Members</h3>
+        <ul>
+          <li>Mr.Nantapat Pasukulpipat</li>
+          <li>Mr.Nutthee Vimolpattanatham</li>
+          <li>Mr.Pakin Yuwawat</li>
+          <li>Mr.Sippawich Kongkatonyoosakul</li>
+          <li>Mr.Thatkrit Amatyakul</li>
+        </ul>
+      </div>
+ 
+    </div>
+  </footer>
+</body>
+</html>
