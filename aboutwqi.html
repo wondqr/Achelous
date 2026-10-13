@@ -139,6 +139,32 @@
   .quality-badge--normal { background: #d9a800; }
   .quality-badge--dirty { background: #d6413a; }
   .quality-badge--very-dirty { background: #6b1fad; }
+  
+  /* ===========================================================
+     WQI CALCULATION SECTION
+     =========================================================== */
+
+  .calc-intro { font-size: 15px; line-height: 1.7; color: var(--ink-soft); max-width: 860px; margin: 0 0 24px; }
+  .calc-step { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px; }
+  .calc-step h3 { font-family: var(--font-display); font-size: 18px; color: var(--deep-2); margin: 0 0 12px; display: flex; align-items: center; gap: 12px; }
+  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--deep); color: #fff; font-size: 15px; flex-shrink: 0; }
+  .calc-step p { font-size: 14.5px; line-height: 1.7; color: var(--ink-soft); margin: 0 0 12px; }
+  .calc-step .table-scroll { margin: 12px 0 16px; }
+  .formula { background: var(--mist); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 12px 0; overflow-x: auto; text-align: center; font-size: 17px; }
+  .formula-label { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--deep-2); margin: 16px 0 0; }
+  .var-list { margin: 0 0 14px; padding: 0; }
+  .var-list li { font-family: var(--font-mono); font-size: 13.5px; color: var(--ink); padding: 3px 0; }
+  .var-list li b { color: var(--deep-2); }
+  .calc-note { border-left: 4px solid var(--good); background: var(--mist); border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 16px; font-size: 14px; line-height: 1.7; color: var(--ink); margin-top: 14px; }
+  .calc-note ul { margin: 6px 0 0; padding: 0; }
+  .calc-note li { font-family: var(--font-body); font-size: 14px; padding: 3px 0; }
+  .calc-note li::before { content: '— '; color: var(--good); }
+  .calc-result { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--deep); margin: 14px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 480px) {
+    .calc-step { padding: 18px 18px; }
+    .formula { font-size: 15px; padding: 12px; }
+  }
   </style>
 </head>
  
@@ -326,6 +352,156 @@
 
     <section>
       <h2 class="section-title">Calculation of the daily air quality index</h2>
+
+      <p class="calc-intro">
+        The WQI turns the sensor readings into a single score from 0 to 100. Each parameter is first
+        converted into its own sub-index <em>q</em>, then the sub-indices are combined using weights.
+      </p>
+
+      <!-- STEP 1 -->
+      <div class="calc-step">
+        <h3><span class="step-num">1</span>Combine the sub-indices</h3>
+        <p>The final WQI is the weighted sum of the sub-indices of pH, TDS, and turbidity.</p>
+        <div class="formula">
+          \[ WQI = \sum \left( w_i \times q_i \right) = w_{pH}\,q_{pH} + w_{TDS}\,q_{TDS} + w_{turbidity}\,q_{turbidity} \]
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Parameter</th><th>Weight (w)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>pH</td><td>0.34</td></tr>
+              <tr><td>TDS</td><td>0.33</td></tr>
+              <tr><td>Turbidity</td><td>0.33</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="calc-note">
+          Temperature is measured and displayed on the monitor, but it is not included in the WQI score.
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="calc-step">
+        <h3><span class="step-num">2</span>Find the band of each reading</h3>
+        <p>
+          Compare each measured value with the ranges below to find which water-quality band it falls in.
+          The limits of that band are then used in the sub-index formula.
+        </p>
+        <ul class="var-list">
+          <li><b>V<sub>actual</sub></b> = the value measured by the sensor</li>
+          <li><b>V<sub>min</sub></b> = the lowest sensor value of that band</li>
+          <li><b>V<sub>max</sub></b> = the highest sensor value of that band</li>
+          <li><b>Q<sub>min</sub></b> = the lowest WQI score of that band</li>
+          <li><b>Q<sub>max</sub></b> = the highest WQI score of that band</li>
+        </ul>
+        <p>
+          Example: TDS = 120 ppm falls in the Clean band, so V<sub>min</sub> = 101 ppm, V<sub>max</sub> = 150 ppm,
+          Q<sub>min</sub> = 70, and Q<sub>max</sub> = 84.
+        </p>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Water Quality</th>
+                <th>Q<sub>min</sub> - Q<sub>max</sub></th>
+                <th>TDS (V<sub>min</sub> - V<sub>max</sub>)</th>
+                <th>Turbidity (V<sub>min</sub> - V<sub>max</sub>)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="quality-badge quality-badge--very-clean">Very Clean</span></td>
+                <td>85 - 100</td><td>0 - 100 ppm</td><td>0 - 0.5 NTU</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--clean">Clean</span></td>
+                <td>70 - 84</td><td>101 - 150 ppm</td><td>0.5 - 0.99 NTU</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--normal">Normal</span></td>
+                <td>50 - 69</td><td>151 - 300 ppm</td><td>1 - 10 NTU</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
+                <td>25 - 49</td><td>301 - 500 ppm</td><td>11 - 20 NTU</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
+                <td>0 - 24</td><td>500 - 750 ppm</td><td>20 - 100 NTU</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          pH is split at 7, because both too-acidic and too-alkaline water lowers the score. The Very Clean and
+          Clean rows share the same pH range (6.5 - 8.5), so they are combined into one band where pH 7 gives the best score.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Water Quality</th>
+                <th>Q<sub>min</sub> - Q<sub>max</sub></th>
+                <th>pH &gt; 7 (V<sub>min</sub> - V<sub>max</sub>)</th>
+                <th>pH &lt; 7 (V<sub>min</sub> - V<sub>max</sub>)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="quality-badge quality-badge--very-clean">Very Clean</span>
+                  <span class="quality-badge quality-badge--clean">Clean</span>
+                </td>
+                <td>70 - 100</td><td>7 - 8.5</td><td>6.5 - 7</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--normal">Normal</span></td>
+                <td>50 - 69</td><td>8.5 - 9.5</td><td>5.5 - 6.5</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
+                <td>25 - 49</td><td>9.5 - 10.5</td><td>4.0 - 5.5</td>
+              </tr>
+              <tr>
+                <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
+                <td>0 - 24</td><td>10.5 - 14</td><td>0 - 4.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="calc-step">
+        <h3><span class="step-num">3</span>Calculate each sub-index (q)</h3>
+        <p>
+          Use the limits of the band to place the reading between Q<sub>min</sub> and Q<sub>max</sub>.
+          The formula depends on the parameter.
+        </p>
+
+        <p class="formula-label">TDS, Turbidity, and pH &ge; 7 (a higher reading gives a lower score)</p>
+        <div class="formula">
+          \[ q_i = \frac{V_{min} - V_{actual}}{V_{max} - V_{min}} \times \left( Q_{max} - Q_{min} \right) + Q_{max} \]
+        </div>
+
+        <p class="formula-label">pH &lt; 7 (a reading closer to 7 gives a higher score)</p>
+        <div class="formula">
+          \[ q_i = \frac{V_{actual} - V_{min}}{V_{max} - V_{min}} \times \left( Q_{max} - Q_{min} \right) + Q_{min} \]
+        </div>
+
+        <div class="calc-note">
+          Special cases:
+          <ul>
+            <li>A value that falls in a small gap between two rows (for example TDS 100.5 ppm) uses the next band, and q is capped at that band's Q<sub>max</sub>.</li>
+            <li>A value beyond the highest band (TDS &gt; 750 ppm, turbidity &gt; 100 NTU, or pH outside 0 - 14) gets q = 0.</li>
+          </ul>
+        </div>
+      </div>
+
     </section>
  
   </main>
@@ -360,4 +536,4 @@
   </footer>
  
 </body>
-</html> 
+</html>
