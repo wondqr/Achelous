@@ -96,6 +96,24 @@ img { max-width: 100%; display: block; }
 }
 
 /* ===========================================================
+   WATER QUALITY SCALE (replaces scale1.png)
+   =========================================================== */
+
+.wq-scale { display: flex; width: 100%; max-width: 760px; margin: 18px auto 0; }
+.wq-scale__seg { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.wq-scale__seg span { font-family: var(--font-display); font-weight: 500; font-size: 17px; line-height: 1; color: #3a4560; margin-bottom: 14px; white-space: nowrap; }
+.wq-scale__seg::after { content: ''; display: block; width: 100%; height: 26px; }
+.wq-scale__seg--very-clean::after { background: #62d8ff; border-radius: 999px 0 0 999px; }
+.wq-scale__seg--clean::after      { background: #9be37d; }
+.wq-scale__seg--normal::after     { background: #ffdb58; }
+.wq-scale__seg--dirty::after      { background: #ff3b3b; }
+.wq-scale__seg--very-dirty::after { background: #6a1fa8; border-radius: 0 999px 999px 0; }
+@media (max-width: 560px) {
+  .wq-scale__seg span { font-size: 12px; margin-bottom: 8px; }
+  .wq-scale__seg::after { height: 18px; }
+}
+
+/* ===========================================================
    SYSTEM SELECTOR
    =========================================================== */
  
@@ -273,7 +291,14 @@ img { max-width: 100%; display: block; }
       </div>
     </section>
 
-    <img src="scale1.png" style="height: 60px; display: block; margin: 0 auto;">
+    <!-- Water quality scale (HTML/CSS version of scale1.png) -->
+    <div class="wq-scale" role="img" aria-label="Water quality scale: very clean, clean, normal, dirty, very dirty">
+      <div class="wq-scale__seg wq-scale__seg--very-clean"><span>very clean</span></div>
+      <div class="wq-scale__seg wq-scale__seg--clean"><span>clean</span></div>
+      <div class="wq-scale__seg wq-scale__seg--normal"><span>normal</span></div>
+      <div class="wq-scale__seg wq-scale__seg--dirty"><span>dirty</span></div>
+      <div class="wq-scale__seg wq-scale__seg--very-dirty"><span>very dirty</span></div>
+    </div>
 
     <!-- ===================== SYSTEM SELECTOR ===================== -->
     <section class="system-select">
