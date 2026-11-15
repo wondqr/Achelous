@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACHELOUS</title>
+  <title>ACHELOUS - Filter Dashboard</title>
+
+  <!-- Socket.IO client served by the backend -->
+  <script src="http://192.168.26.212:4000/socket.io/socket.io.js"></script> 
+
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');  
+    :root {
+      --ink: #0e2a2f;
+      --ink-soft: #4c6367;
+      --deep: #0b4f5c;
+      --deep-2: #0e6577;
+      --mist: #eaf3f2;
+      --paper: #ffffff;
+      --line: #d7e6e4;
+      --good: #2f9e6e;
+      --footer-text: #cfe3e0;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --max-w: 1200px;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: #efeeee;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      border-bottom: 2px solid var(--good);
+      background: var(--paper);
+      position: relative;
+      z-index: 100;
+    }
+
+    .navbar__inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .navbar__logo img {
+      height: 56px;
+      width: auto;
+    }
+
+    .navbar__links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar__links a {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .navbar__links a:hover {
+      color: var(--deep);
+    }
+
+    .navbar__right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar__login {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--deep-2);
+    }
+
+    .navbar__toggle {
+      display: none;
+    }
+
+    .navbar__burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .navbar__burger span {
+      width: 24px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+
+    /* DASHBOARD */
+    .dashboard {
+      max-width: var(--max-w);
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .dashboard-header {
+      margin-bottom: 24px;
+    }
+
+    .dashboard-header h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--ink);
+      margin: 0 0 8px;
+    }
+
+    .dashboard-header p {
+      color: var(--ink-soft);
+      margin: 0 0 16px;
+    }
+
+    .status {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--mist);
+      color: var(--ink-soft);
+      display: inline-block;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--deep);
+      margin: 36px 0 16px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      min-width: 0;
+    }
+
+    .metric-card h3 {
+      font-family: var(--font-display);
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .metric-sublevel {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      margin-top: 6px;
+      font-weight: 600;
+      color: var(--good);
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #555;
+      color: var(--footer-text);
+      padding: 36px 0;
+      margin-top: 60px;
+    }
+
+    .footer__inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .footer__logos {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer__logo {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer__logo img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .footer__members h3 {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+      color: var(--paper);
+    }
+
+    .footer__members ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer__members li {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--footer-text);
+    }
+
+    .footer__members li::before {
+      content: '— ';
+      color: var(--good);
+    }
+
+    @media (max-width: 900px) {
+      .navbar__inner {
+        flex-wrap: wrap;
+      }
+
+      .navbar__burger {
+        display: flex;
+      }
+
+      .navbar__links {
+        order: 3;
+        flex-basis: 100%;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+      }
+
+      .navbar__links li {
+        width: 100%;
+      }
+
+      .navbar__links a {
+        display: block;
+        padding: 12px;
+        border-top: 1px solid var(--line);
+      }
+
+      .navbar__toggle:checked ~ .navbar__links {
+        max-height: 400px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard {
+        padding: 0 14px;
+        margin-top: 24px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-card {
+        padding: 18px;
+      }
+
+      .metric-value {
+        font-size: 24px;
+      }
+
+      .dashboard-header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <img src="achelouslogo.png" alt="ACHELOUS" />
+      </a>
+      <input type="checkbox" id="navToggle" class="navbar__toggle" />
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="archiveddata.html">Archived Data</a></li>
+        <li><a href="aboutwqi.html">About Water Quality</a></li>
+        <li><a href="aboutproject.html">About The Project</a></li>
+        <li><a href="Filter.html">Filter</a></li>
+      </ul>
+      <div class="navbar__right">
+        <a href="login.html" class="navbar__login">Login</a>
+        <div class="navbar__lang" id="langToggleBtn" title="Click to toggle display">
+          <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%; object-fit: cover;">
+          <span id="langText">EN</span>
+        </div>
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <main class="dashboard">
+    <div class="dashboard-header">
+      <h1>ACHELOUS Water Quality</h1>
+      <p>ESP32-S3 live monitoring dashboard</p>
+      <div id="connectionStatus" class="status">Connecting...</div>
+    </div>
+
+    <h2 class="section-title">Water Quality</h2>
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <h3>Temperature</h3>
+        <div class="metric-value"><span id="temperature">--</span> °C</div>
+      </div>
+      <div class="metric-card">
+        <h3>pH</h3>
+        <div class="metric-value" id="ph">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>First-stage WQI</h3>
+        <div class="metric-value" id="wqi1">--</div>
+        <div class="metric-sublevel" id="wqi1Level">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage WQI</h3>
+        <div class="metric-value" id="wqi2">--</div>
+        <div class="metric-sublevel" id="wqi2Level">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Overall WQI</h3>
+        <div class="metric-value" id="wqi">--</div>
+        <div class="metric-sublevel" id="wqiLevel">--</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Sensor Measurements</h2>
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <h3>First-stage TDS</h3>
+        <div class="metric-value"><span id="tds1">--</span> ppm</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage TDS</h3>
+        <div class="metric-value"><span id="tds2">--</span> ppm</div>
+      </div>
+      <div class="metric-card">
+        <h3>First-stage Turbidity</h3>
+        <div class="metric-value"><span id="turbidity1">--</span> NTU</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage Turbidity</h3>
+        <div class="metric-value"><span id="turbidity2">--</span> NTU</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Pressure</h2>
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <h3>First-stage Pressure (kPa)</h3>
+        <div class="metric-value" id="pressureKPa">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>First-stage Pressure (MPa)</h3>
+        <div class="metric-value" id="pressureMPa">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>First-stage Pressure (bar)</h3>
+        <div class="metric-value" id="pressureBar">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>First-stage Pressure (psi)</h3>
+        <div class="metric-value" id="pressurePsi">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage Pressure (kPa)</h3>
+        <div class="metric-value" id="pressure2KPa">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage Pressure (MPa)</h3>
+        <div class="metric-value" id="pressure2MPa">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage Pressure (bar)</h3>
+        <div class="metric-value" id="pressure2Bar">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Second-stage Pressure (psi)</h3>
+        <div class="metric-value" id="pressure2Psi">--</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Water Flow</h2>
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <h3>Flow Rate</h3>
+        <div class="metric-value"><span id="flowRate">--</span> L/min</div>
+      </div>
+      <div class="metric-card">
+        <h3>Total Volume</h3>
+        <div class="metric-value"><span id="totalVolume">--</span> L</div>
+      </div>
+      <div class="metric-card">
+        <h3>Flow Frequency</h3>
+        <div class="metric-value"><span id="flowFrequency">--</span> Hz</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Valve Status</h2>
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <h3>Valve 1</h3>
+        <div class="metric-value" id="valve1Open">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Valve 2</h3>
+        <div class="metric-value" id="valve2Open">--</div>
+      </div>
+      <div class="metric-card">
+        <h3>Valve 3</h3>
+        <div class="metric-value" id="valve3Open">--</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__logos">
+        <div class="footer__logo"><img src="Thailand.png" alt="Thailand" /></div>
+        <div class="footer__logo"><img src="AClogo.png" alt="Project logo" /></div>
+        <div class="footer__logo"><img src="dreammakertransp.png" alt="Dreammaker" /></div>
+        <div class="footer__logo"><img src="achelouslogo.png" alt="ACHELOUS" /></div>
+        <div class="footer__logo"><img src="siiflogo.png" alt="SIIF" /></div>
+      </div>
+
+      <div class="footer__members">
+        <h3>Project Members</h3>
+        <ul>
+          <li>Mr.Arkkharayut Pandej</li>
+          <li>Mr.Nantapat Pasukulpipat</li>
+          <li>Mr.Nutthee Vimolpattanatham</li>
+          <li>Mr.Pakin Yuwawat</li>
+          <li>Mr.Sippawich Kongkatonyoosakul</li>
+          <li>Mr.Thatkrit Amatyakul</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+
+
+    <script>
+      (function () {
+       var langBtn = document.getElementById('langToggleBtn');
+       var flagImg = document.getElementById('langFlagImg');
+       var langText = document.getElementById('langText');
+     if (!langBtn || !flagImg || !langText) return;
+
+      var isEnglish = true;
+      var ukFlag = 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg';
+      var thaiFlag = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg';
+
+     langBtn.addEventListener('click', function () {
+      isEnglish = !isEnglish;
+      if (isEnglish) {
+        flagImg.src = ukFlag;
+        langText.textContent = 'EN';
+      } else {
+        flagImg.src = thaiFlag;
+        langText.textContent = 'TH';
+      }
+    });
+  })();
+  </script>
+  <!-- BACKEND CONNECTION -->
+  <script>
+    (function () {
+      'use strict';
+
+      var API_BASE = 'http://192.168.26.212:4000';
+      var POLL_MS = 1000;
+
+      var FIELDS = {
+        temperature: 2,
+        ph: 2,
+        tds1: 2,
+        tds2: 2,
+        turbidity1: 2,
+        turbidity2: 2,
+        wqi: 1,
+        wqi1: 1,
+        wqi2: 1,
+        pressureKPa: 2,
+        pressureMPa: 4,
+        pressureBar: 3,
+        pressurePsi: 2,
+        pressure2KPa: 2,
+        pressure2MPa: 4,
+        pressure2Bar: 3,
+        pressure2Psi: 2,
+        flowRate: 2,
+        totalVolume: 3,
+        flowFrequency: 2
+      };
+
+      var statusEl = document.getElementById('connectionStatus');
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.textContent = value;
+        }
+      }
+
+      function toNum(value) {
+        if (typeof value === 'string' && value.trim() !== '') {
+          value = Number(value);
+        }
+
+        return (typeof value === 'number' && Number.isFinite(value))
+          ? value
+          : null;
+      }
+
+      function fmt(value, decimals) {
+        var number = toNum(value);
+        return number === null ? '--' : number.toFixed(decimals);
+      }
+
+      function wqiLevel(value) {
+        if (value === null) {
+          return { text: '--', color: '' };
+        }
+
+        if (value >= 85) {
+          return { text: 'Very Clean', color: '#2f9e6e' };
+        }
+        if (value >= 70) {
+          return { text: 'Clean', color: '#2f9e6e' };
+        }
+        if (value >= 50) {
+          return { text: 'Normal', color: '#b8860b' };
+        }
+        if (value >= 25) {
+          return { text: 'Dirty', color: '#d9822b' };
+        }
+
+        return { text: 'Very Dirty', color: '#c0392b' };
+      }
+
+      function render(reading) {
+        if (!reading || typeof reading !== 'object') {
+          return;
+        }
+
+        Object.keys(FIELDS).forEach(function (id) {
+          setText(id, fmt(reading[id], FIELDS[id]));
+        });
+
+        ['wqi1', 'wqi2', 'wqi'].forEach(function (key) {
+          var level = wqiLevel(toNum(reading[key]));
+          var element = document.getElementById(key + 'Level');
+
+          if (element) {
+            element.textContent = level.text;
+            element.style.color = level.color;
+          }
+        });
+
+        ['valve1Open', 'valve2Open', 'valve3Open'].forEach(function (key) {
+          var value = reading[key];
+          var textValue = '--';
+
+          if (value === true || value === 'true' || value === 1 || value === '1') {
+            textValue = 'Open';
+          } else if (
+            value === false ||
+            value === 'false' ||
+            value === 0 ||
+            value === '0'
+          ) {
+            textValue = 'Closed';
+          }
+
+          setText(key, textValue);
+        });
+      }
+
+      function setStatus(message, connected) {
+        if (!statusEl) return;
+
+        statusEl.textContent = message;
+        statusEl.style.color = connected ? '#1f7a53' : '#c0392b';
+        statusEl.style.borderColor = connected ? '#2f9e6e' : '#c0392b';
+      }
+
+      function fetchLatest() {
+        fetch(API_BASE + '/api/sensor/latest')
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+          })
+          .then(function (data) {
+            if (data && data.reading) {
+              render(data.reading);
+              setStatus(
+                'Connected - Last data: ' +
+                new Date().toLocaleTimeString(),
+                true
+              );
+            } else {
+              setStatus('Connected - No reading available', true);
+            }
+          })
+          .catch(function (error) {
+            console.error('Could not fetch latest sensor reading:', error);
+            setStatus('Offline - Cannot reach backend API', false);
+          });
+      }
+
+      // Load the latest stored reading immediately and poll every 2 seconds.
+      fetchLatest();
+      window.setInterval(fetchLatest, POLL_MS);
+
+      // Set up real-time updates only if the Socket.IO client loaded.
+      if (typeof window.io === 'function') {
+        var socket = window.io(API_BASE);
+
+        socket.on('connect', function () {
+          console.log('Connected to ACHELOUS backend');
+          setStatus('Socket connected - waiting for readings', true);
+          fetchLatest();
+        });
+
+        socket.on('connect_error', function (error) {
+          console.error('Socket connection error:', error.message);
+          // HTTP polling may still work if Socket.IO fails.
+        });
+
+        socket.on('disconnect', function () {
+          console.warn('Socket disconnected. HTTP polling continues.');
+        });
+
+        socket.on('sensor-update', function(reading) {
+
+    console.log('========== SENSOR DATA DEBUG ==========');
+
+    console.log(
+        'Full sensor data:',
+        JSON.stringify(reading, null, 2)
+    );
+
+    console.table(reading);
+
+    console.log('Temperature:', reading.temperature);
+    console.log('pH:', reading.ph);
+    console.log('TDS 1:', reading.tds1);
+    console.log('TDS 2:', reading.tds2);
+    console.log('WQI:', reading.wqi);
+
+    render(reading);
+
+    setStatus(
+        'Live - Real-time updated ' + new Date().toLocaleTimeString(),
+        true
+    );
+});
+
+      } else {
+        console.error('Socket.IO client did not load. HTTP polling remains enabled.');
+      }
+    })();
+  </script>
+
+</body>
+</html>

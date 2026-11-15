@@ -144,7 +144,7 @@ img { max-width: 100%; display: block; }
         <li><a href="archiveddata.html">Archived Data</a></li>
         <li><a href="aboutwqi.html">About Water Quality</a></li>
         <li><a href="aboutproject.html">About The Project</a></li>
-        <li><a href="#">Filter</a></li>
+        <li><a href="Filter.html">Filter</a></li>
       </ul>
  
       <div class="navbar__right">
@@ -162,6 +162,30 @@ img { max-width: 100%; display: block; }
  
     </div>
   </header>
+    <script>
+     (function () {
+      var langBtn = document.getElementById('langToggleBtn');
+      var flagImg = document.getElementById('langFlagImg');
+      var langText = document.getElementById('langText');
+       if (!langBtn || !flagImg || !langText) return;
+
+      var isEnglish = true;
+      var ukFlag = 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg';
+      var thaiFlag = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg';
+
+     langBtn.addEventListener('click', function () {
+       isEnglish = !isEnglish;
+       if (isEnglish) {
+          flagImg.src = ukFlag;
+          langText.textContent = 'EN';
+        } else {
+          flagImg.src = thaiFlag;
+          langText.textContent = 'TH';
+      }
+    });
+  })();
+  </script>
+
 
     <!-- ===================== PAGE CONTENT ===================== -->
   <main class="wrap page">

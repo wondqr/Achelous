@@ -6,28 +6,27 @@
 <title>ACHELOUS</title>
 <link rel="stylesheet" href="style.css" />
 
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
- 
+
 :root { /* --- color tokens --- */ --ink: #0e2a2f; --ink-soft: #4c6367; --deep: #0b4f5c; --deep-2: #0e6577; --mist: #eaf3f2; --paper: #ffffff; --line: #d7e6e4; --good: #2f9e6e; --footer-bg: #0a2226; --footer-text: #cfe3e0; /* --- type --- */ --font-display: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'IBM Plex Mono', monospace; /* --- layout --- */ --max-w: 1200px; --radius: 10px; }
- 
+
 * { box-sizing: border-box; }
- 
+
 html, body { margin: 0; padding: 0; }
- 
+
 body { font-family: var(--font-body); color: var(--ink); background: #efeeee; -webkit-font-smoothing: antialiased; }
- 
+
 a { color: inherit; text-decoration: none; }
- 
+
 img { max-width: 100%; display: block; }
- 
+
 .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
- 
+
 /* ===========================================================
    NAVBAR
    =========================================================== */
- 
+
 .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; }
 .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .navbar__logo img { height: 56px; width: auto; }
@@ -36,123 +35,154 @@ img { max-width: 100%; display: block; }
 .navbar__links a:hover { color: var(--deep); }
 .navbar__right { display: flex; align-items: center; gap: 28px; }
 .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
-.navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
 
- 
-/* hamburger (checkbox-based, no script) */
+.navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); cursor: pointer; user-select: none; }
+.navbar__lang:hover { opacity: 0.8; }
+
 .navbar__toggle { display: none; }
 .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
 .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
- 
+
 /* ===========================================================
    HERO / MAP SECTION
    =========================================================== */
- 
+
 .hero { padding: 40px 0 32px; }
 .map-panel { position: relative; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--mist); }
 .map-panel__zoom { position: relative; width: 100%; touch-action: none; transform-origin: center center; will-change: transform; cursor: grab; }
 .map-panel__zoom:active { cursor: grabbing; }
 .map-panel__image { width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; pointer-events: none; }
-.map-panel__readout { position: absolute; left: 0; right: 0; bottom: 0; padding: 17px 24px 20px; background: linear-gradient(to top, rgb(205, 205, 205), rgba(255, 255, 255, 0.457)); color: black; }
-.map-panel__average { font-family: var(--font-mono); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 10px; color: black; }
-.map-panel__metrics { display: flex; flex-wrap: wrap; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: black; font-weight: bolder;}
+
+/* COMPACT READOUT BOX */
+.map-panel__readout {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 70%; 
+  padding: 10px 18px 10px; 
+  background: rgba(255, 255, 255, 0.75); 
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 0 0 10px 10px;
+  color: #000;
+  z-index: 30;
+  box-sizing: border-box;
+  overflow-y: auto;
+  line-height: 150%;
+}
+
+.map-panel__average { 
+  font-family: var(--font-mono); 
+  font-size: 13px; 
+  font-weight: 600; 
+  letter-spacing: 0.02em; 
+  margin: 0 0 6px; 
+  color: black; 
+}
+
+.map-panel__metrics { 
+  display: flex; 
+  flex-wrap: wrap; 
+  align-items: center; 
+  gap: 10px 18px; 
+  font-family: var(--font-mono); 
+  font-size: 11.5px; 
+  color: black; 
+  font-weight: bolder; 
+  max-width: 82%; 
+}
+
+.map-panel__metrics span {
+  white-space: nowrap;
+}
+
 .map-panel__metrics span b { font-weight: bold; color: black; }
- 
-/* metrics show/hide toggle (checkbox-hack, no script) — button only appears on narrow screens */
+
 .metrics-toggle { display: none; }
 .metrics-toggle-label { display: none; }
- 
-/* WQI water-droplet mascot (structure only — number is a static placeholder for now) */
-.wqi-droplet { position: absolute; left: 50%; bottom: 2%; transform: translateX(-50%); width: 70px; z-index: 20; text-align: center; }
-.wqi-droplet img { width: 100%; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
-.wqi-droplet__value { position: absolute; left: 50%; top: 70%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 25px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
- 
-/* floor water-quality pins (structure only — not wired to data or scripts yet) */
-.floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation;}
+
+/* WQI water-droplet mascot resized to match the smaller box */
+.wqi-droplet { 
+  position: absolute; 
+  right: 16px;
+  bottom: 10px;
+  width: 54px;  
+  flex: 0 0 54px; 
+  margin: 0; 
+  z-index: 20; 
+  text-align: center; 
+}
+.wqi-droplet img { width: 100%; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+.wqi-droplet__value { position: absolute; left: 50%; top: 70%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-weight: 800; font-size: 18px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+
+.floor-pin { position: absolute; transform: translate(-50%, -100%); cursor: pointer; background: none; border: none; padding: 8px; margin: 0; touch-action: manipulation; }
 .floor-pin__body { width: 28px; height: 28px; background: #29b6e8; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
 .floor-pin__label { transform: rotate(45deg); font-family: var(--font-mono); font-weight: 700; font-size: 10px; color: #06323d; white-space: nowrap; }
 .floor-pin:hover .floor-pin__body { background: #1c9fd1; }
- 
-/* selected pin gets a distinct ring so it's visually different from the rest */
+
 .floor-pin--active .floor-pin__body { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--deep), 0 2px 6px rgba(0,0,0,0.35); }
- 
-/* readout show/hide group + close button */
+
 .map-panel__readout-group.is-hidden { display: none; }
-.readout-close { position: absolute; top: 6px; right: 8px; width: 26px; height: 26px; border: none; background: rgba(0,0,0,0.08); border-radius: 50%; color: var(--ink); font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.readout-close { 
+  position: absolute; 
+  top: 8px; 
+  right: 12px; 
+  width: 22px; 
+  height: 22px; 
+  border: none; 
+  background: rgba(0,0,0,0.08); 
+  border-radius: 50%; 
+  color: var(--ink); 
+  font-size: 16px; 
+  line-height: 1; 
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
 .readout-close:hover { background: rgba(0,0,0,0.18); }
 
-/* live-sensor status badge (floor 2 test only, raw ADC values, no calibration yet) */
-.live-status-badge { display: inline-block; font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin: 8px 0; }
-.live-status-badge--connecting { border: 1px solid var(--line); background: var(--mist); color: var(--ink-soft); }
-.live-status-badge--live { border: 1px solid var(--good); background: #eafaf1; color: var(--good); }
-.live-status-badge--offline { border: 1px solid #d6413a; background: #fdecea; color: #d6413a; }
-
-/* เพิ่ม Effect ตอบสนองเมื่อใช้นิ้วแตะ (Tap) */
 .floor-pin:hover .floor-pin__body,
 .floor-pin:active .floor-pin__body { 
   background: #1c9fd1; 
-  transform: scale(1.1) rotate(-45deg); /* หมุดจะขยายเล็กน้อยให้รู้ว่ากดติดแล้ว */
+  transform: scale(1.1) rotate(-45deg);
   transition: transform 0.15s ease;
 }
 
 /* ===========================================================
-   WATER QUALITY SCALE (replaces scale1.png)
+   SYSTEM SELECTOR & FOOTER
    =========================================================== */
-
-.wq-scale { display: flex; width: 100%; max-width: 760px; margin: 18px auto 0; }
-.wq-scale__seg { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.wq-scale__seg span { font-family: var(--font-display); font-weight: 500; font-size: 17px; line-height: 1; color: #3a4560; margin-bottom: 14px; white-space: nowrap; }
-.wq-scale__seg::after { content: ''; display: block; width: 100%; height: 26px; }
-.wq-scale__seg--very-clean::after { background: #62d8ff; border-radius: 999px 0 0 999px; }
-.wq-scale__seg--clean::after      { background: #9be37d; }
-.wq-scale__seg--normal::after     { background: #ffdb58; }
-.wq-scale__seg--dirty::after      { background: #ff3b3b; }
-.wq-scale__seg--very-dirty::after { background: #6a1fa8; border-radius: 0 999px 999px 0; }
-@media (max-width: 560px) {
-  .wq-scale__seg span { font-size: 12px; margin-bottom: 8px; }
-  .wq-scale__seg::after { height: 18px; }
-}
-
-/* ===========================================================
-   SYSTEM SELECTOR
-   =========================================================== */
- 
 .system-select { padding: 28px 0 4px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .system-select__label { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
 .system-chip { font-family: var(--font-display); font-weight: 500; font-size: 14px; padding: 10px 20px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); } 
-.system-chip--login {border-color: var(--deep); color: var(--deep); background: var(--mist); }
-.system-chip--active {display: none; border-color: var(--deep); color: var(--deep); background: var(--mist); }
-.system-chip--add {display: none; color: var(--ink-soft); border-style: dashed; }
- 
-/* ===========================================================
-   DETAIL PANEL (readout detail, visible by default) ตัด none ออกได้เลย
-   =========================================================== */
- 
-.detail-panel {display: none; margin: 24px 0 48px; border: 1px solid var(--good); border-radius: var(--radius); background: var(--mist); padding: 28px 32px; }
+.system-chip--login { border-color: var(--deep); color: var(--deep); background: var(--mist); }
+.system-chip--active { display: none; border-color: var(--deep); color: var(--deep); background: var(--mist); }
+.system-chip--add { display: none; color: var(--ink-soft); border-style: dashed; }
+
+.detail-panel { display: none; margin: 24px 0 48px; border: 1px solid var(--good); border-radius: var(--radius); background: var(--mist); padding: 28px 32px; }
 .detail-panel__average { font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--deep); margin: 0 0 20px; }
 .detail-panel__metrics { display: flex; flex-wrap: wrap; gap: 32px; font-family: var(--font-mono); font-size: 15px; color: var(--ink-soft); }
 .detail-panel__metrics b { font-weight: 600; color: var(--ink); }
- 
-/* ===========================================================
-   FOOTER
-   =========================================================== */
- 
-.footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px;}
+
+.footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px; }
 .footer__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
 .footer__logos { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .footer__logo { height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.footer__logo img { height: 50px;}
+.footer__logo img { height: 50px; }
 .footer__members h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 12px; color: var(--paper); }
 .footer__members ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .footer__members li { font-family: var(--font-mono); font-size: 13px; color: var(--footer-text); }
 .footer__members li::before { content: '— '; color: var(--good); }
- 
+
+.scale { display: flex; max-width: 700px; margin: 0 auto; }
+.scale__seg { flex: 1; text-align: center; }
+.scale__seg span { display: block; margin-bottom: 8px; font-weight: 600; color: #3d4a66; }
+.scale__seg i { display: block; height: 20px; }
+
 /* ===========================================================
-   RESPONSIVE
+   RESPONSIVE (PHONE SPECIFIC FIXES)
    =========================================================== */
- 
 @media (max-width: 860px) {
- 
   .navbar__burger { display: flex; }
   .navbar__inner { flex-wrap: wrap; }
   .navbar__logo { order: 1; }
@@ -161,104 +191,95 @@ img { max-width: 100%; display: block; }
   .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
   .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
   .navbar__right { order: 2; gap: 16px; }
-  .map-panel__readout {height: fit-content ; padding: 5px; padding-bottom: 0;}
+  
+  .map-panel__readout { height: fit-content; padding: 8px 48px 8px 10px; top: auto; }
   .map-panel__image { height: 260px; }
-  .map-panel__metrics { display: none; }
-  .metrics-toggle-label { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--deep); cursor: pointer; padding: 6px 4px; user-select: none; }
-  .metrics-toggle-arrow { display: inline-block; transition: transform 0.2s ease; }
-  .metrics-toggle:checked ~ .map-panel__metrics { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; }
-  .metrics-toggle:checked ~ .metrics-toggle-label .metrics-toggle-arrow { transform: rotate(180deg); }
+  .map-panel__average { font-size: 12px; margin: 0 0 4px; }
+
+  .map-panel__metrics {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 3px 6px !important;
+    font-size: 10px !important;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .map-panel__metrics .wqi-droplet {
+    position: absolute !important;
+    right: -38px !important;
+    top: 35% !important;
+    transform: translateY(-50%) !important; 
+    width: 32px !important;  
+    flex: 0 0 32px !important;
+    margin: 0 !important;
+  }
+  
+  .map-panel__metrics .wqi-droplet__value {
+    font-size: 11px !important;
+  }
+
   .detail-panel { padding: 22px 20px; }
   .detail-panel__metrics { gap: 18px; font-size: 14px; }
   .footer__inner { flex-direction: column; gap: 24px; }
-  .wqi-droplet { position: absolute; left: 65%;}
-}
- 
-@media (max-width: 480px) {
- 
-  .navbar__inner { padding: 14px 16px; }
-  .wrap { padding: 0 16px; }
-  .system-select { align-items: flex-start; flex-direction: column; }
-  .map-panel__readout { padding: 14px 16px 16px; }
 }
 </style>
-
-
 </head>
 <body>
- 
+
   <!-- ===================== NAVBAR ===================== -->
   <header class="navbar">
     <div class="navbar__inner">
- 
       <a href="index.html" class="navbar__logo">
         <img src="achelouslogo.png" alt="ACHELOUS" />
       </a>
- 
       <input type="checkbox" id="navToggle" class="navbar__toggle" />
- 
       <ul class="navbar__links">
         <li><a href="index.html">Home</a></li>
         <li><a href="archiveddata.html">Archived Data</a></li>
         <li><a href="aboutwqi.html">About Water Quality</a></li>
         <li><a href="aboutproject.html">About The Project</a></li>
-        <li><a href="#">Filter</a></li>
+        <li><a href="Filter.html">Filter</a></li>
       </ul>
- 
       <div class="navbar__right">
         <a href="login.html" class="navbar__login">Login</a>
-        <div class="navbar__lang">
-          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
-          <span>EN</span>
+        <div class="navbar__lang" id="langToggleBtn" title="Click to toggle display">
+          <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%; object-fit: cover;">
+          <span id="langText">EN</span>
         </div>
         <label for="navToggle" class="navbar__burger" aria-label="Open menu">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </label>
       </div>
- 
     </div>
   </header>
- 
+
   <main class="wrap">
- 
     <!-- ===================== MAP ===================== -->
     <section class="hero">
       <div class="map-panel" id="mapPanel">
         <div class="map-panel__zoom" id="mapZoom">
-          <img
-            class="map-panel__image"
-            src="ac2003.jpg"
-            alt="Assumption Map"
-          />
+          <img class="map-panel__image" src="ac2003.jpg" alt="Assumption Map" />
 
-          <!-- floor pins: position (left/top) is % of image size. WQI/color/label are computed -->
-          <!-- by the shared WQI CALCULATOR script from data-temp/ph/tds/turb — not hardcoded. -->
-          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality"
-            data-floor="8" data-temp="24.5" data-ph="7.2" data-tds="85" data-turb="0.3">
+          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality" data-floor="8" data-temp="24.5" data-ph="7.2" data-tds1="85" data-tds2="51" data-turb1="0.3" data-turb2="0.1" data-pressure="145" data-flow="12.0">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button> 
-          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality"
-            data-floor="7" data-temp="29.0" data-ph="8.8" data-tds="240" data-turb="6.5">
+          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality" data-floor="7" data-temp="29.0" data-ph="8.8" data-tds1="240" data-tds2="144" data-turb1="6.5" data-turb2="2.6" data-pressure="180" data-flow="9.5">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality"
-            data-floor="5" data-temp="28.0" data-ph="6.0" data-tds="200" data-turb="4.0">
+          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality" data-floor="5" data-temp="28.0" data-ph="6.0" data-tds1="200" data-tds2="120" data-turb1="4.0" data-turb2="1.6" data-pressure="130" data-flow="11.2">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality"
-            data-floor="4" data-temp="25.0" data-ph="7.5" data-tds="120" data-turb="0.8">
+          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality" data-floor="4" data-temp="25.0" data-ph="7.5" data-tds1="120" data-tds2="72" data-turb1="0.8" data-turb2="0.3" data-pressure="155" data-flow="10.8">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality"
-            data-floor="3" data-temp="23.5" data-ph="7.0" data-tds="95" data-turb="0.4">
+          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality" data-floor="3" data-temp="23.5" data-ph="7.0" data-tds1="95" data-tds2="57" data-turb1="0.4" data-turb2="0.2" data-pressure="160" data-flow="14.1">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <!-- Floor 2 has a real sensor attached — no demo data attributes here on purpose. -->
-          <!-- Its numbers only ever come from the live Socket.io feed, never a fallback.     -->
-          <button type="button" class="floor-pin floor-pin--active" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality"
-            data-floor="2" data-live="true">
+          <button type="button" class="floor-pin floor-pin--active" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality" data-floor="2" data-temp="25.5" data-ph="7.4" data-tds1="110" data-tds2="66" data-turb1="0.5" data-turb2="0.2" data-pressure="150" data-flow="13.5" data-live="true">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
         </div>
@@ -266,48 +287,45 @@ img { max-width: 100%; display: block; }
         <div class="map-panel__readout-group" id="mapReadoutGroup">
           <div class="map-panel__readout">
             <button type="button" class="readout-close" id="readoutClose" aria-label="Close water quality panel">&times;</button>
-            <span style="font-family: var(--font-mono); font-weight: 900;">Floor <span id="readoutFloor">2</span> : </span>
-            <span id="readoutQuality" style="font-family: var(--font-mono); font-weight: 900; color: var(--ink-soft);"> --</span><br><br>
+            <span style="font-family: var(--font-mono); font-weight: 900; font-size: 13px;">Floor <span id="readoutFloor">2</span> : </span>
+            <span id="readoutQuality" style="font-family: var(--font-mono); font-weight: 900; font-size: 13px; color: var(--ink-soft);"> --</span>
             <p class="map-panel__average">WQI: <span id="readoutWqi">--</span></p>
 
             <input type="checkbox" id="metricsToggle" class="metrics-toggle">
             <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
-
+        
             <div class="map-panel__metrics">
-              <span>Temp: <b id="readoutTemp">--</b> °C</span>
-              <span>pH: <b id="readoutPh">--</b></span>
-              <span>TDS: <b id="readoutTds">--</b> ppm</span>
-              <span>Turbidity: <b id="readoutTurb">--</b> NTU</span>
-            </div>
-            <span id="liveStatusBadge" class="live-status-badge live-status-badge--connecting">⚪ Connecting to live feed…</span>
-          </div>
+                <span>Temp: <b id="readoutTemp">--</b> °C</span>
+                <span>pH: <b id="readoutPh">--</b></span>
+                <span>TDS: <b id="readoutTds">--</b> ppm</span>
+                <span>Turbidity: <b id="readoutTurb">--</b> NTU</span>
 
-          <!-- WQI droplet mascot: swap src for other quality states later (e.g. dirty.png). Number updates per pin clicked. -->
-          <div class="wqi-droplet">
-            <img src="glassclean.png" alt="Water quality mascot" id="dropletImg">
-            <span class="wqi-droplet__value" id="dropletValue">--</span>
+              <div class="wqi-droplet">
+                <img src="glassclean.png" alt="Water quality mascot" id="dropletImg">
+                <span class="wqi-droplet__value" id="dropletValue">--</span>
+                </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Water quality scale (HTML/CSS version of scale1.png) -->
-    <div class="wq-scale" role="img" aria-label="Water quality scale: very clean, clean, normal, dirty, very dirty">
-      <div class="wq-scale__seg wq-scale__seg--very-clean"><span>very clean</span></div>
-      <div class="wq-scale__seg wq-scale__seg--clean"><span>clean</span></div>
-      <div class="wq-scale__seg wq-scale__seg--normal"><span>normal</span></div>
-      <div class="wq-scale__seg wq-scale__seg--dirty"><span>dirty</span></div>
-      <div class="wq-scale__seg wq-scale__seg--very-dirty"><span>very dirty</span></div>
-    </div>
+  <div class="scale">
+    <div class="scale__seg"><span>very clean</span><i style="background:#62d6ff;border-radius:999px 0 0 999px"></i></div>
+    <div class="scale__seg"><span>clean</span><i style="background:#9be37c"></i></div>
+    <div class="scale__seg"><span>normal</span><i style="background:#ffdb58"></i></div>
+    <div class="scale__seg"><span>dirty</span><i style="background:#ff3b3b"></i></div>
+    <div class="scale__seg"><span>very dirty</span><i style="background:#6a1fa8;border-radius:0 999px 999px 0"></i></div>
+  </div>
 
     <!-- ===================== SYSTEM SELECTOR ===================== -->
     <section class="system-select">
       <span class="system-select__label">Your System &rsaquo;</span>
-      <a class="system-chip system-chip--login" type="button" href="login.html">Log in to add your system</a>
+      <a class="system-chip system-chip--login" href="login.html">Log in to add your system</a>
       <button class="system-chip system-chip--active" type="button">System 1</button>
       <button class="system-chip system-chip--add" type="button">+ Add your system</button>
     </section>
- 
+
     <!-- ===================== DETAIL PANEL ===================== -->
     <section class="detail-panel">
       <p class="detail-panel__average" style="color: #7bb562;">Quality: Clean </p>
@@ -319,14 +337,11 @@ img { max-width: 100%; display: block; }
         <span>Turbidity: <b>--</b> NTU</span>
       </div>
     </section>
-    
-    
   </main>
- 
+
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
     <div class="footer__inner">
- 
       <div class="footer__logos">
         <div class="footer__logo"><img src="Thailand.png"></div>
         <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
@@ -336,7 +351,6 @@ img { max-width: 100%; display: block; }
         <div class="footer__logo"><img src="achelouslogo.png" alt="logo" /></div>
         <div class="footer__logo"><img src="siiflogo.png"></div>
       </div>
- 
       <div class="footer__members">
         <h3>Project Members</h3>
         <ul>
@@ -348,12 +362,10 @@ img { max-width: 100%; display: block; }
           <li>Mr.Thatkrit Amatyakul</li>
         </ul>
       </div>
- 
     </div>
   </footer>
- 
-  <!-- ===================== MAP ZOOM/PAN SCRIPT ===================== -->
-  <!-- Self-contained: only controls #mapPanel / #mapZoom. Nothing else on the page is affected. -->
+
+  <!-- ===================== SCRIPTS ===================== -->
   <script>
   (function () {
     var viewport = document.getElementById('mapPanel');
@@ -398,7 +410,7 @@ img { max-width: 100%; display: block; }
     }
 
     zoomEl.addEventListener('pointerdown', function (e) {
-      if (e.target.closest('.floor-pin')) return; // let pin buttons handle their own click, unaffected by pan/zoom
+      if (e.target.closest('.floor-pin')) return;
       zoomEl.setPointerCapture(e.pointerId);
       pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (pointers.size === 1) {
@@ -440,13 +452,11 @@ img { max-width: 100%; display: block; }
     zoomEl.addEventListener('pointercancel', endPointer);
     zoomEl.addEventListener('pointerleave', endPointer);
 
-    // desktop mouse-wheel zoom
     viewport.addEventListener('wheel', function (e) {
       e.preventDefault();
       zoomAround(e.clientX, e.clientY, scale * (1 - e.deltaY * 0.0015));
     }, { passive: false });
 
-    // double-click / double-tap toggles zoom in/out
     viewport.addEventListener('dblclick', function (e) {
       if (scale > 1) {
         resetZoom();
@@ -457,10 +467,30 @@ img { max-width: 100%; display: block; }
   })();
   </script>
 
-  <!-- ===================== WQI CALCULATOR (shared by pins + live sensor) ===================== -->
-  <!-- Sub-index weighted average: pH 30%, Turbidity 30%, TDS 25%, Temp 15%.          -->
-  <!-- Ranges taken from the Water Assessment Criteria table (aboutwqi.html).         -->
-  <!-- Scale direction: HIGHER wqi = CLEANER (85-100 Very Clean ... 0-24 Very Dirty). -->
+  <script>
+  (function () {
+    var langBtn = document.getElementById('langToggleBtn');
+    var flagImg = document.getElementById('langFlagImg');
+    var langText = document.getElementById('langText');
+    if (!langBtn || !flagImg || !langText) return;
+
+    var isEnglish = true;
+    var ukFlag = 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg';
+    var thaiFlag = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg';
+
+    langBtn.addEventListener('click', function () {
+      isEnglish = !isEnglish;
+      if (isEnglish) {
+        flagImg.src = ukFlag;
+        langText.textContent = 'EN';
+      } else {
+        flagImg.src = thaiFlag;
+        langText.textContent = 'TH';
+      }
+    });
+  })();
+  </script>
+
   <script>
   window.ACHELOUS_computeWQI = (function () {
     function lerp(x, points) {
@@ -501,19 +531,26 @@ img { max-width: 100%; display: block; }
       return { label: 'Very Dirty', color: '#6b1fad', glass: 'glassverydirty.png' };
     }
 
-    return function (temp, ph, tds, turb) {
-      temp = parseFloat(temp); ph = parseFloat(ph); tds = parseFloat(tds); turb = parseFloat(turb);
+    // Condition 1 & 2: use the "before cleaning" value if its score >= 70,
+    // otherwise use the "after cleaning" value.
+    // (If the "after" value is missing, fall back to the "before" value.)
+    return function (temp, ph, tds1, tds2, turb1, turb2) {
+      temp = parseFloat(temp); ph = parseFloat(ph);
+      tds1 = parseFloat(tds1);   tds2 = parseFloat(tds2);
+      turb1 = parseFloat(turb1); turb2 = parseFloat(turb2);
+
+      var tds  = (tdsScore(tds1)   >= 70 || isNaN(tds2))  ? tds1  : tds2;
+      var turb = (turbScore(turb1) >= 70 || isNaN(turb2)) ? turb1 : turb2;
+
       var score = 0.15 * tempScore(temp) + 0.30 * phScore(ph) + 0.25 * tdsScore(tds) + 0.30 * turbScore(turb);
       score = Math.max(0, Math.min(100, score));
       var wqi = Math.round(score);
       var q = qualityFromWqi(wqi);
-      return { wqi: wqi, label: q.label, color: q.color, glass: q.glass };
+      return { wqi: wqi, label: q.label, color: q.color, glass: q.glass, tds: tds, turb: turb };
     };
   })();
   </script>
 
-  <!-- ===================== FLOOR PIN READOUT SCRIPT ===================== -->
-  <!-- Self-contained: only controls the pins + water-quality readout panel. Nothing else is affected. -->
   <script>
   (function () {
     var pins = document.querySelectorAll('.floor-pin');
@@ -531,31 +568,36 @@ img { max-width: 100%; display: block; }
     if (!pins.length || !readoutGroup) return;
 
     function hasDemoData(pin) {
-      return pin.hasAttribute('data-temp'); // live pins (e.g. Floor 2) have none until real data arrives
+      return pin.hasAttribute('data-temp');
+    }
+
+    function fmt(v) {
+      return (v === null || v === undefined || isNaN(v)) ? '--' : v;
     }
 
     function readPinWQI(pin) {
-      if (!hasDemoData(pin)) return null; // no data yet — caller shows "--"
+      if (!hasDemoData(pin)) return null;
       return window.ACHELOUS_computeWQI(
         pin.getAttribute('data-temp'),
         pin.getAttribute('data-ph'),
-        pin.getAttribute('data-tds'),
-        pin.getAttribute('data-turb')
+        pin.getAttribute('data-tds1'),
+        pin.getAttribute('data-tds2'),
+        pin.getAttribute('data-turb1'),
+        pin.getAttribute('data-turb2')
       );
     }
 
-    // paint every pin's number + color on load, so the map reflects real computed values
-    // (live pins with no data yet just keep their "--" / default color)
-    pins.forEach(function (pin) {
+    function paintPin(pin) {
       var q = readPinWQI(pin);
       if (!q) return;
       pin.querySelector('.floor-pin__label').textContent = q.wqi;
       pin.querySelector('.floor-pin__body').style.background = q.color;
-    });
+    }
+
+    pins.forEach(paintPin);
 
     function showPin(pin) {
       var q = readPinWQI(pin);
-
       elFloor.textContent = pin.getAttribute('data-floor');
       if (q) {
         elQuality.textContent = ' ' + q.label;
@@ -563,12 +605,11 @@ img { max-width: 100%; display: block; }
         elWqi.textContent = q.wqi;
         elTemp.textContent = pin.getAttribute('data-temp');
         elPh.textContent = pin.getAttribute('data-ph');
-        elTds.textContent = pin.getAttribute('data-tds');
-        elTurb.textContent = pin.getAttribute('data-turb');
+        elTds.textContent = fmt(q.tds);     // tds1 or tds2 (chosen by the condition)
+        elTurb.textContent = fmt(q.turb);   // turbidity1 or turbidity2 (chosen by the condition)
         if (elDroplet) elDroplet.textContent = q.wqi;
         if (elDropletImg) elDropletImg.src = q.glass;
       } else {
-        // live pin with no reading yet — show honest placeholders, not demo numbers
         elQuality.textContent = ' --';
         elQuality.style.color = 'var(--ink-soft)';
         elWqi.textContent = '--';
@@ -581,7 +622,6 @@ img { max-width: 100%; display: block; }
 
       pins.forEach(function (p) { p.classList.remove('floor-pin--active'); });
       pin.classList.add('floor-pin--active');
-
       readoutGroup.classList.remove('is-hidden');
     }
 
@@ -594,73 +634,63 @@ img { max-width: 100%; display: block; }
         readoutGroup.classList.add('is-hidden');
       });
     }
-  })();
-  </script>
 
-  <!-- ===================== LIVE SENSOR (SOCKET.IO) SCRIPT ===================== -->
-  <!-- Self-contained: Floor 2 only. Connects to the Render backend automatically (no -->
-  <!-- button needed) and recomputes WQI/quality/droplet live using the same shared   -->
-  <!-- ACHELOUS_computeWQI() formula the pins use, so both stay on one standard.      -->
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script>
-  (function () {
-    var BACKEND_URL = 'https://achelous-1.onrender.com';
-
-    var badge = document.getElementById('liveStatusBadge');
-    var elFloor = document.getElementById('readoutFloor');
-    var elQuality = document.getElementById('readoutQuality');
-    var elWqi = document.getElementById('readoutWqi');
-    var elTemp = document.getElementById('readoutTemp');
-    var elPh = document.getElementById('readoutPh');
-    var elTds = document.getElementById('readoutTds');
-    var elTurb = document.getElementById('readoutTurb');
-    var elDroplet = document.getElementById('dropletValue');
-    var elDropletImg = document.getElementById('dropletImg');
-    var floor2Pin = document.querySelector('.floor-pin[data-floor="2"]');
-    if (!badge || typeof io === 'undefined') return;
-
-    function setBadge(state, text) {
-      badge.className = 'live-status-badge live-status-badge--' + state;
-      badge.textContent = text;
-    }
-
-    var socket = io(BACKEND_URL, { transports: ['websocket', 'polling'] });
-
-    socket.on('connect', function () {
-      setBadge('live', '🟢 Live');
-      if (floor2Pin && !floor2Pin.classList.contains('floor-pin--active')) floor2Pin.click();
-    });
-
-    socket.on('disconnect', function () {
-      setBadge('offline', '🔴 Offline — reconnecting…');
-    });
-
-    socket.on('connect_error', function () {
-      setBadge('offline', '🔴 Connection failed');
-    });
-
-    socket.on('sensor-data', function (data) {
-      if (!data) return;
-      var q = window.ACHELOUS_computeWQI(data.temp, data.ph, data.tds, data.turb);
-
-      if (elFloor) elFloor.textContent = '2';
-      if (elQuality) { elQuality.textContent = ' ' + q.label; elQuality.style.color = q.color; }
-      if (elWqi) elWqi.textContent = q.wqi;
-      if (elTemp && 'temp' in data) elTemp.textContent = data.temp;
-      if (elPh && 'ph' in data) elPh.textContent = data.ph;
-      if (elTds && 'tds' in data) elTds.textContent = data.tds;
-      if (elTurb && 'turb' in data) elTurb.textContent = data.turb;
-      if (elDroplet) elDroplet.textContent = q.wqi;
-      if (elDropletImg) elDropletImg.src = q.glass;
-
-      // keep floor-2 pin's own number/color in sync with the live reading too
-      if (floor2Pin) {
-        floor2Pin.querySelector('.floor-pin__label').textContent = q.wqi;
-        floor2Pin.querySelector('.floor-pin__body').style.background = q.color;
+    // Called by the socket code below whenever the backend sends a new reading.
+    // Updates the live pin (data-live="true"); refreshes the readout only if
+    // that pin is the one currently shown and the panel is open.
+    window.ACHELOUS_updateLivePin = function (r) {
+      var pin = document.querySelector('.floor-pin[data-live="true"]');
+      if (!pin || !r) return;
+      var map = {
+        'data-temp': r.temperature,
+        'data-ph': r.ph,
+        'data-tds1': r.tds1,
+        'data-tds2': r.tds2,
+        'data-turb1': r.turbidity1,
+        'data-turb2': r.turbidity2
+      };
+      Object.keys(map).forEach(function (k) {
+        if (map[k] === null || map[k] === undefined) pin.removeAttribute(k);
+        else pin.setAttribute(k, map[k]);
+      });
+      paintPin(pin);
+      if (pin.classList.contains('floor-pin--active') &&
+          !readoutGroup.classList.contains('is-hidden')) {
+        showPin(pin);
       }
-    });
+    };
   })();
   </script>
 
+  
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+(function () {
+  var BACKEND_URL = 'http://localhost:4000';
+
+  if (typeof io === 'undefined') {
+    console.error('Socket.IO client failed to load');
+    return;
+  }
+
+  var socket = io(BACKEND_URL);
+
+  socket.on('connect', function () {
+    console.log('Connected to ACHELOUS backend:', socket.id);
+  });
+
+  socket.on('connect_error', function (error) {
+    console.error('Backend connection failed:', error.message);
+  });
+
+  socket.on('sensor-update', function (reading) {
+    console.log('Received live sensor data:', reading);
+
+    if (window.ACHELOUS_updateLivePin) {
+      window.ACHELOUS_updateLivePin(reading);
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -3,42 +3,193 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <WiFi.h>
+#include <WiFiServer.h>
+#include <WebServer.h>
 #include <WiFiClientSecure.h>
 #include <math.h>
 
-// =================================================
-// WIFI AND BACKEND
-// =================================================
-const char* WIFI_SSID = "SPACE AC";
-const char* WIFI_PASSWORD = "0632317613";
-const char* SERVER_URL = "https://achelous-1.onrender.com/api/sensor";
+//Host WiFi
+const char* WIFI_SSID = "f16";
+const char* WIFI_PASSWORD = "tawan123";
+const char* SERVER_URL ="http://192.168.26.212:4000/api/sensor";//ใช้ตาม IPv4 ของแต่ละเครื่อง
+// ดู ip จาก cmd --> ipconfig
 
-// =================================================
-// ESP32-S3 PIN CONFIGURATION
-// =================================================
+// Must be identical to the DEVICE_API_KEY environment variable on the Render server.
+const char* DEVICE_API_KEY = "PUT-YOUR-DEVICE-KEY-HERE";
+
+//ESP-32 hotspot WiFi
+const char* ssid = "Motor-ESP32";
+const char* password = "motor1234";
+
+WebServer server(80);
+
+//SET PIN
+#define FLOW_PIN        0
 #define TEMP_PIN        4
-#define PH_PIN          8
-#define TDS1_PIN        17
-#define TDS2_PIN        18
 #define TURBIDITY1_PIN  5
 #define TURBIDITY2_PIN  6
+#define PRESSURE1_PIN   7
+#define PH_PIN          8
+#define RELAY1_PIN      9
+#define RELAY2_PIN      10
+#define RELAY3_PIN      11
+#define PRESSURE2_PIN   15
+#define TDS1_PIN        17
+#define TDS2_PIN        18
 
-// IMPORTANT:
-// ESP32 ADC pins must not receive more than 3.3 V.
-// Use an appropriate voltage divider when a sensor output can exceed 3.3 V.
-// For the turbidity formula below, Code 2 assumes a 10k/20k divider.
+#define RELAY_VALVE1 RELAY1_PIN
+#define RELAY_VALVE2 RELAY2_PIN
+#define RELAY_VALVE3 RELAY3_PIN
+
+// ================= MOTOR DRIVER =================
+const int STBY = 1;
+const int PWMA = 2;
+const int AIN1 = 41;
+const int AIN2 = 40;
+
+
+int motorSpeed = 0;
+int motorDirection = 1;
+
+void updateMotor() {
+  digitalWrite(AIN1, motorDirection == 1 ? HIGH : LOW);
+  digitalWrite(AIN2, motorDirection == 1 ? LOW : HIGH);
+  ledcWrite(PWMA, motorSpeed);
+}
+
+// ================= AUTOMATIC PUMP CONTROL =================
+
+bool automaticMode = true;
+void controlPumpByWQI(float overallWQI)
+{
+  if (!automaticMode) return;
+
+  if (!isfinite(overallWQI))
+  {
+    motorSpeed = 0;
+    ledcWrite(PWMA, 0);
+    Serial.println("Invalid WQI - Pump STOPPED");
+    return;
+  }
+
+  if (overallWQI >= 70)
+  {
+    motorSpeed = 80;
+  }
+  else if (overallWQI >= 50)
+  {
+    motorSpeed = 150;
+  }
+  else if (overallWQI >= 25)
+  {
+    motorSpeed = 200;
+  }
+  else
+  {
+    motorSpeed = 0;
+  }
+
+  updateMotor();
+
+  Serial.printf(
+    "AUTO PUMP | Overall WQI: %.1f | Motor PWM: %d/255\n",
+    overallWQI,
+    motorSpeed
+  );
+}
+
+const char page[] PROGMEM = R"HTML(
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motor Control</title>
+<style>
+body { font-family:Arial;text-align:center;padding:25px;background:#eef2ff; }
+main { max-width:400px;margin:auto;background:white;padding:22px;border-radius:16px; }
+input { width:100%; }
+button { padding:14px;margin:5px;border:0;border-radius:8px;color:white;font-size:16px; }
+</style>
+</head>
+<body>
+<main>
+<h2>ESP32 Motor Control</h2>
+<h3>Speed: <span id="v">0</span>/255</h3>
+<input id="s" type="range" min="0" max="255" value="0"
+ oninput="document.getElementById('v').textContent=this.value"
+ onchange="send('/speed?value='+this.value)">
+<p id="status">Stopped</p>
+<button style="background:green" onclick="send('/dir?d=f')">Forward</button>
+<button style="background:blue" onclick="send('/dir?d=r')">Reverse</button>
+<button style="background:red" onclick="stopMotor()">STOP</button>
+</main>
+<script>
+function send(url) {
+ fetch(url)
+ .then(r => r.text())
+ .then(t => document.getElementById('status').textContent=t)
+ .catch(() => document.getElementById('status').textContent='Connection error');
+}
+function stopMotor() {
+ document.getElementById('s').value=0;
+ document.getElementById('v').textContent=0;
+ send('/stop');
+}
+</script>
+</body>
+</html>
+)HTML";
+
 
 OneWire oneWire(TEMP_PIN);
 DallasTemperature tempSensor(&oneWire);
 
-const unsigned long SEND_INTERVAL_MS = 2000;
+// ================= TIMING =================
+const unsigned long SEND_INTERVAL_MS = 3000;
 unsigned long lastSend = 0;
 
-// =================================================
-// SENSOR CALIBRATION SETTINGS FROM CODE 2
-// =================================================
+// ================= FLOW SENSOR: YF-S201 =================
+const float FLOW_CALIBRATION = 7.5f;
+const float FLOW_PULSES_PER_LITER = 450.0f;
+
+volatile uint32_t flowPulseCount = 0;
+uint32_t totalFlowPulses = 0;
+unsigned long lastFlowMeasure = 0;
+
+float flowRateLMin = 0.0f;
+float totalVolumeLiters = 0.0f;
+float flowFrequencyHz = 0.0f;
+
+void ARDUINO_ISR_ATTR flowPulseISR()
+{
+  flowPulseCount++;
+}
+
+void updateFlowSensor()
+{
+  unsigned long now = millis();
+
+  if (now - lastFlowMeasure < 1000) return;
+
+  unsigned long elapsed = now - lastFlowMeasure;
+  lastFlowMeasure = now;
+
+  noInterrupts();
+  uint32_t pulses = flowPulseCount;
+  flowPulseCount = 0;
+  interrupts();
+
+  totalFlowPulses += pulses;
+  flowFrequencyHz = pulses * 1000.0f / elapsed;
+  flowRateLMin = flowFrequencyHz / FLOW_CALIBRATION;
+  totalVolumeLiters = totalFlowPulses / FLOW_PULSES_PER_LITER;
+}
+
+// ================= SENSOR CALIBRATION =================
 const int NUM_SAMPLES = 30;
-const int TURB_NUM_SAMPLES = 50;
+
+const int RELAY_ON = LOW;
+const int RELAY_OFF = HIGH;
 
 const float TDS_FACTOR_1 = 1.00f;
 const float TDS_FACTOR_2 = 1.00f;
@@ -48,9 +199,16 @@ const float TURB_CLEAR_VOLTAGE = 1.590f;
 const float TURB_MILK_VOLTAGE = 0.0555f;
 const float TURB_MILK_REFERENCE_NTU = 1000.0f;
 
-// =================================================
-// READ AVERAGE ANALOG VOLTAGE
-// =================================================
+const float WQI_THRESHOLD = 69.0f;
+const float PH_MIN = 5.5f;
+const float PH_MAX = 9.5f;
+
+const float PRESSURE_DIVIDER_RATIO = 1.5f;
+const float PRESSURE_VOLTAGE_MIN = 0.5f;
+const float PRESSURE_VOLTAGE_MAX = 4.5f;
+const float PRESSURE_RANGE_KPA = 800.0f;
+
+// ================= SENSOR READ FUNCTIONS =================
 float readVoltage(int pin, int samples, int delayMs)
 {
   uint64_t totalMilliVolts = 0;
@@ -64,68 +222,102 @@ float readVoltage(int pin, int samples, int delayMs)
   return (totalMilliVolts / (float)samples) / 1000.0f;
 }
 
-// =================================================
-// CALCULATE TDS (ppm), WITH TEMPERATURE COMPENSATION
-// =================================================
+struct PressureReading
+{
+  float adcV;
+  float sensorV;
+  float kPa;
+  float MPa;
+  float bar;
+  float psi;
+};
+
+PressureReading readPressure(int pin)
+{
+  PressureReading r;
+
+  r.adcV = readVoltage(pin, 10, 2);
+  r.sensorV = r.adcV * PRESSURE_DIVIDER_RATIO;
+
+  if (!isfinite(r.sensorV) ||
+      r.sensorV < PRESSURE_VOLTAGE_MIN - 0.2f ||
+      r.sensorV > PRESSURE_VOLTAGE_MAX + 0.2f)
+  {
+    r.kPa = r.MPa = r.bar = r.psi = NAN;
+    return r;
+  }
+
+  float v = constrain(r.sensorV, PRESSURE_VOLTAGE_MIN, PRESSURE_VOLTAGE_MAX);
+
+  r.kPa = (v - PRESSURE_VOLTAGE_MIN) /
+          (PRESSURE_VOLTAGE_MAX - PRESSURE_VOLTAGE_MIN) *
+          PRESSURE_RANGE_KPA;
+
+  r.MPa = r.kPa / 1000.0f;
+  r.bar = r.kPa / 100.0f;
+  r.psi = r.kPa * 0.1450377f;
+
+  return r;
+}
+
+String jsonNum(float v, int decimals)
+{
+  return isfinite(v) ? String(v, decimals) : String("null");
+}
+
 float calculateTDS(float voltage, float temperature, float calibrationFactor)
 {
-  float compensationCoefficient =
-      1.0f + 0.02f * (temperature - 25.0f);
+  float coefficient = 1.0f + 0.02f * (temperature - 25.0f);
+  if (coefficient <= 0.0f) coefficient = 1.0f;
 
-  // Avoid division by zero if an invalid temperature is received.
-  if (compensationCoefficient <= 0.0f)
-    compensationCoefficient = 1.0f;
-
-  float compensatedVoltage = voltage / compensationCoefficient;
-
-  float tds =
-      (133.42f * compensatedVoltage * compensatedVoltage * compensatedVoltage
-       - 255.86f * compensatedVoltage * compensatedVoltage
-       + 857.39f * compensatedVoltage) * 0.5f;
-
+  float v = voltage / coefficient;
+  float tds = (133.42f * v * v * v - 255.86f * v * v + 857.39f * v) * 0.5f;
   tds *= calibrationFactor;
-
-  if (tds < 0.0f)
-    tds = 0.0f;
-
+  if (tds < 0.0f) tds = 0.0f;
   return tds;
 }
 
-// =================================================
-// CALCULATE TURBIDITY (experimental NTU estimate)
-// =================================================
-float readTurbidityNTU(int pin)
+float readTurbidity(int pin)
 {
-  float adcVoltage = readVoltage(pin, TURB_NUM_SAMPLES, 10);
-  float sensorVoltage = adcVoltage * TURB_DIVIDER_RATIO;
+    const int samples = 30;
+    uint64_t totalRaw = 0;
+    uint64_t totalMilliVolts = 0;
 
-  float ntu =
-      (TURB_CLEAR_VOLTAGE - sensorVoltage) /
-      (TURB_CLEAR_VOLTAGE - TURB_MILK_VOLTAGE) *
-      TURB_MILK_REFERENCE_NTU;
+    // Read ADC values and voltage
+    for (int i = 0; i < samples; i++)
+    {
+        totalRaw += analogRead(pin);
+        totalMilliVolts += analogReadMilliVolts(pin);
+        delay(5);
+    }
 
-  if (ntu < 0.0f)
-    ntu = 0.0f;
+    float raw = totalRaw / (float)samples;
+    float adcVoltage =(totalMilliVolts / (float)samples) / 1000.0f;
+    float sensorVoltage = adcVoltage * TURB_DIVIDER_RATIO;
+    float denominator =TURB_CLEAR_VOLTAGE - TURB_MILK_VOLTAGE;
+    float ntu = NAN;
 
-  return ntu;
+    if (denominator > 0)
+    {
+        ntu = ((TURB_CLEAR_VOLTAGE - sensorVoltage)
+               / denominator) * TURB_MILK_REFERENCE_NTU;
+
+        if (ntu < 0)
+            ntu = 0;
+    }
+    return ntu;
 }
 
-// =================================================
-// CALCULATE pH (must be calibrated for your probe)
-// =================================================
 float readPH()
 {
-  float adcVoltage = readVoltage(PH_PIN, 10, 5);
-  return 8.0f + ((2.5f - adcVoltage) / 0.18f);
+  float adcVoltage = readVoltage(PH_PIN, 10, 2);
+  float ph = 8.0f + ((2.5f - adcVoltage) / 0.18f);
+  return ph;
 }
 
-// =================================================
-// WQI SCORING
-// These bands and formulas are copied from Code 2.
-// Verify the ranges and calibration for your project.
-// =================================================
-const float W_PH   = 0.34f;
-const float W_TDS  = 0.33f;
+// ================= WQI SCORING =================
+const float W_PH = 0.34f;
+const float W_TDS = 0.33f;
 const float W_TURB = 0.33f;
 
 struct Band
@@ -137,59 +329,47 @@ struct Band
 };
 
 const Band TDS_BANDS[] = {
-  {0,   100, 85, 100},
+  {0, 100, 85, 100},
   {101, 150, 70, 84},
   {151, 300, 50, 69},
   {301, 500, 25, 49},
-  {500, 750, 0,  24}
+  {500, 750, 0, 24}
 };
 
 const Band TURB_BANDS[] = {
-  {0,   0.5,  85, 100},
+  {0, 0.5, 85, 100},
   {0.5, 0.99, 70, 84},
-  {1,   10,   50, 69},
-  {11,  20,   25, 49},
-  {20,  100,  0,  24}
+  {1, 10, 50, 69},
+  {11, 20, 25, 49},
+  {20, 100, 0, 24}
 };
 
 const Band PH_HIGH_BANDS[] = {
-  {7,    8.5,  70, 100},
-  {8.5,  9.5,  50, 69},
-  {9.5, 10.5,  25, 49},
-  {10.5, 14,    0,  24}
+  {7, 8.5, 70, 100},
+  {8.5, 9.5, 50, 69},
+  {9.5, 10.5, 25, 49},
+  {10.5, 14, 0, 24}
 };
 
 const Band PH_LOW_BANDS[] = {
-  {6.5, 7,   70, 100},
+  {6.5, 7, 70, 100},
   {5.5, 6.5, 50, 69},
   {4.0, 5.5, 25, 49},
-  {0,   4.0, 0,  24}
+  {0, 4.0, 0, 24}
 };
 
 float qDecreasing(float v, const Band &b)
 {
-  if (b.vmax == b.vmin)
-    return b.qmin;
-
-  float q = (b.vmin - v) / (b.vmax - b.vmin)
-            * (b.qmax - b.qmin) + b.qmax;
-
-  if (q > b.qmax) q = b.qmax;
-  if (q < b.qmin) q = b.qmin;
-  return q;
+  if (b.vmax == b.vmin) return b.qmin;
+  float q = (b.vmin - v) / (b.vmax - b.vmin) * (b.qmax - b.qmin) + b.qmax;
+  return constrain(q, b.qmin, b.qmax);
 }
 
 float qIncreasing(float v, const Band &b)
 {
-  if (b.vmax == b.vmin)
-    return b.qmin;
-
-  float q = (v - b.vmin) / (b.vmax - b.vmin)
-            * (b.qmax - b.qmin) + b.qmin;
-
-  if (q > b.qmax) q = b.qmax;
-  if (q < b.qmin) q = b.qmin;
-  return q;
+  if (b.vmax == b.vmin) return b.qmin;
+  float q = (v - b.vmin) / (b.vmax - b.vmin) * (b.qmax - b.qmin) + b.qmin;
+  return constrain(q, b.qmin, b.qmax);
 }
 
 float qFromBands(float v, const Band* bands, int n)
@@ -204,37 +384,31 @@ float qFromBands(float v, const Band* bands, int n)
 
 float qTDS(float tds)
 {
-  if (tds < 0) return 0;
+  if (!isfinite(tds) || tds < 0) return 0.0f;
   return qFromBands(tds, TDS_BANDS, 5);
 }
 
 float qTurbidity(float ntu)
 {
-  if (ntu < 0) return 0;
+  if (!isfinite(ntu) || ntu < 0) return 0.0f;
   return qFromBands(ntu, TURB_BANDS, 5);
 }
 
 float qPH(float ph)
 {
-  if (ph < 0 || ph > 14) return 0;
-
-  if (ph >= 7)
-    return qFromBands(ph, PH_HIGH_BANDS, 4);
-
+  if (!isfinite(ph) || ph < 0 || ph > 14) return 7.0f; 
+  if (ph >= 7) return qFromBands(ph, PH_HIGH_BANDS, 4);
   for (int i = 0; i < 4; i++)
   {
     if (ph >= PH_LOW_BANDS[i].vmin)
       return qIncreasing(ph, PH_LOW_BANDS[i]);
   }
-
-  return 0;
+  return 0.0f;
 }
 
 float calculateWQI(float ph, float tds, float ntu)
 {
-  return W_PH * qPH(ph)
-       + W_TDS * qTDS(tds)
-       + W_TURB * qTurbidity(ntu);
+  return W_PH * qPH(ph) + W_TDS * qTDS(tds) + W_TURB * qTurbidity(ntu);
 }
 
 const char* wqiLevel(float wqi)
@@ -246,18 +420,75 @@ const char* wqiLevel(float wqi)
   return "Very Dirty";
 }
 
-// =================================================
-// WIFI
-// =================================================
+// ================= RELAY CONTROL =================
+void setValve(int pin, bool open)
+{
+  digitalWrite(pin, open ? RELAY_ON : RELAY_OFF);
+}
+
+void closeAllValves()
+{
+  setValve(RELAY_VALVE1, false);
+  setValve(RELAY_VALVE2, false);
+  setValve(RELAY_VALVE3, false);
+  
+}
+
+void controlValves(float pHwater, float wqiBefore, float wqiAfter)
+{
+  bool phUnsafe = !isfinite(pHwater) || pHwater < PH_MIN || pHwater > PH_MAX;
+
+  if (phUnsafe)
+  {
+    closeAllValves();
+
+    Serial.println("WARNING: UNSAFE pH!");
+    Serial.printf("pH = %.2f\n", pHwater);
+    Serial.println("All valves CLOSED. Pump STOPPED.");
+
+    return;
+  }
+  if (!isfinite(wqiBefore))
+  {
+    setValve(RELAY_VALVE1, false);
+    setValve(RELAY_VALVE2, false);
+  }
+  else if (wqiBefore > WQI_THRESHOLD)
+  {
+    setValve(RELAY_VALVE1, false);
+    setValve(RELAY_VALVE2, true);
+  }
+  else
+  {
+    setValve(RELAY_VALVE1, true);
+    setValve(RELAY_VALVE2, false);
+  }
+
+  if (!isfinite(wqiAfter) || wqiAfter <= WQI_THRESHOLD)
+  {
+    setValve(RELAY_VALVE3, false);
+  }
+  else
+  {
+    setValve(RELAY_VALVE3, true);
+
+    Serial.printf("pH: %.2f | Unsafe: %s\n",
+                pHwater,
+                phUnsafe ? "YES" : "NO");
+  }
+
+}
+
+// ================= WIFI =================
 void connectWiFi()
 {
-  if (WiFi.status() == WL_CONNECTED)
-    return;
+  if (WiFi.status() == WL_CONNECTED) return;
 
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_AP_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   Serial.print("Connecting to WiFi");
+  unsigned long startAttempt = millis();
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
@@ -265,87 +496,184 @@ void connectWiFi()
   }
 
   Serial.println();
-  Serial.print("Connected. ESP32 IP: ");
-  Serial.println(WiFi.localIP());
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println("Host WiFi Connected!");
+    Serial.print("STA IP: ");
+    Serial.println(WiFi.localIP());
+  }
+  else
+  {
+    Serial.println("Host WiFi connection failed.");
+    Serial.println("ESP32 hotspot is still available.");
+  }
 }
 
-// =================================================
-// SETUP
-// =================================================
+// ================= SETUP =================
 void setup()
 {
   Serial.begin(115200);
   delay(1000);
 
-  analogReadResolution(12);
+  pinMode(STBY, OUTPUT);
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
 
+  digitalWrite(STBY, LOW);
+
+  if (!ledcAttach(PWMA, 1000, 8)) {
+    Serial.println("PWM initialization failed");
+    while (true) delay(1000);
+}
+
+  ledcWrite(PWMA, 0);
+  digitalWrite(STBY, HIGH);
+
+  WiFi.mode(WIFI_AP_STA);
+
+  bool apStarted = WiFi.softAP(ssid, password);
+
+  if (apStarted)
+  {
+    Serial.println("ESP32 Hotspot Started!");
+    Serial.print("SSID: ");
+    Serial.println(ssid);
+
+    Serial.print("Password: ");
+    Serial.println(password);
+
+    Serial.print("Motor Control Page: http://");
+    Serial.println(WiFi.softAPIP());
+  }
+  else
+  {
+    Serial.println("ESP32 Hotspot Failed!");
+  }
+
+  server.on("/", []() {
+    server.send(200, "text/html", page);
+  });
+
+  server.on("/speed", []() {
+    if (server.hasArg("value")) {
+      motorSpeed = constrain(server.arg("value").toInt(), 0, 255);
+      updateMotor();
+      Serial.printf("Speed: %d\n", motorSpeed);
+    }
+    server.send(200, "text/plain", "Speed updated");
+  });
+
+  server.on("/dir", []() {
+    motorSpeed = 0;
+    ledcWrite(PWMA, 0);
+    delay(100);
+
+    motorDirection = server.arg("d") == "r" ? -1 : 1;
+    updateMotor();
+
+    Serial.println(motorDirection == 1 ? "Forward" : "Reverse");
+    server.send(200, "text/plain", "Direction updated");
+  });
+
+    server.on("/stop", []() {
+    motorSpeed = 0;
+    ledcWrite(PWMA, 0);
+    Serial.println("Motor stopped");
+    server.send(200, "text/plain", "Stopped");
+  });
+
+  server.begin();
+  Serial.println("Server ready");
+
+  pinMode(RELAY_VALVE1, OUTPUT);
+  pinMode(RELAY_VALVE2, OUTPUT);
+  pinMode(RELAY_VALVE3, OUTPUT);
+  closeAllValves();
+
+  pinMode(FLOW_PIN, INPUT);
+  attachInterrupt(digitalPinToInterrupt(FLOW_PIN), flowPulseISR, FALLING);
+  lastFlowMeasure = millis();
+
+  analogReadResolution(12);
   analogSetPinAttenuation(PH_PIN, ADC_11db);
   analogSetPinAttenuation(TDS1_PIN, ADC_11db);
   analogSetPinAttenuation(TDS2_PIN, ADC_11db);
   analogSetPinAttenuation(TURBIDITY1_PIN, ADC_11db);
   analogSetPinAttenuation(TURBIDITY2_PIN, ADC_11db);
+  analogSetPinAttenuation(PRESSURE1_PIN, ADC_11db);
+  analogSetPinAttenuation(PRESSURE2_PIN, ADC_11db);
+
+  pinMode(TURBIDITY1_PIN, INPUT);
+  pinMode(TURBIDITY2_PIN, INPUT);
+
+  pinMode(PRESSURE1_PIN, INPUT);
+  pinMode(PRESSURE2_PIN, INPUT);
 
   tempSensor.begin();
   connectWiFi();
 
-  Serial.println();
-  Serial.println("====================================");
-  Serial.println(" ESP32-S3 WATER QUALITY MONITOR");
-  Serial.println(" 2 TDS + 2 TURBIDITY + pH + TEMP");
-  Serial.println(" Sending data to Render backend");
-  Serial.println("====================================");
+  Serial.println("ESP32-S3 Water Quality System Initialized.");
 }
 
-// =================================================
-// MAIN LOOP
-// =================================================
+// ================= MAIN LOOP =================
 void loop()
 {
+
+  server.handleClient();
+
+  updateFlowSensor();
+
   if (WiFi.status() != WL_CONNECTED)
-    connectWiFi();
-
-  unsigned long now = millis();
-  if (now - lastSend < SEND_INTERVAL_MS)
-    return;
-
-  lastSend = now;
-
-  // 1. Temperature
-  tempSensor.requestTemperatures();
-  float temperature = tempSensor.getTempCByIndex(0);
-
-  if (temperature == DEVICE_DISCONNECTED_C || isnan(temperature))
   {
-    Serial.println("ERROR: DS18B20 disconnected. Check sensor and 4.7k pull-up.");
-    return;
+    connectWiFi();
   }
 
-  // 2. pH
-  float pHwater = readPH();
+  unsigned long now = millis();
+  if (now - lastSend < SEND_INTERVAL_MS) return;
+  lastSend = now;
 
-  // 3. TDS sensor 1
-  float voltageTDS1 = readVoltage(TDS1_PIN, NUM_SAMPLES, 5);
+  // ----- TEMPERATURE -----
+  tempSensor.requestTemperatures();
+  float temperature = tempSensor.getTempCByIndex(0);
+  if (temperature == DEVICE_DISCONNECTED_C || !isfinite(temperature))
+  {
+    temperature = 25.0f;
+  }
+
+  // ----- pH -----
+  float pHwater = readPH();
+  if (!isfinite(pHwater) || pHwater < 0 || pHwater > 14)
+  {
+    pHwater = 7.0f; 
+  }
+
+  // ----- TDS -----
+  float voltageTDS1 = readVoltage(TDS1_PIN, NUM_SAMPLES, 2);
   float tds1 = calculateTDS(voltageTDS1, temperature, TDS_FACTOR_1);
 
-  // 4. TDS sensor 2
-  float voltageTDS2 = readVoltage(TDS2_PIN, NUM_SAMPLES, 5);
+  float voltageTDS2 = readVoltage(TDS2_PIN, NUM_SAMPLES, 2);
   float tds2 = calculateTDS(voltageTDS2, temperature, TDS_FACTOR_2);
 
-  // 5. Turbidity sensor 1 and 2
-  float ntu1 = readTurbidityNTU(TURBIDITY1_PIN);
-  float ntu2 = readTurbidityNTU(TURBIDITY2_PIN);
+  // ----- TURBIDITY -----
+  float ntu1 = readTurbidity(TURBIDITY1_PIN);
+  float ntu2 = readTurbidity(TURBIDITY2_PIN);
 
-  // 6. WQI values
+  // ----- WQI -----
   float wqi1 = calculateWQI(pHwater, tds1, ntu1);
   float wqi2 = calculateWQI(pHwater, tds2, ntu2);
-
   float averageTDS = (tds1 + tds2) / 2.0f;
   float averageNTU = (ntu1 + ntu2) / 2.0f;
   float overallWQI = calculateWQI(pHwater, averageTDS, averageNTU);
+  controlPumpByWQI(overallWQI);
 
-  // 7. Send JSON to Render.
-  // Property names are aligned with Code 2:
-  // temperature, ph, tds1, tds2, turbidity1, turbidity2, wqi
+  // ----- VALVES & PUMP -----
+  controlValves(pHwater, wqi1, wqi2);
+
+  // ----- PRESSURE -----
+  PressureReading p1 = readPressure(PRESSURE1_PIN);
+  PressureReading p2 = readPressure(PRESSURE2_PIN);
+
+  // ----- JSON UPLOAD -----
   String json = "{";
   json += "\"temperature\":" + String(temperature, 2) + ",";
   json += "\"ph\":" + String(pHwater, 2) + ",";
@@ -353,51 +681,86 @@ void loop()
   json += "\"tds2\":" + String(tds2, 2) + ",";
   json += "\"turbidity1\":" + String(ntu1, 2) + ",";
   json += "\"turbidity2\":" + String(ntu2, 2) + ",";
-  json += "\"wqi\":" + String(overallWQI, 1);
+  json += "\"wqi\":" + String(overallWQI, 1) + ",";
+  json += "\"wqi1\":" + String(wqi1, 1) + ",";
+  json += "\"wqi2\":" + String(wqi2, 1) + ",";
+  json += "\"flowRate\":" + String(flowRateLMin, 2) + ",";
+  json += "\"totalVolume\":" + String(totalVolumeLiters, 3) + ",";
+  json += "\"flowFrequency\":" + String(flowFrequencyHz, 2) + ",";
+  json += "\"pressureKPa\":" + jsonNum(p1.kPa, 2) + ",";
+  json += "\"pressureMPa\":" + jsonNum(p1.MPa, 4) + ",";
+  json += "\"pressureBar\":" + jsonNum(p1.bar, 3) + ",";
+  json += "\"pressurePsi\":" + jsonNum(p1.psi, 2) + ",";
+  json += "\"pressure2KPa\":" + jsonNum(p2.kPa, 2) + ",";
+  json += "\"pressure2MPa\":" + jsonNum(p2.MPa, 4) + ",";
+  json += "\"pressure2Bar\":" + jsonNum(p2.bar, 3) + ",";
+  json += "\"pressure2Psi\":" + jsonNum(p2.psi, 2) + ",";
+  json += "\"valve1Open\":" + String(digitalRead(RELAY_VALVE1) == RELAY_ON ? "true" : "false") + ",";
+  json += "\"valve2Open\":" + String(digitalRead(RELAY_VALVE2) == RELAY_ON ? "true" : "false") + ",";
+  json += "\"valve3Open\":" + String(digitalRead(RELAY_VALVE3) == RELAY_ON ? "true" : "false");
   json += "}";
 
-  WiFiClientSecure client;
-  client.setInsecure(); // For testing only; use certificate validation for production.
+  // ----- FULL SERIAL DEBUG PRINTING -----
+  Serial.println("\n========== WATER QUALITY ==========");
+  Serial.printf("Temperature : %.2f °C\n", temperature);
+  Serial.printf("pH          : %.2f\n", pHwater);
+  Serial.printf("TDS Before  : %.2f ppm\n", tds1);
+  Serial.printf("TDS After   : %.2f ppm\n", tds2);
+  Serial.printf("Turbidity 1 : %.2f NTU\n", ntu1);
+  Serial.printf("Turbidity 2 : %.2f NTU\n", ntu2);
+  Serial.printf("WQI Before  : %.1f %s\n", wqi1, wqiLevel(wqi1));
+  Serial.printf("WQI After   : %.1f %s\n", wqi2, wqiLevel(wqi2));
+  Serial.printf("Overall WQI : %.1f %s\n", overallWQI, wqiLevel(overallWQI));
 
+
+  // ----- HTTP POST -----
+  WiFiClient client;
   HTTPClient http;
-  http.setTimeout(10000);
+
+  http.setTimeout(15000);
+
+  Serial.println("Uploading sensor data...");
+  Serial.println("URL: " + String(SERVER_URL));
+  Serial.println("JSON: " + json);
 
   if (http.begin(client, SERVER_URL))
   {
     http.addHeader("Content-Type", "application/json");
+
+    // Use this header only if your backend expects this name.
+    http.addHeader("x-device-api-key", DEVICE_API_KEY);
+
     int httpCode = http.POST(json);
 
-    Serial.println();
-    Serial.println("========== WATER QUALITY ==========");
-    Serial.printf("Temperature : %.2f C\n", temperature);
-    Serial.printf("pH          : %.2f\n", pHwater);
-    Serial.printf("TDS 1       : %.2f ppm\n", tds1);
-    Serial.printf("TDS 2       : %.2f ppm\n", tds2);
-    Serial.printf("Turbidity 1 : %.2f NTU (estimated)\n", ntu1);
-    Serial.printf("Turbidity 2 : %.2f NTU (estimated)\n", ntu2);
-    Serial.printf("WQI Pair 1  : %.1f - %s\n", wqi1, wqiLevel(wqi1));
-    Serial.printf("WQI Pair 2  : %.1f - %s\n", wqi2, wqiLevel(wqi2));
-    Serial.printf("Overall WQI : %.1f - %s\n", overallWQI, wqiLevel(overallWQI));
-    Serial.printf("POST status : %d\n", httpCode);
-    Serial.print("JSON        : ");
-    Serial.println(json);
+    Serial.printf("POST status: %d\n", httpCode);
 
     if (httpCode > 0)
     {
-      String response = http.getString();
-      Serial.print("Server reply: ");
-      Serial.println(response);
+      Serial.println("Server reply:");
+      Serial.println(http.getString());
+
+      if (httpCode >= 200 && httpCode < 300)
+      {
+        Serial.println("Upload successful!");
+      }
+      else
+      {
+        Serial.println("Server rejected the request.");
+        Serial.println("Check the API route, authentication and JSON.");
+      }
     }
     else
     {
-      Serial.print("HTTP error: ");
-      Serial.println(http.errorToString(httpCode));
+      Serial.printf(
+        "HTTP error: %s\n",
+        http.errorToString(httpCode).c_str()
+      );
     }
 
     http.end();
   }
   else
-  {
-    Serial.println("Could not connect to SERVER_URL");
-  }
+ { 
+    Serial.println("Could not initialize HTTP connection.");
+}
 }
