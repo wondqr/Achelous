@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ACHELOUS</title>
+<script>document.documentElement.classList.add('js');</script>
 <link rel="stylesheet" href="style.css" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
 
-:root { /* --- color tokens --- */ --ink: #0e2a2f; --ink-soft: #4c6367; --deep: #0b4f5c; --deep-2: #0e6577; --mist: #eaf3f2; --paper: #ffffff; --line: #d7e6e4; --good: #2f9e6e; --footer-bg: #0a2226; --footer-text: #cfe3e0; /* --- type --- */ --font-display: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'IBM Plex Mono', monospace; /* --- layout --- */ --max-w: 1200px; --radius: 10px; }
+:root { /* --- color tokens --- */ --ink: #0e2a2f; --ink-soft: #4c6367; --deep: #0b4f5c; --deep-2: #0e6577; --mist: #eaf3f2; --paper: #ffffff; --line: #d7e6e4; --good: #2f9e6e; --footer-bg: #0a2226; --footer-text: #cfe3e0; /* --- type --- */ --font-display: 'Space Grotesk', 'Noto Sans Thai', 'Noto Sans KR', sans-serif; --font-body: 'Inter', 'Noto Sans Thai', 'Noto Sans KR', sans-serif; --font-mono: 'IBM Plex Mono', monospace; /* --- layout --- */ --max-w: 1200px; --radius: 10px; }
 
 * { box-sizing: border-box; }
 
@@ -226,9 +227,104 @@ img { max-width: 100%; display: block; }
   .detail-panel__metrics { gap: 18px; font-size: 14px; }
   .footer__inner { flex-direction: column; gap: 24px; }
 }
+
+/* ===========================================================
+   UPDATE: sticky navbar, animation, accessibility, language menu
+   =========================================================== */
+html { scroll-behavior: smooth; }
+
+/* --- accessibility --- */
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 300; background: var(--deep); color: #fff; padding: 10px 18px; border-radius: 8px; font-family: var(--font-display); font-weight: 600; transition: top 0.2s ease; }
+.skip-link:focus { top: 12px; }
+a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__toggle:focus-visible ~ .navbar__right .navbar__burger { outline: 3px solid var(--deep-2); outline-offset: 3px; border-radius: 6px; }
+.navbar__toggle { display: block; position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+
+/* --- sticky navbar (follows the scroll) --- */
+.navbar { position: sticky; top: 0; background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: box-shadow 0.3s ease; animation: navIn 0.6s cubic-bezier(.2,.8,.2,1) both; }
+.navbar__inner { transition: padding 0.3s ease; }
+.navbar__logo img { transition: height 0.3s ease; }
+.navbar.is-scrolled { box-shadow: 0 8px 24px rgba(11, 79, 92, 0.14); }
+.navbar.is-scrolled .navbar__inner { padding-top: 8px; padding-bottom: 8px; }
+.navbar.is-scrolled .navbar__logo img { height: 44px; }
+@keyframes navIn { from { transform: translateY(-100%); } }
+
+.navbar__links a, .navbar__login { transition: color 0.2s ease; }
+.navbar__burger span { transition: transform 0.25s ease, opacity 0.25s ease; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(2) { opacity: 0; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (min-width: 861px) {
+  .navbar__links a { position: relative; padding: 6px 0; }
+  .navbar__links a::after { content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--good); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+  .navbar__links a:hover::after, .navbar__links a[aria-current="page"]::after { transform: scaleX(1); }
+}
+
+/* --- language menu (EN / TH / KO) --- */
+.navbar__lang-wrap { position: relative; }
+.navbar__lang { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 8px; transition: background 0.2s ease, border-color 0.2s ease; }
+.navbar__lang:hover { opacity: 1; background: var(--mist); border-color: var(--deep-2); }
+.navbar__lang::after { content: '\25BE'; font-size: 12px; transition: transform 0.2s ease; }
+.navbar__lang[aria-expanded="true"]::after { transform: rotate(180deg); }
+.navbar__lang img { width: 20px; height: 20px; border-radius: 100%; object-fit: cover; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 10px); min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(11, 79, 92, 0.16); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; z-index: 200; }
+.lang-menu.is-open { opacity: 1; visibility: visible; transform: none; }
+.lang-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; font-family: var(--font-body); font-size: 15px; color: var(--ink); cursor: pointer; text-align: left; }
+.lang-menu button:hover, .lang-menu button[aria-selected="true"] { background: var(--mist); }
+.lang-menu button[aria-selected="true"] { font-weight: 600; color: var(--deep); }
+.lang-menu img { width: 22px; height: 22px; border-radius: 100%; object-fit: cover; }
+
+/* --- page-load / scroll animation --- */
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.8,.2,1); }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+.js .scale .scale__seg { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.js .scale.is-visible .scale__seg { opacity: 1; transform: none; }
+.scale.is-visible .scale__seg:nth-child(2) { transition-delay: 0.08s; }
+.scale.is-visible .scale__seg:nth-child(3) { transition-delay: 0.16s; }
+.scale.is-visible .scale__seg:nth-child(4) { transition-delay: 0.24s; }
+.scale.is-visible .scale__seg:nth-child(5) { transition-delay: 0.32s; }
+.scale__seg span { text-transform: lowercase; }
+
+/* pins pop in one after another, the active one pulses */
+.floor-pin { animation: pinFade 0.4s ease backwards; }
+.floor-pin__body { animation: pinPop 0.55s cubic-bezier(.34,1.56,.64,1) backwards; }
+.floor-pin:nth-of-type(1), .floor-pin:nth-of-type(1) .floor-pin__body { animation-delay: 0.5s; }
+.floor-pin:nth-of-type(2), .floor-pin:nth-of-type(2) .floor-pin__body { animation-delay: 0.6s; }
+.floor-pin:nth-of-type(3), .floor-pin:nth-of-type(3) .floor-pin__body { animation-delay: 0.7s; }
+.floor-pin:nth-of-type(4), .floor-pin:nth-of-type(4) .floor-pin__body { animation-delay: 0.8s; }
+.floor-pin:nth-of-type(5), .floor-pin:nth-of-type(5) .floor-pin__body { animation-delay: 0.9s; }
+.floor-pin:nth-of-type(6), .floor-pin:nth-of-type(6) .floor-pin__body { animation-delay: 1s; }
+@keyframes pinFade { from { opacity: 0; } }
+@keyframes pinPop { from { transform: rotate(-45deg) scale(0); } }
+.floor-pin--active .floor-pin__body { animation: pinPulse 2s ease-in-out infinite; }
+@keyframes pinPulse {
+  0%, 100% { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--deep), 0 2px 6px rgba(0,0,0,0.35); }
+  50% { box-shadow: 0 0 0 3px #fff, 0 0 0 10px rgba(11, 79, 92, 0.25), 0 2px 6px rgba(0,0,0,0.35); }
+}
+
+/* readout slides up when a pin is picked, mascot floats gently */
+.map-panel__readout-group:not(.is-hidden) .map-panel__readout { animation: readoutUp 0.35s ease both; }
+@keyframes readoutUp { from { opacity: 0; transform: translateY(16px); } }
+.wqi-droplet img { animation: dropletFloat 3.2s ease-in-out infinite; }
+@keyframes dropletFloat { 50% { transform: translateY(-4px); } }
+
+/* hover feedback */
+.system-chip { transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+.system-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(11, 79, 92, 0.14); }
+.readout-close { transition: background 0.2s ease, transform 0.2s ease; }
+.readout-close:hover { transform: rotate(90deg); }
+.footer__logo img { transition: transform 0.25s ease; }
+.footer__logo:hover img { transform: translateY(-3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal, .js .scale .scale__seg { opacity: 1; transform: none; }
+}
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
   <!-- ===================== NAVBAR ===================== -->
   <header class="navbar">
@@ -238,31 +334,38 @@ img { max-width: 100%; display: block; }
       </a>
       <input type="checkbox" id="navToggle" class="navbar__toggle" />
       <ul class="navbar__links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="archiveddata.html">Archived Data</a></li>
-        <li><a href="aboutwqi.html">About Water Quality</a></li>
-        <li><a href="aboutproject.html">About The Project</a></li>
-        <li><a href="Filter.html">Filter</a></li>
+        <li><a href="index.html" aria-current="page" data-i18n="nav.home">Home</a></li>
+        <li><a href="archiveddata.html" data-i18n="nav.archived">Archived Data</a></li>
+        <li><a href="aboutwqi.html" data-i18n="nav.wqi">About Water Quality</a></li>
+        <li><a href="aboutproject.html" data-i18n="nav.project">About The Project</a></li>
+        <li><a href="Filter.html" data-i18n="nav.filter">Filter</a></li>
       </ul>
       <div class="navbar__right">
-        <a href="login.html" class="navbar__login">Login</a>
-        <div class="navbar__lang" id="langToggleBtn" title="Click to toggle display">
-          <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%; object-fit: cover;">
-          <span id="langText">EN</span>
+        <a href="login.html" class="navbar__login" data-i18n="login">Login</a>
+        <div class="navbar__lang-wrap">
+          <button type="button" class="navbar__lang" id="langToggleBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" title="Change language" data-i18n-title="langTitle" data-i18n-aria="langTitle" aria-label="Change language">
+            <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">
+            <span id="langText">EN</span>
+          </button>
+          <ul class="lang-menu" id="langMenu">
+            <li><button type="button" data-lang="en" aria-selected="true"><img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">English</button></li>
+            <li><button type="button" data-lang="th" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg" alt="">&#3652;&#3607;&#3618;</button></li>
+            <li><button type="button" data-lang="ko" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" alt="">&#54620;&#44397;&#50612;</button></li>
+          </ul>
         </div>
-        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu" data-i18n-aria="menu">
           <span></span><span></span><span></span>
         </label>
       </div>
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="main" tabindex="-1">
     <!-- ===================== MAP ===================== -->
-    <section class="hero">
+    <section class="hero reveal">
       <div class="map-panel" id="mapPanel">
         <div class="map-panel__zoom" id="mapZoom">
-          <img class="map-panel__image" src="ac2003.jpg" alt="Assumption Map" />
+          <img class="map-panel__image" src="ac2003.jpg" alt="Assumption Map" data-i18n-alt="mapAlt" />
 
           <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality" data-floor="8" data-temp="24.5" data-ph="7.2" data-tds1="85" data-tds2="51" data-turb1="0.3" data-turb2="0.1" data-pressure="145" data-flow="12.0">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
@@ -284,24 +387,24 @@ img { max-width: 100%; display: block; }
           </button>
         </div>
 
-        <div class="map-panel__readout-group" id="mapReadoutGroup">
+        <div class="map-panel__readout-group" id="mapReadoutGroup" aria-live="polite">
           <div class="map-panel__readout">
-            <button type="button" class="readout-close" id="readoutClose" aria-label="Close water quality panel">&times;</button>
-            <span style="font-family: var(--font-mono); font-weight: 900; font-size: 13px;">Floor <span id="readoutFloor">2</span> : </span>
+            <button type="button" class="readout-close" id="readoutClose" aria-label="Close water quality panel" data-i18n-aria="close">&times;</button>
+            <span style="font-family: var(--font-mono); font-weight: 900; font-size: 13px;"><span data-i18n="floorPre">Floor </span><span id="readoutFloor">2</span><span data-i18n="floorSuf"> : </span></span>
             <span id="readoutQuality" style="font-family: var(--font-mono); font-weight: 900; font-size: 13px; color: var(--ink-soft);"> --</span>
             <p class="map-panel__average">WQI: <span id="readoutWqi">--</span></p>
 
             <input type="checkbox" id="metricsToggle" class="metrics-toggle">
-            <label for="metricsToggle" class="metrics-toggle-label">More <span class="metrics-toggle-arrow">&#9662;</span></label>
+            <label for="metricsToggle" class="metrics-toggle-label"><span data-i18n="more">More</span> <span class="metrics-toggle-arrow">&#9662;</span></label>
         
             <div class="map-panel__metrics">
-                <span>Temp: <b id="readoutTemp">--</b> °C</span>
+                <span><span data-i18n="temp">Temp</span>: <b id="readoutTemp">--</b> °C</span>
                 <span>pH: <b id="readoutPh">--</b></span>
                 <span>TDS: <b id="readoutTds">--</b> ppm</span>
-                <span>Turbidity: <b id="readoutTurb">--</b> NTU</span>
+                <span><span data-i18n="turb">Turbidity</span>: <b id="readoutTurb">--</b> NTU</span>
 
               <div class="wqi-droplet">
-                <img src="glassclean.png" alt="Water quality mascot" id="dropletImg">
+                <img src="glassclean.png" alt="Water quality mascot" data-i18n-alt="mascot" id="dropletImg">
                 <span class="wqi-droplet__value" id="dropletValue">--</span>
                 </div>
             </div>
@@ -310,38 +413,38 @@ img { max-width: 100%; display: block; }
       </div>
     </section>
 
-  <div class="scale">
-    <div class="scale__seg"><span>very clean</span><i style="background:#62d6ff;border-radius:999px 0 0 999px"></i></div>
-    <div class="scale__seg"><span>clean</span><i style="background:#9be37c"></i></div>
-    <div class="scale__seg"><span>normal</span><i style="background:#ffdb58"></i></div>
-    <div class="scale__seg"><span>dirty</span><i style="background:#ff3b3b"></i></div>
-    <div class="scale__seg"><span>very dirty</span><i style="background:#6a1fa8;border-radius:0 999px 999px 0"></i></div>
+  <div class="scale reveal">
+    <div class="scale__seg"><span data-i18n="q.Very Clean">very clean</span><i style="background:#62d6ff;border-radius:999px 0 0 999px"></i></div>
+    <div class="scale__seg"><span data-i18n="q.Clean">clean</span><i style="background:#9be37c"></i></div>
+    <div class="scale__seg"><span data-i18n="q.Normal">normal</span><i style="background:#ffdb58"></i></div>
+    <div class="scale__seg"><span data-i18n="q.Dirty">dirty</span><i style="background:#ff3b3b"></i></div>
+    <div class="scale__seg"><span data-i18n="q.Very Dirty">very dirty</span><i style="background:#6a1fa8;border-radius:0 999px 999px 0"></i></div>
   </div>
 
     <!-- ===================== SYSTEM SELECTOR ===================== -->
-    <section class="system-select">
-      <span class="system-select__label">Your System &rsaquo;</span>
-      <a class="system-chip system-chip--login" href="login.html">Log in to add your system</a>
-      <button class="system-chip system-chip--active" type="button">System 1</button>
-      <button class="system-chip system-chip--add" type="button">+ Add your system</button>
+    <section class="system-select reveal">
+      <span class="system-select__label"><span data-i18n="yourSystem">Your System</span> &rsaquo;</span>
+      <a class="system-chip system-chip--login" href="login.html" data-i18n="loginAdd">Log in to add your system</a>
+      <button class="system-chip system-chip--active" type="button" data-i18n="system1">System 1</button>
+      <button class="system-chip system-chip--add" type="button" data-i18n="addSystem">+ Add your system</button>
     </section>
 
     <!-- ===================== DETAIL PANEL ===================== -->
-    <section class="detail-panel">
-      <p class="detail-panel__average" style="color: #7bb562;">Quality: Clean </p>
+    <section class="detail-panel reveal">
+      <p class="detail-panel__average" style="color: #7bb562;"><span data-i18n="quality">Quality</span>: <span data-i18n="q.Clean">Clean</span> </p>
       <p class="detail-panel__average">WQI: -- </p>
       <div class="detail-panel__metrics">
-        <span>Temp: <b>--</b> °C</span>
+        <span><span data-i18n="temp">Temp</span>: <b>--</b> °C</span>
         <span>pH: <b>--</b></span>
         <span>TDS: <b>--</b> ppm </span>
-        <span>Turbidity: <b>--</b> NTU</span>
+        <span><span data-i18n="turb">Turbidity</span>: <b>--</b> NTU</span>
       </div>
     </section>
   </main>
 
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
-    <div class="footer__inner">
+    <div class="footer__inner reveal">
       <div class="footer__logos">
         <div class="footer__logo"><img src="Thailand.png"></div>
         <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
@@ -352,7 +455,7 @@ img { max-width: 100%; display: block; }
         <div class="footer__logo"><img src="siiflogo.png"></div>
       </div>
       <div class="footer__members">
-        <h3>Project Members</h3>
+        <h3 data-i18n="members">Project Members</h3>
         <ul>
           <li>Mr.Arkkharayut Pandej</li>
           <li>Mr.Nantapat Pasukulpipat</li>
@@ -468,26 +571,136 @@ img { max-width: 100%; display: block; }
   </script>
 
   <script>
+  /* ===== Language: English / Thai / Korean (choice is remembered) ===== */
   (function () {
-    var langBtn = document.getElementById('langToggleBtn');
+    var STORE = 'achelous-lang';
+    var LANGS = {
+      en: { code: 'EN', flag: 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg' },
+      th: { code: 'TH', flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg' },
+      ko: { code: 'KO', flag: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg' }
+    };
+    var DICT = {
+      en: {
+        skip: 'Skip to content', 'nav.home': 'Home', 'nav.archived': 'Archived Data', 'nav.wqi': 'About Water Quality',
+        'nav.project': 'About The Project', 'nav.filter': 'Filter', login: 'Login', menu: 'Open menu', langTitle: 'Change language',
+        mapAlt: 'Assumption Map', pinLabel: 'Floor {n} water quality', close: 'Close water quality panel',
+        floorPre: 'Floor ', floorSuf: ' : ', more: 'More', temp: 'Temp', turb: 'Turbidity', mascot: 'Water quality mascot',
+        'q.Very Clean': 'Very Clean', 'q.Clean': 'Clean', 'q.Normal': 'Normal', 'q.Dirty': 'Dirty', 'q.Very Dirty': 'Very Dirty',
+        yourSystem: 'Your System', loginAdd: 'Log in to add your system', system1: 'System 1', addSystem: '+ Add your system',
+        quality: 'Quality', members: 'Project Members'
+      },
+      th: {
+        skip: 'ข้ามไปยังเนื้อหา', 'nav.home': 'หน้าแรก', 'nav.archived': 'ข้อมูลย้อนหลัง', 'nav.wqi': 'เกี่ยวกับคุณภาพน้ำ',
+        'nav.project': 'เกี่ยวกับโครงการ', 'nav.filter': 'ไส้กรอง', login: 'เข้าสู่ระบบ', menu: 'เปิดเมนู', langTitle: 'เปลี่ยนภาษา',
+        mapAlt: 'แผนที่โรงเรียนอัสสัมชัญ', pinLabel: 'คุณภาพน้ำชั้น {n}', close: 'ปิดแผงคุณภาพน้ำ',
+        floorPre: 'ชั้น ', floorSuf: ' : ', more: 'เพิ่มเติม', temp: 'อุณหภูมิ', turb: 'ความขุ่น', mascot: 'มาสคอตคุณภาพน้ำ',
+        'q.Very Clean': 'สะอาดมาก', 'q.Clean': 'สะอาด', 'q.Normal': 'ปานกลาง', 'q.Dirty': 'สกปรก', 'q.Very Dirty': 'สกปรกมาก',
+        yourSystem: 'ระบบของคุณ', loginAdd: 'เข้าสู่ระบบเพื่อเพิ่มระบบของคุณ', system1: 'ระบบ 1', addSystem: '+ เพิ่มระบบของคุณ',
+        quality: 'คุณภาพ', members: 'สมาชิกโครงการ'
+      },
+      ko: {
+        skip: '본문으로 건너뛰기', 'nav.home': '홈', 'nav.archived': '보관 데이터', 'nav.wqi': '수질 소개',
+        'nav.project': '프로젝트 소개', 'nav.filter': '필터', login: '로그인', menu: '메뉴 열기', langTitle: '언어 변경',
+        mapAlt: '어섬프션 칼리지 지도', pinLabel: '{n}층 수질', close: '수질 패널 닫기',
+        floorPre: '', floorSuf: '층 : ', more: '더 보기', temp: '온도', turb: '탁도', mascot: '수질 마스코트',
+        'q.Very Clean': '매우 깨끗함', 'q.Clean': '깨끗함', 'q.Normal': '보통', 'q.Dirty': '더러움', 'q.Very Dirty': '매우 더러움',
+        yourSystem: '내 시스템', loginAdd: '로그인하여 내 시스템 추가', system1: '시스템 1', addSystem: '+ 시스템 추가',
+        quality: '수질', members: '프로젝트 구성원'
+      }
+    };
+
+    function stored() { try { return localStorage.getItem(STORE); } catch (e) { return null; } }
+    function save(l) { try { localStorage.setItem(STORE, l); } catch (e) {} }
+
+    var current = DICT[stored()] ? stored() : 'en';
+
+    function t(key) {
+      var d = DICT[current];
+      if (d && d[key] !== undefined) return d[key];
+      return DICT.en[key] !== undefined ? DICT.en[key] : key;
+    }
+
+    var btn = document.getElementById('langToggleBtn');
+    var menu = document.getElementById('langMenu');
     var flagImg = document.getElementById('langFlagImg');
     var langText = document.getElementById('langText');
-    if (!langBtn || !flagImg || !langText) return;
 
-    var isEnglish = true;
-    var ukFlag = 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg';
-    var thaiFlag = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg';
+    function apply() {
+      document.documentElement.lang = current;
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t(el.getAttribute('data-i18n')); });
+      document.querySelectorAll('[data-i18n-alt]').forEach(function (el) { el.setAttribute('alt', t(el.getAttribute('data-i18n-alt'))); });
+      document.querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+      document.querySelectorAll('[data-i18n-title]').forEach(function (el) { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+      document.querySelectorAll('.floor-pin').forEach(function (p) {
+        p.setAttribute('aria-label', t('pinLabel').replace('{n}', p.getAttribute('data-floor')));
+      });
+      if (flagImg) flagImg.src = LANGS[current].flag;
+      if (langText) langText.textContent = LANGS[current].code;
+      if (menu) menu.querySelectorAll('button[data-lang]').forEach(function (b) {
+        b.setAttribute('aria-selected', b.getAttribute('data-lang') === current ? 'true' : 'false');
+      });
+    }
 
-    langBtn.addEventListener('click', function () {
-      isEnglish = !isEnglish;
-      if (isEnglish) {
-        flagImg.src = ukFlag;
-        langText.textContent = 'EN';
-      } else {
-        flagImg.src = thaiFlag;
-        langText.textContent = 'TH';
-      }
-    });
+    function setLang(l) {
+      if (!DICT[l]) return;
+      current = l;
+      save(l);
+      apply();
+      document.dispatchEvent(new CustomEvent('achelous-langchange', { detail: { lang: l } }));
+    }
+
+    function closeMenu() {
+      if (!menu) return;
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (btn && menu) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-lang]');
+        if (!b) return;
+        setLang(b.getAttribute('data-lang'));
+        closeMenu();
+        btn.focus();
+      });
+      document.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('is-open')) { closeMenu(); btn.focus(); }
+      });
+    }
+
+    // Other pages can reuse these once they include this same code.
+    window.ACHELOUS_t = t;
+    window.ACHELOUS_setLang = setLang;
+    window.ACHELOUS_getLang = function () { return current; };
+    apply();
+  })();
+  </script>
+
+  <script>
+  /* ===== Navbar shadow on scroll + reveal-on-scroll ===== */
+  (function () {
+    var nav = document.querySelector('.navbar');
+    function onScroll() { if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 10); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
   })();
   </script>
 
@@ -600,7 +813,8 @@ img { max-width: 100%; display: block; }
       var q = readPinWQI(pin);
       elFloor.textContent = pin.getAttribute('data-floor');
       if (q) {
-        elQuality.textContent = ' ' + q.label;
+        elQuality.setAttribute('data-q', q.label);
+        elQuality.textContent = ' ' + (window.ACHELOUS_t ? window.ACHELOUS_t('q.' + q.label) : q.label);
         elQuality.style.color = q.color;
         elWqi.textContent = q.wqi;
         elTemp.textContent = pin.getAttribute('data-temp');
@@ -610,6 +824,7 @@ img { max-width: 100%; display: block; }
         if (elDroplet) elDroplet.textContent = q.wqi;
         if (elDropletImg) elDropletImg.src = q.glass;
       } else {
+        elQuality.removeAttribute('data-q');
         elQuality.textContent = ' --';
         elQuality.style.color = 'var(--ink-soft)';
         elWqi.textContent = '--';
@@ -634,6 +849,12 @@ img { max-width: 100%; display: block; }
         readoutGroup.classList.add('is-hidden');
       });
     }
+
+    // Re-translate the quality label when the language changes
+    document.addEventListener('achelous-langchange', function () {
+      var key = elQuality.getAttribute('data-q');
+      if (key) elQuality.textContent = ' ' + window.ACHELOUS_t('q.' + key);
+    });
 
     // Called by the socket code below whenever the backend sends a new reading.
     // Updates the live pin (data-live="true"); refreshes the readout only if
