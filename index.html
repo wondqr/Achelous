@@ -309,6 +309,13 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
 .footer__logo img { transition: transform 0.25s ease; }
 .footer__logo:hover img { transform: translateY(-3px); }
 
+/* --- colour scale on phones: labels stay small and every bar sits on the same line --- */
+@media (max-width: 860px) {
+  .scale__seg { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; }
+  .scale__seg span { font-size: 12px; line-height: 1.25; margin-bottom: 6px; padding: 0 2px; word-break: keep-all; overflow-wrap: anywhere; }
+  .scale__seg i { height: 14px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
