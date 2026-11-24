@@ -383,12 +383,12 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
           <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality" data-floor="3" data-temp="23.5" data-ph="7.0" data-tds1="95" data-tds2="57" data-turb1="0.4" data-turb2="0.2" data-pressure="160" data-flow="14.1">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin floor-pin--active" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality" data-floor="2" data-temp="25.5" data-ph="7.4" data-tds1="110" data-tds2="66" data-turb1="0.5" data-turb2="0.2" data-pressure="150" data-flow="13.5" data-live="true">
+          <button type="button" class="floor-pin" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality" data-floor="2" data-live="true">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
         </div>
 
-        <div class="map-panel__readout-group" id="mapReadoutGroup" aria-live="polite">
+        <div class="map-panel__readout-group is-hidden" id="mapReadoutGroup" aria-live="polite">
           <div class="map-panel__readout">
             <button type="button" class="readout-close" id="readoutClose" aria-label="Close water quality panel" data-i18n-aria="close">&times;</button>
             <span style="font-family: var(--font-mono); font-weight: 900; font-size: 13px;"><span data-i18n="floorPre">Floor </span><span id="readoutFloor">2</span><span data-i18n="floorSuf"> : </span></span>
