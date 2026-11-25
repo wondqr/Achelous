@@ -367,19 +367,19 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
       <div class="map-panel" id="mapPanel">
         <div class="map-panel__zoom" id="mapZoom">
 
-          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality" data-floor="8" data-temp="24.5" data-ph="7.2" data-tds1="85" data-tds2="51" data-turb1="0.3" data-turb2="0.1" data-pressure="145" data-flow="12.0">
+          <button type="button" class="floor-pin" style="left: 23%; top: 12%;" aria-label="Floor 8 water quality" data-floor="8" data-temp="24.5" data-ph="7.2" data-tds2="51" data-turb2="0.1" data-pressure="145" data-flow="12.0">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button> 
-          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality" data-floor="7" data-temp="29.0" data-ph="8.8" data-tds1="240" data-tds2="144" data-turb1="6.5" data-turb2="2.6" data-pressure="180" data-flow="9.5">
+          <button type="button" class="floor-pin" style="left: 23%; top: 23%;" aria-label="Floor 7 water quality" data-floor="7" data-temp="29.0" data-ph="8.8" data-tds2="144" data-turb2="2.6" data-pressure="180" data-flow="9.5">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality" data-floor="5" data-temp="28.0" data-ph="6.0" data-tds1="200" data-tds2="120" data-turb1="4.0" data-turb2="1.6" data-pressure="130" data-flow="11.2">
+          <button type="button" class="floor-pin" style="left: 21%; top: 45.0%;" aria-label="Floor 5 water quality" data-floor="5" data-temp="28.0" data-ph="6.0" data-tds2="120" data-turb2="1.6" data-pressure="130" data-flow="11.2">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality" data-floor="4" data-temp="25.0" data-ph="7.5" data-tds1="120" data-tds2="72" data-turb1="0.8" data-turb2="0.3" data-pressure="155" data-flow="10.8">
+          <button type="button" class="floor-pin" style="left: 21%; top: 58.8%;" aria-label="Floor 4 water quality" data-floor="4" data-temp="25.0" data-ph="7.5" data-tds2="72" data-turb2="0.3" data-pressure="155" data-flow="10.8">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
-          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality" data-floor="3" data-temp="23.5" data-ph="7.0" data-tds1="95" data-tds2="57" data-turb1="0.4" data-turb2="0.2" data-pressure="160" data-flow="14.1">
+          <button type="button" class="floor-pin" style="left: 21%; top: 70.3%;" aria-label="Floor 3 water quality" data-floor="3" data-temp="23.5" data-ph="7.0" data-tds2="57" data-turb2="0.2" data-pressure="160" data-flow="14.1">
             <span class="floor-pin__body"><span class="floor-pin__label">--</span></span>
           </button>
           <button type="button" class="floor-pin" style="left: 21%; top: 83%;" aria-label="Floor 2 water quality" data-floor="2" data-live="true">
@@ -647,13 +647,9 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
     // Condition 1 & 2: use the "before cleaning" value if its score >= 70,
     // otherwise use the "after cleaning" value.
     // (If the "after" value is missing, fall back to the "before" value.)
-    return function (temp, ph, tds1, tds2, turb1, turb2) {
+    return function (temp, ph, tds, turb) {
       temp = parseFloat(temp); ph = parseFloat(ph);
-      tds1 = parseFloat(tds1);   tds2 = parseFloat(tds2);
-      turb1 = parseFloat(turb1); turb2 = parseFloat(turb2);
-
-      var tds  = (tdsScore(tds1)   >= 70 || isNaN(tds2))  ? tds1  : tds2;
-      var turb = (turbScore(turb1) >= 70 || isNaN(turb2)) ? turb1 : turb2;
+      tds = parseFloat(tds); turb = parseFloat(turb);
 
       var score = 0.15 * tempScore(temp) + 0.30 * phScore(ph) + 0.25 * tdsScore(tds) + 0.30 * turbScore(turb);
       score = Math.max(0, Math.min(100, score));
@@ -693,9 +689,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
       return window.ACHELOUS_computeWQI(
         pin.getAttribute('data-temp'),
         pin.getAttribute('data-ph'),
-        pin.getAttribute('data-tds1'),
         pin.getAttribute('data-tds2'),
-        pin.getAttribute('data-turb1'),
         pin.getAttribute('data-turb2')
       );
     }
@@ -765,9 +759,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
       var map = {
         'data-temp': r.temperature,
         'data-ph': r.ph,
-        'data-tds1': r.tds1,
         'data-tds2': r.tds2,
-        'data-turb1': r.turbidity1,
         'data-turb2': r.turbidity2
       };
       Object.keys(map).forEach(function (k) {
