@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="th">
-
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ACHELOUS</title>
+<script>document.documentElement.classList.add('js');</script>
 <link rel="stylesheet" href="style.css" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
  
 :root { /* --- color tokens --- */ 
     --ink: #0e2a2f; 
@@ -22,9 +22,9 @@
     --footer-bg: #0a2226; 
     --footer-text: #cfe3e0; 
     /* --- type --- */ 
-    --font-display: 'Space Grotesk', sans-serif; 
-    --font-body: 'Inter', sans-serif; 
-    --font-mono: 'IBM Plex Mono', monospace; 
+    --font-display: 'Space Grotesk', 'Noto Sans Thai', 'Noto Sans KR', sans-serif; 
+    --font-body: 'Inter', 'Noto Sans Thai', 'Noto Sans KR', sans-serif; 
+    --font-mono: 'IBM Plex Mono', 'Noto Sans Thai', 'Noto Sans KR', monospace; 
     /* --- layout --- */ 
     --max-w: 1200px; --radius: 10px; }
  
@@ -124,10 +124,108 @@ img { max-width: 100%; display: block; }
     .system-select { align-items: flex-start; flex-direction: column; }
     .map-panel__readout { padding: 14px 16px 16px; }
 }
+
+    /* ARCHIVE ADDITIONS */
+    .system-select .hint { font-size: 13px; color: var(--ink-soft); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 4px; }
+    .stat { background: var(--mist); border-radius: var(--radius); padding: 14px 16px; }
+    .stat b { display: block; font-family: var(--font-display); font-size: 22px; color: var(--deep); }
+    .stat span { display: block; font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+    .summary-text { margin: 18px 0 0; font-size: 15px; line-height: 1.65; max-width: 75ch; }
+    .expiry { margin: 12px 0 0; font-size: 13px; color: var(--ink-soft); }
+    .status-msg { margin: 12px 0 0; font-size: 14px; color: #b3402f; }
+    .chart .line { fill: none; stroke: var(--deep-2); stroke-width: 2.5; stroke-linejoin: round; }
+    .chart .dot { fill: var(--deep-2); }
+    .chart .rng { stroke: var(--good); stroke-width: 7; stroke-linecap: round; opacity: 0.3; }
+    .chart .thr { stroke: #c0504d; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .chart .thr-label { fill: #c0504d; }
+    .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 12px; font-size: 14px; }
+    .crumbs button { font: inherit; font-family: var(--font-display); font-weight: 500; color: var(--deep-2); background: none; border: 0; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+    .crumbs button:hover { background: var(--mist); }
+    .crumbs button[aria-current="true"] { color: var(--ink); cursor: default; background: none; }
+    .crumbs .sep { color: var(--ink-soft); }
+    .chart .hit { fill: transparent; cursor: pointer; }
+    .chart .dot.sel { fill: var(--good); }
+    .legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; }
+    .legend i { display: inline-block; width: 18px; height: 0; border-top: 3px solid var(--deep-2); vertical-align: middle; margin-right: 6px; }
+    .legend i.band { border-top: 7px solid var(--good); opacity: 0.3; border-radius: 4px; }
+    .legend i.dash { border-top: 2px dashed #c0504d; }
+    .content-card { display: block; }
+    #chartBox { display: block; width: 100%; }
+    .chart { width: 100%; height: auto; }
+/* ===========================================================
+   UPDATE: sticky navbar, animation, accessibility, language menu
+   =========================================================== */
+html { scroll-behavior: smooth; }
+
+/* --- accessibility --- */
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 300; background: var(--deep); color: #fff; padding: 10px 18px; border-radius: 8px; font-family: var(--font-display); font-weight: 600; transition: top 0.2s ease; }
+.skip-link:focus { top: 12px; }
+a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__toggle:focus-visible ~ .navbar__right .navbar__burger { outline: 3px solid var(--deep-2); outline-offset: 3px; border-radius: 6px; }
+.navbar__toggle { display: block; position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+
+/* --- sticky navbar (follows the scroll) --- */
+.navbar { position: sticky; top: 0; background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: box-shadow 0.3s ease; animation: navIn 0.6s cubic-bezier(.2,.8,.2,1) both; }
+.navbar__inner { padding-top: 8px; padding-bottom: 8px; }
+.navbar__logo img { height: 44px; }
+.navbar.is-scrolled { box-shadow: 0 8px 24px rgba(11, 79, 92, 0.14); }
+@keyframes navIn { from { transform: translateY(-100%); } }
+
+.navbar__links a, .navbar__login { transition: color 0.2s ease; }
+.navbar__burger span { transition: transform 0.25s ease, opacity 0.25s ease; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(2) { opacity: 0; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (min-width: 861px) {
+  .navbar__links a { position: relative; padding: 6px 0; }
+  .navbar__links a::after { content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--good); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+  .navbar__links a:hover::after, .navbar__links a[aria-current="page"]::after { transform: scaleX(1); }
+}
+
+/* --- language menu (EN / TH / KO) --- */
+.navbar__lang-wrap { position: relative; }
+.navbar__lang { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 8px; transition: background 0.2s ease, border-color 0.2s ease; }
+.navbar__lang:hover { opacity: 1; background: var(--mist); border-color: var(--deep-2); }
+.navbar__lang::after { content: '\25BE'; font-size: 12px; transition: transform 0.2s ease; }
+.navbar__lang[aria-expanded="true"]::after { transform: rotate(180deg); }
+.navbar__lang img { width: 20px; height: 20px; border-radius: 100%; object-fit: cover; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 10px); min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(11, 79, 92, 0.16); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; z-index: 200; }
+.lang-menu.is-open { opacity: 1; visibility: visible; transform: none; }
+.lang-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; font-family: var(--font-body); font-size: 15px; color: var(--ink); cursor: pointer; text-align: left; }
+.lang-menu button:hover, .lang-menu button[aria-selected="true"] { background: var(--mist); }
+.lang-menu button[aria-selected="true"] { font-weight: 600; color: var(--deep); }
+.lang-menu img { width: 22px; height: 22px; border-radius: 100%; object-fit: cover; }
+
+/* --- phones: no empty gap under the collapsed menu --- */
+@media (max-width: 860px) { .navbar__inner { row-gap: 0; } }
+
+/* --- page-load / scroll animation --- */
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.8,.2,1); }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+.system-select select { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.system-select select:focus-visible { outline: 3px solid var(--deep-2); outline-offset: 2px; }
+.crumbs button { transition: background 0.2s ease; }
+.chart .hit { transition: fill 0.2s ease; }
+.chart .hit:hover { fill: rgba(14, 101, 119, 0.15); }
+
+/* chart draws itself when the view changes (not on the 60-second auto refresh) */
+.chart.anim .line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: drawLine 1s ease-out forwards; }
+.chart.anim .dot, .chart.anim .rng { animation: chartFade 0.5s ease 0.5s backwards; }
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
+@keyframes chartFade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+  .chart.anim .line { stroke-dasharray: none; stroke-dashoffset: 0; }
+}
 </style>
 </head>
 
 <body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
  
   <!-- ===================== NAVBAR ===================== -->
   <header class="navbar">
@@ -140,20 +238,27 @@ img { max-width: 100%; display: block; }
       <input type="checkbox" id="navToggle" class="navbar__toggle" />
  
       <ul class="navbar__links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="archiveddata.html">Archived Data</a></li>
-        <li><a href="aboutwqi.html">About Water Quality</a></li>
-        <li><a href="aboutproject.html">About The Project</a></li>
-        <li><a href="Filter.html">Filter</a></li>
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="archiveddata.html" aria-current="page" data-i18n="nav.archived">Archived Data</a></li>
+        <li><a href="aboutwqi.html" data-i18n="nav.wqi">About Water Quality</a></li>
+        <li><a href="aboutproject.html" data-i18n="nav.project">About The Project</a></li>
+        <li><a href="Filter.html" data-i18n="nav.filter">Filter</a></li>
       </ul>
  
       <div class="navbar__right">
-        <a href="login.html" class="navbar__login">Login</a>
-        <div class="navbar__lang">
-          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
-          <span>EN</span>
+        <a href="login.html" class="navbar__login" data-i18n="login">Login</a>
+        <div class="navbar__lang-wrap">
+          <button type="button" class="navbar__lang" id="langToggleBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" title="Change language" data-i18n-title="langTitle" data-i18n-aria="langTitle" aria-label="Change language">
+            <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">
+            <span id="langText">EN</span>
+          </button>
+          <ul class="lang-menu" id="langMenu">
+            <li><button type="button" data-lang="en" aria-selected="true"><img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">English</button></li>
+            <li><button type="button" data-lang="th" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg" alt="">&#3652;&#3607;&#3618;</button></li>
+            <li><button type="button" data-lang="ko" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" alt="">&#54620;&#44397;&#50612;</button></li>
+          </ul>
         </div>
-        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu" data-i18n-aria="menu">
           <span></span>
           <span></span>
           <span></span>
@@ -162,111 +267,753 @@ img { max-width: 100%; display: block; }
  
     </div>
   </header>
-    <script>
-     (function () {
-      var langBtn = document.getElementById('langToggleBtn');
-      var flagImg = document.getElementById('langFlagImg');
-      var langText = document.getElementById('langText');
-       if (!langBtn || !flagImg || !langText) return;
 
-      var isEnglish = true;
-      var ukFlag = 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg';
-      var thaiFlag = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg';
-
-     langBtn.addEventListener('click', function () {
-       isEnglish = !isEnglish;
-       if (isEnglish) {
-          flagImg.src = ukFlag;
-          langText.textContent = 'EN';
-        } else {
-          flagImg.src = thaiFlag;
-          langText.textContent = 'TH';
+  <script>
+  /* ===== Language: English / Thai / Korean (same choice is remembered across pages) ===== */
+  (function () {
+    var STORE = 'achelous-lang';
+    var LANGS = {
+      en: { code: 'EN', flag: 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg' },
+      th: { code: 'TH', flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg' },
+      ko: { code: 'KO', flag: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg' }
+    };
+    var DICT = {
+      "en": {
+        "skip": "Skip to content",
+        "nav.home": "Home",
+        "nav.archived": "Archived Data",
+        "nav.wqi": "About Water Quality",
+        "nav.project": "About The Project",
+        "nav.filter": "Filter",
+        "login": "Login",
+        "menu": "Open menu",
+        "langTitle": "Change language",
+        "pageTitle": "ACHELOUS",
+        "members": "Project Members",
+        "h1": "Archived Data",
+        "heroP": "Every month is saved and summarised automatically. The last 12 months are kept.",
+        "chooseLoc": "Choose a location",
+        "chooseSub": "Pick a floor to see its recorded data.",
+        "location": "Location",
+        "floorN": "Floor {n}",
+        "wqiTitle": "Water Quality Index (WQI)",
+        "wqiSub": "Score from 0 (poor) to 100 (excellent).",
+        "tabMonthly": "Monthly",
+        "tabDaily": "Daily",
+        "tabHourly": "Hourly",
+        "chartLevel": "Chart level",
+        "last12": "Last 12 months",
+        "legAvg": "Average",
+        "legRange": "Lowest to highest",
+        "legDirty": "Dirty below <span id=\"dirtyNum\">50</span>",
+        "chartAria": "WQI chart",
+        "noChart": "No data to display yet",
+        "tipAvg": "{tip}: average {avg} (lowest {min}, highest {max})",
+        "hitDays": "{tip} - click to see its days",
+        "hitHours": "{tip} - click to see its hours",
+        "noteHourly": "Every hour of the chosen day. Click a point on the Daily chart to pick another day.",
+        "noteDaily": "Every day of the month. Click a point to see that day hour by hour.",
+        "noteMonthly": "The last 12 months. Click a point to see that month day by day. Each month is deleted automatically when the same month comes round again.",
+        "errMonth": "Could not load that month.",
+        "errArchive": "Could not load the archive. Check the Apps Script URL in this page and that the Web App is deployed with access \"Anyone\".",
+        "noData": "No data yet",
+        "current": "(current)",
+        "q.Very Clean": "Very Clean",
+        "q.Clean": "Clean",
+        "q.Normal": "Normal",
+        "q.Dirty": "Dirty",
+        "q.Very Dirty": "Very Dirty",
+        "months": [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December"
+        ],
+        "monthsShort": [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ],
+        "fmtMonth": "{m} {y}",
+        "fmtDay": "{d} {m} {y}",
+        "fmtDayMon": "{d} {m}",
+        "fmtHour": "{h} {ap}",
+        "am": "AM",
+        "pm": "PM",
+        "durHM": "{h} h {m} min",
+        "durM": "{m} min",
+        "sumNone": "No data has been recorded yet. Once the device starts sending, each month appears here automatically.",
+        "stAvg": "Average WQI",
+        "stRange": "Lowest – highest WQI",
+        "stDirty": "Dirty water (WQI below {n})",
+        "stPh": "Average pH",
+        "stTds": "Average TDS (ppm)",
+        "stTurb": "Average turbidity (NTU)",
+        "stTime": "Recorded time",
+        "sumMain": "In {month}, WQI averaged {avg} ({lvl}), ranging from {min} to {max}. ",
+        "sumDirty": "The water was in the dirty range for {dur} ({pct}% of recorded time). ",
+        "sumClean": "The water never dropped into the dirty range. ",
+        "sumBest": "Best day: {day} ({v}). ",
+        "sumWorst": "Worst day: {day} ({v}).",
+        "expCur": "This month is still being recorded. ",
+        "expDel": "It will be deleted automatically on {date}.",
+        "fmtFirst": "1 {m} {y}"
+      },
+      "th": {
+        "skip": "ข้ามไปยังเนื้อหา",
+        "nav.home": "หน้าแรก",
+        "nav.archived": "ข้อมูลย้อนหลัง",
+        "nav.wqi": "เกี่ยวกับคุณภาพน้ำ",
+        "nav.project": "เกี่ยวกับโครงการ",
+        "nav.filter": "ไส้กรอง",
+        "login": "เข้าสู่ระบบ",
+        "menu": "เปิดเมนู",
+        "langTitle": "เปลี่ยนภาษา",
+        "pageTitle": "ACHELOUS",
+        "members": "สมาชิกโครงการ",
+        "h1": "ข้อมูลย้อนหลัง",
+        "heroP": "ระบบบันทึกและสรุปข้อมูลทุกเดือนโดยอัตโนมัติ และเก็บข้อมูลย้อนหลัง 12 เดือนล่าสุด",
+        "chooseLoc": "เลือกสถานที่",
+        "chooseSub": "เลือกชั้นเพื่อดูข้อมูลที่บันทึกไว้",
+        "location": "สถานที่",
+        "floorN": "ชั้น {n}",
+        "wqiTitle": "ดัชนีคุณภาพน้ำ (WQI)",
+        "wqiSub": "คะแนนตั้งแต่ 0 (แย่) ถึง 100 (ดีเยี่ยม)",
+        "tabMonthly": "รายเดือน",
+        "tabDaily": "รายวัน",
+        "tabHourly": "รายชั่วโมง",
+        "chartLevel": "ระดับของกราฟ",
+        "last12": "12 เดือนล่าสุด",
+        "legAvg": "ค่าเฉลี่ย",
+        "legRange": "ต่ำสุดถึงสูงสุด",
+        "legDirty": "สกปรกเมื่อต่ำกว่า <span id=\"dirtyNum\">50</span>",
+        "chartAria": "กราฟ WQI",
+        "noChart": "ยังไม่มีข้อมูลให้แสดง",
+        "tipAvg": "{tip}: ค่าเฉลี่ย {avg} (ต่ำสุด {min}, สูงสุด {max})",
+        "hitDays": "{tip} - คลิกเพื่อดูรายวันของเดือนนี้",
+        "hitHours": "{tip} - คลิกเพื่อดูรายชั่วโมงของวันนี้",
+        "noteHourly": "แสดงทุกชั่วโมงของวันที่เลือก คลิกจุดบนกราฟรายวันเพื่อเลือกวันอื่น",
+        "noteDaily": "แสดงทุกวันของเดือน คลิกจุดเพื่อดูวันนั้นทีละชั่วโมง",
+        "noteMonthly": "แสดง 12 เดือนล่าสุด คลิกจุดเพื่อดูเดือนนั้นทีละวัน ข้อมูลของแต่ละเดือนจะถูกลบโดยอัตโนมัติเมื่อถึงเดือนเดิมของปีถัดไป",
+        "errMonth": "ไม่สามารถโหลดข้อมูลของเดือนนั้นได้",
+        "errArchive": "ไม่สามารถโหลดข้อมูลย้อนหลังได้ กรุณาตรวจสอบ URL ของ Apps Script ในหน้านี้ และตรวจสอบว่า Web App ถูกเผยแพร่โดยตั้งสิทธิ์การเข้าถึงเป็น \"Anyone\"",
+        "noData": "ยังไม่มีข้อมูล",
+        "current": "(เดือนปัจจุบัน)",
+        "q.Very Clean": "สะอาดมาก",
+        "q.Clean": "สะอาด",
+        "q.Normal": "ปานกลาง",
+        "q.Dirty": "สกปรก",
+        "q.Very Dirty": "สกปรกมาก",
+        "months": [
+          "มกราคม",
+          "กุมภาพันธ์",
+          "มีนาคม",
+          "เมษายน",
+          "พฤษภาคม",
+          "มิถุนายน",
+          "กรกฎาคม",
+          "สิงหาคม",
+          "กันยายน",
+          "ตุลาคม",
+          "พฤศจิกายน",
+          "ธันวาคม"
+        ],
+        "monthsShort": [
+          "ม.ค.",
+          "ก.พ.",
+          "มี.ค.",
+          "เม.ย.",
+          "พ.ค.",
+          "มิ.ย.",
+          "ก.ค.",
+          "ส.ค.",
+          "ก.ย.",
+          "ต.ค.",
+          "พ.ย.",
+          "ธ.ค."
+        ],
+        "fmtMonth": "{m} {y}",
+        "fmtDay": "{d} {m} {y}",
+        "fmtDayMon": "{d} {m}",
+        "fmtHour": "{H}:00 น.",
+        "am": "AM",
+        "pm": "PM",
+        "durHM": "{h} ชม. {m} นาที",
+        "durM": "{m} นาที",
+        "sumNone": "ยังไม่มีข้อมูลที่ถูกบันทึก เมื่ออุปกรณ์เริ่มส่งข้อมูล แต่ละเดือนจะแสดงที่นี่โดยอัตโนมัติ",
+        "stAvg": "WQI เฉลี่ย",
+        "stRange": "WQI ต่ำสุด – สูงสุด",
+        "stDirty": "น้ำสกปรก (WQI ต่ำกว่า {n})",
+        "stPh": "ค่า pH เฉลี่ย",
+        "stTds": "ค่า TDS เฉลี่ย (ppm)",
+        "stTurb": "ความขุ่นเฉลี่ย (NTU)",
+        "stTime": "เวลาที่บันทึก",
+        "sumMain": "ใน{month} WQI เฉลี่ย {avg} ({lvl}) อยู่ในช่วง {min} ถึง {max} ",
+        "sumDirty": "น้ำอยู่ในช่วงสกปรกเป็นเวลา {dur} ({pct}% ของเวลาที่บันทึก) ",
+        "sumClean": "น้ำไม่เคยลดลงไปอยู่ในช่วงสกปรก ",
+        "sumBest": "วันที่ดีที่สุด: {day} ({v}) ",
+        "sumWorst": "วันที่แย่ที่สุด: {day} ({v})",
+        "expCur": "เดือนนี้ยังอยู่ระหว่างการบันทึก ",
+        "expDel": "ข้อมูลจะถูกลบโดยอัตโนมัติในวันที่ {date}",
+        "fmtFirst": "1 {m} {y}"
+      },
+      "ko": {
+        "skip": "본문으로 건너뛰기",
+        "nav.home": "홈",
+        "nav.archived": "보관 데이터",
+        "nav.wqi": "수질 소개",
+        "nav.project": "프로젝트 소개",
+        "nav.filter": "필터",
+        "login": "로그인",
+        "menu": "메뉴 열기",
+        "langTitle": "언어 변경",
+        "pageTitle": "ACHELOUS",
+        "members": "프로젝트 구성원",
+        "h1": "보관 데이터",
+        "heroP": "매월 데이터가 자동으로 저장되고 요약됩니다. 최근 12개월 분량이 보관됩니다.",
+        "chooseLoc": "위치 선택",
+        "chooseSub": "층을 선택하면 기록된 데이터를 볼 수 있습니다.",
+        "location": "위치",
+        "floorN": "{n}층",
+        "wqiTitle": "수질 지수 (WQI)",
+        "wqiSub": "0점(나쁨)부터 100점(매우 좋음)까지의 점수입니다.",
+        "tabMonthly": "월별",
+        "tabDaily": "일별",
+        "tabHourly": "시간별",
+        "chartLevel": "차트 단계",
+        "last12": "최근 12개월",
+        "legAvg": "평균",
+        "legRange": "최저~최고",
+        "legDirty": "<span id=\"dirtyNum\">50</span> 미만이면 더러움",
+        "chartAria": "WQI 차트",
+        "noChart": "아직 표시할 데이터가 없습니다",
+        "tipAvg": "{tip}: 평균 {avg} (최저 {min}, 최고 {max})",
+        "hitDays": "{tip} - 클릭하여 일별 보기",
+        "hitHours": "{tip} - 클릭하여 시간별 보기",
+        "noteHourly": "선택한 날의 모든 시간을 보여줍니다. 다른 날을 보려면 일별 차트에서 점을 클릭하세요.",
+        "noteDaily": "해당 월의 모든 날을 보여줍니다. 점을 클릭하면 그날의 시간별 데이터를 볼 수 있습니다.",
+        "noteMonthly": "최근 12개월을 보여줍니다. 점을 클릭하면 그 달의 일별 데이터를 볼 수 있습니다. 각 월의 데이터는 같은 달이 다시 돌아오면 자동으로 삭제됩니다.",
+        "errMonth": "해당 월 데이터를 불러오지 못했습니다.",
+        "errArchive": "아카이브를 불러오지 못했습니다. 이 페이지의 Apps Script URL과 Web App이 접근 권한 \"Anyone\"으로 배포되었는지 확인하세요.",
+        "noData": "아직 데이터 없음",
+        "current": "(현재)",
+        "q.Very Clean": "매우 깨끗함",
+        "q.Clean": "깨끗함",
+        "q.Normal": "보통",
+        "q.Dirty": "더러움",
+        "q.Very Dirty": "매우 더러움",
+        "months": [
+          "1월",
+          "2월",
+          "3월",
+          "4월",
+          "5월",
+          "6월",
+          "7월",
+          "8월",
+          "9월",
+          "10월",
+          "11월",
+          "12월"
+        ],
+        "monthsShort": [
+          "1월",
+          "2월",
+          "3월",
+          "4월",
+          "5월",
+          "6월",
+          "7월",
+          "8월",
+          "9월",
+          "10월",
+          "11월",
+          "12월"
+        ],
+        "fmtMonth": "{y}년 {m}",
+        "fmtDay": "{y}년 {m} {d}일",
+        "fmtDayMon": "{m} {d}일",
+        "fmtHour": "{ap} {h}시",
+        "am": "오전",
+        "pm": "오후",
+        "durHM": "{h}시간 {m}분",
+        "durM": "{m}분",
+        "sumNone": "아직 기록된 데이터가 없습니다. 장치가 데이터를 보내기 시작하면 각 월이 여기에 자동으로 표시됩니다.",
+        "stAvg": "평균 WQI",
+        "stRange": "WQI 최저 – 최고",
+        "stDirty": "더러운 물 (WQI {n} 미만)",
+        "stPh": "평균 pH",
+        "stTds": "평균 TDS (ppm)",
+        "stTurb": "평균 탁도 (NTU)",
+        "stTime": "기록 시간",
+        "sumMain": "{month}의 WQI 평균은 {avg}({lvl})이며 {min}에서 {max} 사이였습니다. ",
+        "sumDirty": "물은 {dur} 동안 더러움 범위에 있었습니다(기록 시간의 {pct}%). ",
+        "sumClean": "물이 더러움 범위로 떨어진 적은 없었습니다. ",
+        "sumBest": "가장 좋았던 날: {day} ({v}). ",
+        "sumWorst": "가장 나빴던 날: {day} ({v}).",
+        "expCur": "이번 달은 아직 기록 중입니다. ",
+        "expDel": "{date}에 자동으로 삭제됩니다.",
+        "fmtFirst": "{y}년 {m} 1일"
       }
-    });
+    };
+
+    function stored() { try { return localStorage.getItem(STORE); } catch (e) { return null; } }
+    function save(l) { try { localStorage.setItem(STORE, l); } catch (e) {} }
+
+    var current = DICT[stored()] ? stored() : 'en';
+
+    function t(key) {
+      var d = DICT[current];
+      if (d && d[key] !== undefined) return d[key];
+      return DICT.en[key] !== undefined ? DICT.en[key] : key;
+    }
+
+    var btn = document.getElementById('langToggleBtn');
+    var menu = document.getElementById('langMenu');
+    var flagImg = document.getElementById('langFlagImg');
+    var langText = document.getElementById('langText');
+
+    function apply() {
+      document.documentElement.lang = current;
+      document.title = t('pageTitle');
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.innerHTML = String(t(el.getAttribute('data-i18n'))).replace('{n}', el.getAttribute('data-n') || ''); });
+      document.querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+      document.querySelectorAll('[data-i18n-title]').forEach(function (el) { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+      if (flagImg) flagImg.src = LANGS[current].flag;
+      if (langText) langText.textContent = LANGS[current].code;
+      if (menu) menu.querySelectorAll('button[data-lang]').forEach(function (b) {
+        b.setAttribute('aria-selected', b.getAttribute('data-lang') === current ? 'true' : 'false');
+      });
+    }
+
+    function setLang(l) {
+      if (!DICT[l]) return;
+      current = l;
+      save(l);
+      apply();
+      document.dispatchEvent(new CustomEvent('achelous-langchange', { detail: { lang: l } }));
+    }
+
+    function closeMenu() {
+      if (!menu) return;
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (btn && menu) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-lang]');
+        if (!b) return;
+        setLang(b.getAttribute('data-lang'));
+        closeMenu();
+        btn.focus();
+      });
+      document.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('is-open')) { closeMenu(); btn.focus(); }
+      });
+    }
+
+    window.ACHELOUS_t = t;
+    window.ACHELOUS_setLang = setLang;
+    window.ACHELOUS_getLang = function () { return current; };
+    apply();
   })();
   </script>
 
 
     <!-- ===================== PAGE CONTENT ===================== -->
-  <main class="wrap page">
+  <main class="wrap page" id="main" tabindex="-1">
 
-    <section class="hero">
-      <h1>Archived Data</h1>
+    <section class="hero reveal">
+      <h1 data-i18n="h1">Archived Data</h1>
+      <p data-i18n="heroP">Every month is saved and summarised automatically. The last 12 months are kept.</p>
     </section>
 
-    <section class="content-card">
-      <h2>Choose a location</h2>
-      <p class="sub">Pick a floor to see its recorded data.</p>
-      <div class="system-select">
-        <label for="floor">Location</label>
-        <select id="floor">
-          <option selected>Floor 2</option>
-          <option>Floor 3</option>
-          <option>Floor 4</option>
-        </select>
-      </div>
-    </section>
+    <section class="content-card reveal">
+  <h2 data-i18n="chooseLoc">Choose a location</h2>
+  <p class="sub" data-i18n="chooseSub">Pick a floor to see its recorded data.</p>
+  <div class="system-select">
+    <label for="location" data-i18n="location">Location</label>
+    <select id="location">
+    
+      <option value="floor2" selected data-i18n="floorN" data-n="2">Floor 2</option>
+      <option value="floor3" data-i18n="floorN" data-n="3">Floor 3</option>
+      <option value="floor4" data-i18n="floorN" data-n="4">Floor 4</option>
+      <option value="floor5" data-i18n="floorN" data-n="5">Floor 5</option>
+      <option value="floor7" data-i18n="floorN" data-n="7">Floor 7</option>
+      <option value="floor8" data-i18n="floorN" data-n="8">Floor 8</option>
+    </select>
+  </div>
+</section>
 
-        <section class="content-card">
+    <section class="content-card reveal">
       <div class="chart-head">
-        <h2>Water Quality Index (WQI)</h2>
-        <span class="badge">Floor 2</span>
-      </div>
-      <p class="sub">Score from 0 (poor) to 100 (excellent).</p>
+        <h2 data-i18n="wqiTitle">Water Quality Index (WQI)</h2>
+        <span class="badge" id="chartBadge">–</span>
+        <p class="sub" data-i18n="wqiSub">Score from 0 (poor) to 100 (excellent).</p>
+        <p class="status-msg" id="status" hidden></p>
 
-      <input type="radio" name="range" id="r-hourly" class="range__input" checked>
+      <input type="radio" name="range" id="r-hourly" class="range__input">
       <input type="radio" name="range" id="r-daily" class="range__input">
-      <input type="radio" name="range" id="r-monthly" class="range__input">
+      <input type="radio" name="range" id="r-monthly" class="range__input" checked>
 
       <div class="range-tabs">
-        <label for="r-hourly">Hourly</label>
-        <label for="r-daily">Daily</label>
-        <label for="r-monthly">Monthly</label>
+        <label for="r-monthly" data-i18n="tabMonthly">Monthly</label>
+        <label for="r-daily" data-i18n="tabDaily">Daily</label>
+        <label for="r-hourly" data-i18n="tabHourly">Hourly</label>
       </div>
 
-      <svg class="chart" viewBox="0 0 640 280" role="img" aria-label="WQI chart">
-        <text class="title" x="12" y="20">WQI</text>
-        <g class="grid">
-          <line x1="60" y1="30" x2="620" y2="30"/><line x1="60" y1="70" x2="620" y2="70"/>
-          <line x1="60" y1="110" x2="620" y2="110"/><line x1="60" y1="150" x2="620" y2="150"/>
-          <line x1="60" y1="190" x2="620" y2="190"/>
-        </g>
-        <g text-anchor="end">
-          <text x="50" y="34">100</text><text x="50" y="74">80</text><text x="50" y="114">60</text>
-          <text x="50" y="154">40</text><text x="50" y="194">20</text><text x="50" y="234">0</text>
-        </g>
-        <line class="axis" x1="60" y1="30" x2="60" y2="230"/>
-        <line class="axis" x1="60" y1="230" x2="620" y2="230"/>
-
-        <!-- Hourly: last 12 hours -->
-        <g class="xl x-hourly" text-anchor="middle">
-          <text x="85" y="254">2 AM</text><text x="132" y="254">3 AM</text><text x="178" y="254">4 AM</text><text x="225" y="254">5 AM</text>
-          <text x="272" y="254">6 AM</text><text x="318" y="254">7 AM</text><text x="365" y="254">8 AM</text><text x="412" y="254">9 AM</text>
-          <text x="458" y="254">10 AM</text><text x="505" y="254">11 AM</text><text x="552" y="254">12 PM</text><text x="598" y="254">1 PM</text>
-        </g>
-
-        <!-- Daily: last 7 days -->
-        <g class="xl x-daily" text-anchor="middle">
-          <text x="100" y="254">29 Sep</text><text x="180" y="254">30 Sep</text><text x="260" y="254">1 Oct</text><text x="340" y="254">2 Oct</text>
-          <text x="420" y="254">3 Oct</text><text x="500" y="254">4 Oct</text><text x="580" y="254">5 Oct</text>
-        </g>
-
-        <!-- Monthly: last 12 months -->
-        <g class="xl x-monthly" text-anchor="middle">
-          <text x="83" y="254">Nov</text><text x="130" y="254">Dec</text><text x="177" y="254">Jan</text><text x="223" y="254">Feb</text>
-          <text x="270" y="254">Mar</text><text x="317" y="254">Apr</text><text x="363" y="254">May</text><text x="410" y="254">Jun</text>
-          <text x="457" y="254">Jul</text><text x="503" y="254">Aug</text><text x="550" y="254">Sep</text><text x="597" y="254">Oct</text>
-        </g>
-
-        <text class="empty" x="340" y="135" text-anchor="middle">No data to display yet</text>
-      </svg>
+      <nav class="crumbs" id="crumbs" aria-label="Chart level" data-i18n-aria="chartLevel"></nav>
+      <div id="chartBox"></div>
+      <p class="legend">
+        <span><i></i><span data-i18n="legAvg">Average</span></span>
+        <span><i class="band"></i><span data-i18n="legRange">Lowest to highest</span></span>
+        <span><i class="dash"></i><span data-i18n="legDirty">Dirty below <span id="dirtyNum">50</span></span></span>
+      </p>
+      <p class="sub" id="rangeNote" style="margin-top:10px"></p>
     </section>
 
   </main>
 
+  <script>
+  (function () {
+    // =============================================================
+    //  SETTINGS
+    // =============================================================
+    var API_BASE   = 'ใส่ URL ของ Apps Script Web App (ลงท้ายด้วย /exec)';
+    var DIRTY_WQI  = 50;                            // red line + "dirty" wording (match archive.js)
+    var REFRESH_MS = 60000;                         // how often the page reloads the current month
+    // =============================================================
+
+    // text comes from the language dictionary at the top of the page
+    function T(key, vars) {
+      var v = window.ACHELOUS_t(key);
+      if (typeof v !== 'string') return v;
+      if (vars) for (var k in vars) v = v.split('{' + k + '}').join(vars[k]);
+      return v;
+    }
+    function MN(i) { return T('months')[i]; }
+    function MS(i) { return T('monthsShort')[i]; }
+
+    var selectEl = document.getElementById('month')|| document.createElement('select');  // month picker removed from page
+    var statusEl = document.getElementById('status');
+    var state = { months: [], detail: null, range: 'monthly', day: null, err: '', animate: true };
+
+    function $(id) { return document.getElementById(id)|| document.createElement('div'); }  // safe if an element was removed
+    function num(v, d) { return (v === null || v === undefined || !isFinite(v)) ? '–' : Number(v).toFixed(d === undefined ? 1 : d); }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function monthLabel(key) { var p = key.split('-'); return T('fmtMonth', { m: MN(+p[1] - 1), y: p[0] }); }
+    function level(w) {
+      if (w >= 85) return T('q.Very Clean');
+      if (w >= 70) return T('q.Clean');
+      if (w >= 50) return T('q.Normal');
+      if (w >= 25) return T('q.Dirty');
+      return T('q.Very Dirty');
+    }
+    function duration(sec) {
+      var h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+      if (m === 60) { h += 1; m = 0; }
+      if (h === 0) return T('durM', { m: m });
+      return T('durHM', { h: h, m: m });
+    }
+    function showError(key) { state.err = key || ''; statusEl.textContent = key ? T(key) : ''; statusEl.hidden = !key; }
+
+    // รับ query string เช่น 'action=months' (Apps Script ใช้พารามิเตอร์ ไม่ใช้ path)
+    function getJSON(query) {
+      var url = API_BASE + (API_BASE.indexOf('?') >= 0 ? '&' : '?') + query + '&t=' + Date.now();
+      return fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function (d) {
+        if (d && d.error) throw new Error(d.error);
+        return d;
+      });
+    }
+  
+    // ---------- summary ----------
+    function renderSummary(){
+      var d = state.detail, stats = $('stats');
+      if (!d) {
+        stats.innerHTML = '';
+        $('summaryText').textContent = T('sumNone');
+        $('expiry').textContent = '';
+        $('sumBadge').textContent = '–';
+        return;
+      }
+      var t = d.totals, m = t.m, w = m.wqi2;
+      $('sumBadge').textContent = monthLabel(d.month);
+
+      function stat(value, label) { return '<div class="stat"><b>' + value + '</b><span>' + label + '</span></div>'; }
+      stats.innerHTML =
+        stat(w ? num(w.avg) + ' <small style="font-size:14px;font-weight:500">' + level(w.avg) + '</small>' : '–', T('stAvg')) +
+        stat(w ? num(w.min) + ' – ' + num(w.max) : '–', T('stRange')) +
+        stat(duration(t.dirtySec), T('stDirty', { n: DIRTY_WQI })) +
+        stat(m.ph ? num(m.ph.avg, 2) : '–', T('stPh')) +
+        stat(m.tds2 ? num(m.tds2.avg, 0) : '–', T('stTds')) +
+        stat(m.turbidity2 ? num(m.turbidity2.avg) : '–', T('stTurb')) +
+        stat(duration(t.sec), T('stTime'));
+
+      // Auto-written summary
+      var text = '';
+      if (w) {
+        text += T('sumMain', { month: monthLabel(d.month), avg: num(w.avg), lvl: level(w.avg), min: num(w.min), max: num(w.max) });
+        if (t.dirtySec > 0 && t.sec > 0) {
+          text += T('sumDirty', { dur: duration(t.dirtySec), pct: num(t.dirtySec / t.sec * 100) });
+        } else {
+          text += T('sumClean');
+        }
+        var days = d.daily.filter(function (x) { return x.m.wqi2; });
+        if (days.length > 1) {
+          var worst = days.reduce(function (a, b) { return b.m.wqi2.avg < a.m.wqi2.avg ? b : a; });
+          var best = days.reduce(function (a, b) { return b.m.wqi2.avg > a.m.wqi2.avg ? b : a; });
+          text += T('sumBest', { day: T('fmtDayMon', { d: +best.k.slice(8), m: MS(+best.k.slice(5, 7) - 1) }), v: num(best.m.wqi2.avg) }) +
+                  T('sumWorst', { day: T('fmtDayMon', { d: +worst.k.slice(8), m: MS(+worst.k.slice(5, 7) - 1) }), v: num(worst.m.wqi2.avg) });
+        }
+      }
+      $('summaryText').textContent = text;
+
+      var p = d.month.split('-');
+      $('expiry').textContent = (d.current ? T('expCur') : '') +
+        T('expDel', { date: T('fmtFirst', { m: MN(+p[1] - 1), y: +p[0] + 1 }) });
+    }
+  
+    // ---------- chart ----------
+    function currentDay() {
+      var d = state.detail;
+      if (!d || !d.daily.length) return null;
+      var has = d.daily.some(function (x) { return x.k === state.day; });
+      return has ? state.day : d.daily[d.daily.length - 1].k;   // default: latest day with data
+    }
+    function dayLabel(key) { return T('fmtDay', { d: +key.slice(8), m: MS(+key.slice(5, 7) - 1), y: key.slice(0, 4) }); }
+
+    function slotsHourly() {
+      var d = state.detail, day = currentDay();
+      if (!d || !day) return [];
+      var byKey = {};
+      d.hourly.forEach(function (h) { byKey[h.k] = h; });
+      var out = [];
+      for (var hr = 0; hr < 24; hr++) {
+        var label = T('fmtHour', { h: (hr % 12 === 0 ? 12 : hr % 12), H: hr, ap: T(hr < 12 ? 'am' : 'pm') });
+        var h = byKey[day + 'T' + pad(hr)];
+        out.push({ label: label, every: 3, data: h ? h.m.wqi2 : null, tip: dayLabel(day) + ', ' + label });
+      }
+      return out;
+    }
+    function slotsDaily() {
+      var d = state.detail;
+      if (!d) return [];
+      var p = d.month.split('-'), y = +p[0], mo = +p[1];
+      var n = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+      var byKey = {};
+      d.daily.forEach(function (x) { byKey[x.k] = x; });
+      var out = [];
+      for (var i = 1; i <= n; i++) {
+        var key = d.month + '-' + pad(i);
+        out.push({ key: key, label: String(i), every: 2, data: byKey[key] ? byKey[key].m.wqi2 : null, tip: T('fmtDayMon', { d: i, m: MS(mo - 1) }) });
+      }
+      return out;
+    }
+    function slotsMonthly() {
+      var now = new Date(), out = [];
+      var byKey = {};
+      state.months.forEach(function (x) { byKey[x.month] = x; });
+      for (var i = 11; i >= 0; i--) {
+        var t = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        var key = t.getFullYear() + '-' + pad(t.getMonth() + 1);
+        var x = byKey[key];
+        out.push({
+          key: key, label: MS(t.getMonth()), every: 1,
+          data: x && x.avgWqi !== null ? { avg: x.avgWqi, min: x.minWqi, max: x.maxWqi } : null,
+          tip: T('fmtMonth', { m: MS(t.getMonth()), y: t.getFullYear() })
+        });
+      }
+      return out;
+    }
+
+    function drawChart() {
+      var slots = state.range === 'hourly' ? slotsHourly() : state.range === 'daily' ? slotsDaily() : slotsMonthly();
+      var X0 = 60, X1 = 620, Y0 = 230, SCALE = 2;          // WQI 0 sits at y=230, WQI 100 at y=30
+      function y(v) { return Y0 - v * SCALE; }
+      var n = slots.length || 1, step = (X1 - X0) / n;
+      function x(i) { return X0 + (i + 0.5) * step; }
+
+      var svg = '<svg class="chart' + (state.animate ? ' anim' : '') + '" viewBox="0 0 640 280" role="img" aria-label="' + T('chartAria') + '">';
+      svg += '<text class="title" x="12" y="20">WQI</text>';
+      [100, 80, 60, 40, 20].forEach(function (v) {
+        svg += '<line class="grid" x1="' + X0 + '" y1="' + y(v) + '" x2="' + X1 + '" y2="' + y(v) + '"/>';
+      });
+      svg += '<g text-anchor="end">';
+      [100, 80, 60, 40, 20, 0].forEach(function (v) { svg += '<text x="50" y="' + (y(v) + 4) + '">' + v + '</text>'; });
+      svg += '</g>';
+      svg += '<line class="thr" x1="' + X0 + '" y1="' + y(DIRTY_WQI) + '" x2="' + X1 + '" y2="' + y(DIRTY_WQI) + '"/>';
+      svg += '<line class="axis" x1="' + X0 + '" y1="30" x2="' + X0 + '" y2="' + Y0 + '"/>';
+      svg += '<line class="axis" x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '"/>';
+
+      svg += '<g text-anchor="middle">';
+      slots.forEach(function (s, i) {
+        var show = state.range === 'hourly' ? (i % s.every === 0) : state.range === 'daily' ? (i % s.every === 0) : true;
+        if (show) svg += '<text x="' + x(i) + '" y="254">' + s.label + '</text>';
+      });
+      svg += '</g>';
+
+      var any = false, path = '';
+      slots.forEach(function (s, i) {
+        if (!s.data) { path += ' |'; return; }
+        any = true;
+        var a = s.data;
+        svg += '<line class="rng" x1="' + x(i) + '" y1="' + y(a.max) + '" x2="' + x(i) + '" y2="' + y(a.min) + '"/>';
+        path += ' ' + x(i).toFixed(1) + ',' + y(a.avg).toFixed(1);
+      });
+      path.split('|').forEach(function (seg) {
+        var pts = seg.trim();
+        if (pts.indexOf(' ') > -1) svg += '<polyline class="line" pathLength="1" points="' + pts + '"/>';
+      });
+      slots.forEach(function (s, i) {
+        if (!s.data) return;
+        var sel = (state.range === 'daily' && s.key === currentDay());
+        svg += '<circle class="dot' + (sel ? ' sel' : '') + '" cx="' + x(i) + '" cy="' + y(s.data.avg) + '" r="' + (sel ? 5.5 : 3.5) + '"><title>' + T('tipAvg', { tip: s.tip, avg: num(s.data.avg), min: num(s.data.min), max: num(s.data.max) }) + '</title></circle>';
+        if (s.key && state.range !== 'hourly') {   // click a month or a day to drill down
+          svg += '<circle class="hit" data-key="' + s.key + '" cx="' + x(i) + '" cy="' + y(s.data.avg) + '" r="13"><title>' + T(state.range === 'monthly' ? 'hitDays' : 'hitHours', { tip: s.tip }) + '</title></circle>';
+        }
+      });
+      if (!any) svg += '<text class="empty" x="340" y="135" text-anchor="middle">' + T('noChart') + '</text>';
+      svg += '</svg>';
+      $('chartBox').innerHTML = svg;
+      state.animate = false;
+
+      $('rangeNote').textContent = T(state.range === 'hourly' ? 'noteHourly' : state.range === 'daily' ? 'noteDaily' : 'noteMonthly');
+      $('chartBadge').textContent = state.range === 'monthly' ? T('last12') :
+        !state.detail ? '–' : state.range === 'daily' ? monthLabel(state.detail.month) : (currentDay() ? dayLabel(currentDay()) : '–');
+      drawCrumbs();
+    }
+
+    // ---------- linking the three charts together ----------
+    function drawCrumbs() {
+      var html = '<button data-go="monthly"' + (state.range === 'monthly' ? ' aria-current="true"' : '') + '>' + T('last12') + '</button>';
+      if (state.detail && state.range !== 'monthly') {
+        html += '<span class="sep">›</span><button data-go="daily"' + (state.range === 'daily' ? ' aria-current="true"' : '') + '>' + monthLabel(state.detail.month) + '</button>';
+        if (state.range === 'hourly' && currentDay()) {
+          html += '<span class="sep">›</span><button data-go="hourly" aria-current="true">' + dayLabel(currentDay()) + '</button>';
+        }
+      }
+      $('crumbs').innerHTML = html;
+    }
+
+    function setRange(r) {
+      state.range = r;
+      state.animate = true;
+      $('r-' + r).checked = true;       // keeps the Hourly / Daily / Monthly tabs in step
+      drawChart();
+    }
+
+    $('crumbs').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-go]');
+      if (b && b.getAttribute('aria-current') !== 'true') setRange(b.getAttribute('data-go'));
+    });
+
+    $('chartBox').addEventListener('click', function (e) {
+      var hit = e.target.closest('.hit');
+      if (!hit) return;
+      var key = hit.getAttribute('data-key');
+      if (state.range === 'monthly') {                 // month -> its days
+        state.day = null;
+        selectEl.value = key;
+        loadMonth(key).then(function () { setRange('daily'); }).catch(function () { showError('errMonth'); });
+      } else if (state.range === 'daily') {            // day -> its hours
+        state.day = key;
+        setRange('hourly');
+      }
+    });
+
+    // ---------- loading ----------
+    function loadMonth(key) {
+      if (!key) { state.detail = null; renderSummary(); drawChart(); return Promise.resolve(); }
+      return getJSON('action=month&month=' + encodeURIComponent(key)).then(function (d) {
+        state.detail = d; renderSummary(); drawChart();
+      });
+    }
+
+    function loadMonths(keepSelection) {
+      return getJSON('action=months').then(function (res) {
+        state.months = res.months || [];
+        var prev = keepSelection ? selectEl.value : null;
+        selectEl.innerHTML = '';
+        if (!state.months.length) {
+          selectEl.innerHTML = '<option value="">' + T('noData') + '</option>';
+          selectEl.disabled = true;
+          return loadMonth(null);
+        }
+        selectEl.disabled = false;
+        state.months.forEach(function (m) {
+          var o = document.createElement('option');
+          o.value = m.month;
+          o.textContent = monthLabel(m.month) + (m.current ? ' ' + T('current') : '');
+          selectEl.appendChild(o);
+        });
+        var wanted = state.months.some(function (m) { return m.month === prev; }) ? prev : state.months[0].month;
+        selectEl.value = wanted;
+        return loadMonth(wanted);
+      });
+    }
+
+    function refresh(keepSelection) {
+      if (!keepSelection) state.animate = true;
+      loadMonths(keepSelection).then(function () { showError(''); }).catch(function (e) {
+        console.error(e);
+        showError('errArchive');
+        state.detail = null; renderSummary(); drawChart();
+      });
+    }
+
+    selectEl.addEventListener('change', function () {
+      state.day = null;
+      state.animate = true;
+      loadMonth(selectEl.value).catch(function () { showError('errMonth'); });
+    });
+    ['hourly', 'daily', 'monthly'].forEach(function (r) {
+      $('r-' + r).addEventListener('change', function () { setRange(r); });
+    });
+
+    drawChart();
+    refresh(false);
+    $('dirtyNum').textContent = DIRTY_WQI;
+    document.addEventListener('achelous-langchange', function () {
+      $('dirtyNum').textContent = DIRTY_WQI;
+      showError(state.err);
+      renderSummary();
+      drawChart();
+    });
+    setInterval(function () { refresh(true); }, REFRESH_MS);   // keeps the current month fresh
+  })();
+  </script>
+
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
-    <div class="footer__inner">
+    <div class="footer__inner reveal">
  
       <div class="footer__logos">
         <div class="footer__logo"><img src="Thailand.png"></div>
@@ -279,7 +1026,7 @@ img { max-width: 100%; display: block; }
       </div>
  
       <div class="footer__members">
-        <h3>Project Members</h3>
+        <h3 data-i18n="members">Project Members</h3>
         <ul>
           <li>Mr.Arkkharayut Pandej</li>
           <li>Mr.Nantapat Pasukulpipat</li>
@@ -292,5 +1039,27 @@ img { max-width: 100%; display: block; }
  
     </div>
   </footer>
+
+  <script>
+  /* ===== Navbar shadow on scroll + reveal-on-scroll ===== */
+  (function () {
+    var nav = document.querySelector('.navbar');
+    function onScroll() { if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 10); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+  </script>
 </body>
 </html>
