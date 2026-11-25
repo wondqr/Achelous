@@ -7,15 +7,13 @@
 #include <WebServer.h>
 #include <WiFiClientSecure.h>
 #include <math.h>
+#include "firebase_upload.h"
+#include "secrets.h"  //Host WiFi  (ค่าจริงอยู่ใน secrets.h ซึ่งห้ามอัปโหลดขึ้น GitHub)
 
-//Host WiFi
-const char* WIFI_SSID = "f16";
-const char* WIFI_PASSWORD = "tawan123";
-const char* SERVER_URL ="http://192.168.26.212:4000/api/sensor";//ใช้ตาม IPv4 ของแต่ละเครื่อง
-// ดู ip จาก cmd --> ipconfig
 
-// Must be identical to the DEVICE_API_KEY environment variable on the Render server.
-const char* DEVICE_API_KEY = "PUT-YOUR-DEVICE-KEY-HERE";
+const char* WIFI_SSID = SECRET_WIFI_SSID;
+const char* WIFI_PASSWORD = SECRET_WIFI_PASSWORD;
+
 
 //ESP-32 hotspot WiFi
 const char* ssid = "Motor-ESP32";
@@ -39,7 +37,8 @@ WebServer server(80);
 
 #define RELAY_VALVE1 RELAY1_PIN
 #define RELAY_VALVE2 RELAY2_PIN
-#define RELAY_VALVE3 RELAY3_PIN
+#define RELAY_VALVE3 RELAY2_PIN
+#define RELAY_VALVE4 RELAY3_PIN
 
 // ================= MOTOR DRIVER =================
 const int STBY = 1;
@@ -74,15 +73,15 @@ void controlPumpByWQI(float overallWQI)
 
   if (overallWQI >= 70)
   {
-    motorSpeed = 80;
+    motorSpeed = 175;
   }
   else if (overallWQI >= 50)
   {
-    motorSpeed = 150;
+    motorSpeed = 100;
   }
   else if (overallWQI >= 25)
   {
-    motorSpeed = 200;
+    motorSpeed = 50;
   }
   else
   {
@@ -122,6 +121,8 @@ button { padding:14px;margin:5px;border:0;border-radius:8px;color:white;font-siz
 <button style="background:green" onclick="send('/dir?d=f')">Forward</button>
 <button style="background:blue" onclick="send('/dir?d=r')">Reverse</button>
 <button style="background:red" onclick="stopMotor()">STOP</button>
+<button style="background:#555" onclick="send('/mode?m=auto')">Auto</button>
+<button style="background:#555" onclick="send('/mode?m=manual')">Manual</button>
 </main>
 <script>
 function send(url) {
@@ -135,6 +136,23 @@ function stopMotor() {
  document.getElementById('v').textContent=0;
  send('/stop');
 }
+ let dragging = false;
+const sl = document.getElementById('s');
+sl.addEventListener('pointerdown', () => dragging = true);
+sl.addEventListener('pointerup',   () => dragging = false);
+
+function refresh() {
+ fetch('/status').then(r => r.json()).then(d => {
+  if (!dragging) {
+   sl.value = d.speed;
+   document.getElementById('v').textContent = d.speed;
+  }
+  document.getElementById('mode').textContent =
+   (d.auto ? 'AUTO' : 'MANUAL') + ' | ' + (d.dir == 1 ? 'Forward' : 'Reverse');
+ }).catch(() => {});
+}
+setInterval(refresh, 1000);
+refresh();
 </script>
 </body>
 </html>
@@ -145,8 +163,16 @@ OneWire oneWire(TEMP_PIN);
 DallasTemperature tempSensor(&oneWire);
 
 // ================= TIMING =================
-const unsigned long SEND_INTERVAL_MS = 3000;
+const unsigned long MEASURE_INTERVAL_MS     = 1000;   // measure every 1 s
+const unsigned long SEND_INTERVAL_NORMAL_MS = 5000;   // send every 5 s (clean)
+const unsigned long SEND_INTERVAL_DIRTY_MS  = 1000;   // send every 1 s (dirty)
+const float         DIRTY_WQI_THRESHOLD     = 50.0f;
+const unsigned long DIRTY_HOLD_MS           = 10000;  // stay fast 10 s after last dirty
+const unsigned long WIFI_CONNECT_TIMEOUT_MS = 10000;
+const unsigned long HTTP_TIMEOUT_MS         = 3000;
+unsigned long lastMeasure = 0;
 unsigned long lastSend = 0;
+unsigned long lastDirtyTime = 0;
 
 // ================= FLOW SENSOR: YF-S201 =================
 const float FLOW_CALIBRATION = 7.5f;
@@ -195,11 +221,11 @@ const float TDS_FACTOR_1 = 1.00f;
 const float TDS_FACTOR_2 = 1.00f;
 
 const float TURB_DIVIDER_RATIO = 1.5f;
-const float TURB_CLEAR_VOLTAGE = 1.590f;
-const float TURB_MILK_VOLTAGE = 0.0555f;
-const float TURB_MILK_REFERENCE_NTU = 1000.0f;
+const float TURB_CLEAR_VOLTAGE = 1.585f;
+const float TURB_MILK_VOLTAGE = 0.035f;
+const float TURB_MILK_REFERENCE_NTU = 1015.5f;
 
-const float WQI_THRESHOLD = 69.0f;
+const float WQI_THRESHOLD = 70.0f;
 const float PH_MIN = 5.5f;
 const float PH_MAX = 9.5f;
 
@@ -426,12 +452,17 @@ void setValve(int pin, bool open)
   digitalWrite(pin, open ? RELAY_ON : RELAY_OFF);
 }
 
+void setValves(bool v1, bool v2, bool v3, bool v4)
+{
+  setValve(RELAY_VALVE1, v1);
+  setValve(RELAY_VALVE2, v2);
+  setValve(RELAY_VALVE3, v3);
+  setValve(RELAY_VALVE4, v4);
+}
+
 void closeAllValves()
 {
-  setValve(RELAY_VALVE1, false);
-  setValve(RELAY_VALVE2, false);
-  setValve(RELAY_VALVE3, false);
-  
+  setValves(false, false, false, false);
 }
 
 void controlValves(float pHwater, float wqiBefore, float wqiAfter)
@@ -440,41 +471,36 @@ void controlValves(float pHwater, float wqiBefore, float wqiAfter)
 
   if (phUnsafe)
   {
-    closeAllValves();
+    setValves(true, true, true, false);
 
     Serial.println("WARNING: UNSAFE pH!");
     Serial.printf("pH = %.2f\n", pHwater);
-    Serial.println("All valves CLOSED. Pump STOPPED.");
-
     return;
   }
   if (!isfinite(wqiBefore))
   {
-    setValve(RELAY_VALVE1, false);
-    setValve(RELAY_VALVE2, false);
+    closeAllValves();
   }
-  else if (wqiBefore > WQI_THRESHOLD)
-  {
-    setValve(RELAY_VALVE1, false);
-    setValve(RELAY_VALVE2, true);
-  }
-  else
+  else if (wqiBefore >= WQI_THRESHOLD)
   {
     setValve(RELAY_VALVE1, true);
     setValve(RELAY_VALVE2, false);
-  }
-
-  if (!isfinite(wqiAfter) || wqiAfter <= WQI_THRESHOLD)
-  {
     setValve(RELAY_VALVE3, false);
   }
   else
   {
+    setValve(RELAY_VALVE1, false);
+    setValve(RELAY_VALVE2, true);
     setValve(RELAY_VALVE3, true);
+  }
 
-    Serial.printf("pH: %.2f | Unsafe: %s\n",
-                pHwater,
-                phUnsafe ? "YES" : "NO");
+  if (!isfinite(wqiAfter) || wqiAfter < WQI_THRESHOLD)
+  {
+    setValve(RELAY_VALVE4, false);
+  }
+  else
+  {
+    setValve(RELAY_VALVE4, true);
   }
 
 }
@@ -489,7 +515,7 @@ void connectWiFi()
 
   Serial.print("Connecting to WiFi");
   unsigned long startAttempt = millis();
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && millis() - startAttempt < WIFI_CONNECT_TIMEOUT_MS)
   {
     delay(500);
     Serial.print(".");
@@ -507,6 +533,15 @@ void connectWiFi()
     Serial.println("Host WiFi connection failed.");
     Serial.println("ESP32 hotspot is still available.");
   }
+}
+
+void printIPs() {
+  Serial.println("---------- ESP32 IP ----------");
+  Serial.printf("Hotspot  : %s -> http://%s\n", ssid, WiFi.softAPIP().toString().c_str());
+  if (WiFi.status() == WL_CONNECTED)
+    Serial.printf("Host WiFi: http://%s\n", WiFi.localIP().toString().c_str());
+  else
+    Serial.println("Host WiFi: not connected");
 }
 
 // ================= SETUP =================
@@ -582,12 +617,25 @@ void setup()
     server.send(200, "text/plain", "Stopped");
   });
 
+    server.on("/status", []() {
+    String j = "{\"speed\":" + String(motorSpeed) +
+               ",\"dir\":" + String(motorDirection) +
+               ",\"auto\":" + String(automaticMode ? "true" : "false") + "}";
+    server.send(200, "application/json", j);
+  });
+
+  server.on("/mode", []() {
+    automaticMode = (server.arg("m") == "auto");
+    server.send(200, "text/plain", automaticMode ? "Mode: AUTO" : "Mode: MANUAL");
+  });
+
   server.begin();
   Serial.println("Server ready");
 
   pinMode(RELAY_VALVE1, OUTPUT);
   pinMode(RELAY_VALVE2, OUTPUT);
   pinMode(RELAY_VALVE3, OUTPUT);
+  pinMode(RELAY_VALVE4, OUTPUT);
   closeAllValves();
 
   pinMode(FLOW_PIN, INPUT);
@@ -611,6 +659,7 @@ void setup()
 
   tempSensor.begin();
   connectWiFi();
+  startUploadTask();
 
   Serial.println("ESP32-S3 Water Quality System Initialized.");
 }
@@ -619,18 +668,26 @@ void setup()
 void loop()
 {
 
+static unsigned long lastIpPrint = 0;
+  if (millis() - lastIpPrint > 10000) { lastIpPrint = millis(); printIPs(); }
+
   server.handleClient();
 
   updateFlowSensor();
 
   if (WiFi.status() != WL_CONNECTED)
   {
-    connectWiFi();
+    static unsigned long lastReconnect = 0;
+    if (millis() - lastReconnect > 15000)
+    {
+      lastReconnect = millis();
+      WiFi.reconnect();
+    }
   }
 
   unsigned long now = millis();
-  if (now - lastSend < SEND_INTERVAL_MS) return;
-  lastSend = now;
+  if (now - lastMeasure < MEASURE_INTERVAL_MS) return;
+  lastMeasure = now;
 
   // ----- TEMPERATURE -----
   tempSensor.requestTemperatures();
@@ -666,12 +723,25 @@ void loop()
   float overallWQI = calculateWQI(pHwater, averageTDS, averageNTU);
   controlPumpByWQI(overallWQI);
 
-  // ----- VALVES & PUMP -----
+  // ----- VALVES -----
   controlValves(pHwater, wqi1, wqi2);
 
   // ----- PRESSURE -----
   PressureReading p1 = readPressure(PRESSURE1_PIN);
   PressureReading p2 = readPressure(PRESSURE2_PIN);
+
+
+  // Upload mornitor data's speed in site pagex
+  if (isfinite(overallWQI) && overallWQI < DIRTY_WQI_THRESHOLD)
+{
+  lastDirtyTime = now;
+}
+bool dirtyMode = (lastDirtyTime != 0) && (now - lastDirtyTime < DIRTY_HOLD_MS);
+unsigned long sendInterval = dirtyMode ? SEND_INTERVAL_DIRTY_MS : SEND_INTERVAL_NORMAL_MS;
+
+if (now - lastSend < sendInterval) return;   // measured, but not time to send yet
+lastSend = now;
+
 
   // ----- JSON UPLOAD -----
   String json = "{";
@@ -697,7 +767,9 @@ void loop()
   json += "\"pressure2Psi\":" + jsonNum(p2.psi, 2) + ",";
   json += "\"valve1Open\":" + String(digitalRead(RELAY_VALVE1) == RELAY_ON ? "true" : "false") + ",";
   json += "\"valve2Open\":" + String(digitalRead(RELAY_VALVE2) == RELAY_ON ? "true" : "false") + ",";
-  json += "\"valve3Open\":" + String(digitalRead(RELAY_VALVE3) == RELAY_ON ? "true" : "false");
+  json += "\"valve3Open\":" + String(digitalRead(RELAY_VALVE3) == RELAY_ON ? "true" : "false") + ",";
+  json += "\"valve4Open\":" + String(digitalRead(RELAY_VALVE4) == RELAY_ON ? "true" : "false"); 
+  json += ",\"timestamp\":{\".sv\":\"timestamp\"}"; 
   json += "}";
 
   // ----- FULL SERIAL DEBUG PRINTING -----
@@ -713,54 +785,5 @@ void loop()
   Serial.printf("Overall WQI : %.1f %s\n", overallWQI, wqiLevel(overallWQI));
 
 
-  // ----- HTTP POST -----
-  WiFiClient client;
-  HTTPClient http;
-
-  http.setTimeout(15000);
-
-  Serial.println("Uploading sensor data...");
-  Serial.println("URL: " + String(SERVER_URL));
-  Serial.println("JSON: " + json);
-
-  if (http.begin(client, SERVER_URL))
-  {
-    http.addHeader("Content-Type", "application/json");
-
-    // Use this header only if your backend expects this name.
-    http.addHeader("x-device-api-key", DEVICE_API_KEY);
-
-    int httpCode = http.POST(json);
-
-    Serial.printf("POST status: %d\n", httpCode);
-
-    if (httpCode > 0)
-    {
-      Serial.println("Server reply:");
-      Serial.println(http.getString());
-
-      if (httpCode >= 200 && httpCode < 300)
-      {
-        Serial.println("Upload successful!");
-      }
-      else
-      {
-        Serial.println("Server rejected the request.");
-        Serial.println("Check the API route, authentication and JSON.");
-      }
-    }
-    else
-    {
-      Serial.printf(
-        "HTTP error: %s\n",
-        http.errorToString(httpCode).c_str()
-      );
-    }
-
-    http.end();
-  }
-  else
- { 
-    Serial.println("Could not initialize HTTP connection.");
-}
+  queueUpload(json);
 }
