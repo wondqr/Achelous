@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Water Quality</title>
+  <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
  
   <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
  
   :root {
     /* --- color tokens --- */
@@ -24,9 +25,9 @@
     --footer-bg: #0a2226;
     --footer-text: #cfe3e0;
     /* --- type --- */
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
+    --font-display: 'Space Grotesk', 'Noto Sans Thai', 'Noto Sans KR', sans-serif;
+    --font-body: 'Inter', 'Noto Sans Thai', 'Noto Sans KR', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Noto Sans Thai', 'Noto Sans KR', monospace;
     /* --- layout --- */
     --max-w: 1200px;
     --radius: 10px;
@@ -165,10 +166,74 @@
     .calc-step { padding: 18px 18px; }
     .formula { font-size: 15px; padding: 12px; }
   }
+/* ===========================================================
+   UPDATE: sticky navbar, animation, accessibility, language menu
+   =========================================================== */
+html { scroll-behavior: smooth; }
+
+/* --- accessibility --- */
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 300; background: var(--deep); color: #fff; padding: 10px 18px; border-radius: 8px; font-family: var(--font-display); font-weight: 600; transition: top 0.2s ease; }
+.skip-link:focus { top: 12px; }
+a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__toggle:focus-visible ~ .navbar__right .navbar__burger { outline: 3px solid var(--deep-2); outline-offset: 3px; border-radius: 6px; }
+.navbar__toggle { display: block; position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+
+/* --- sticky navbar (follows the scroll) --- */
+.navbar { position: sticky; top: 0; background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: box-shadow 0.3s ease; animation: navIn 0.6s cubic-bezier(.2,.8,.2,1) both; }
+.navbar__inner { padding-top: 8px; padding-bottom: 8px; }
+.navbar__logo img { height: 44px; }
+.navbar.is-scrolled { box-shadow: 0 8px 24px rgba(11, 79, 92, 0.14); }
+@keyframes navIn { from { transform: translateY(-100%); } }
+
+.navbar__links a, .navbar__login { transition: color 0.2s ease; }
+.navbar__burger span { transition: transform 0.25s ease, opacity 0.25s ease; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(2) { opacity: 0; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (min-width: 861px) {
+  .navbar__links a { position: relative; padding: 6px 0; }
+  .navbar__links a::after { content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--good); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+  .navbar__links a:hover::after, .navbar__links a[aria-current="page"]::after { transform: scaleX(1); }
+}
+
+/* --- language menu (EN / TH / KO) --- */
+.navbar__lang-wrap { position: relative; }
+.navbar__lang { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 8px; transition: background 0.2s ease, border-color 0.2s ease; }
+.navbar__lang:hover { opacity: 1; background: var(--mist); border-color: var(--deep-2); }
+.navbar__lang::after { content: '\25BE'; font-size: 12px; transition: transform 0.2s ease; }
+.navbar__lang[aria-expanded="true"]::after { transform: rotate(180deg); }
+.navbar__lang img { width: 20px; height: 20px; border-radius: 100%; object-fit: cover; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 10px); min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(11, 79, 92, 0.16); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; z-index: 200; }
+.lang-menu.is-open { opacity: 1; visibility: visible; transform: none; }
+.lang-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; font-family: var(--font-body); font-size: 15px; color: var(--ink); cursor: pointer; text-align: left; }
+.lang-menu button:hover, .lang-menu button[aria-selected="true"] { background: var(--mist); }
+.lang-menu button[aria-selected="true"] { font-weight: 600; color: var(--deep); }
+.lang-menu img { width: 22px; height: 22px; border-radius: 100%; object-fit: cover; }
+
+/* --- phones: no empty gap under the collapsed menu --- */
+@media (max-width: 860px) { .navbar__inner { row-gap: 0; } }
+
+/* --- page-load / scroll animation --- */
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.8,.2,1); }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+.param-card:nth-child(2) { transition-delay: 0.08s; }
+.param-card:nth-child(3) { transition-delay: 0.16s; }
+.param-card:nth-child(4) { transition-delay: 0.24s; }
+.calc-step.is-visible .step-num { animation: stepPop 0.5s cubic-bezier(.34,1.56,.64,1) 0.25s backwards; }
+@keyframes stepPop { from { transform: scale(0); } }
+tbody tr { transition: background 0.2s ease; }
+tbody tr:hover { background: #d8ebe8; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
   </style>
 </head>
  
 <body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
  
   <!-- ===================== NAVBAR ===================== -->
   <header class="navbar">
@@ -181,20 +246,27 @@
       <input type="checkbox" id="navToggle" class="navbar__toggle" />
  
       <ul class="navbar__links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="archiveddata.html">Archived Data</a></li>
-        <li><a href="aboutwqi.html">About Water Quality</a></li>
-        <li><a href="aboutproject.html">About The Project</a></li>
-        <li><a href="Filter.html">Filter</a></li>
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="archiveddata.html" data-i18n="nav.archived">Archived Data</a></li>
+        <li><a href="aboutwqi.html" aria-current="page" data-i18n="nav.wqi">About Water Quality</a></li>
+        <li><a href="aboutproject.html" data-i18n="nav.project">About The Project</a></li>
+        <li><a href="Filter.html" data-i18n="nav.filter">Filter</a></li>
       </ul>
  
       <div class="navbar__right">
-        <a href="login.html" class="navbar__login">Login</a>
-        <div class="navbar__lang">
-          <img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%;"></img>
-          <span>EN</span>
+        <a href="login.html" class="navbar__login" data-i18n="login">Login</a>
+        <div class="navbar__lang-wrap">
+          <button type="button" class="navbar__lang" id="langToggleBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" title="Change language" data-i18n-title="langTitle" data-i18n-aria="langTitle" aria-label="Change language">
+            <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">
+            <span id="langText">EN</span>
+          </button>
+          <ul class="lang-menu" id="langMenu">
+            <li><button type="button" data-lang="en" aria-selected="true"><img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">English</button></li>
+            <li><button type="button" data-lang="th" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg" alt="">&#3652;&#3607;&#3618;</button></li>
+            <li><button type="button" data-lang="ko" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" alt="">&#54620;&#44397;&#50612;</button></li>
+          </ul>
         </div>
-        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu" data-i18n-aria="menu">
           <span></span>
           <span></span>
           <span></span>
@@ -205,108 +277,106 @@
   </header>
  
   <!-- ===================== PAGE CONTENT ===================== -->
-  <main class="wrap page">
+  <main class="wrap page" id="main" tabindex="-1">
  
-    <section class="hero">
-      <h1>Water Quality Index</h1>
-      <p>
-        A report on water quality presented in a format that's easy to understand, so anyone can see
+    <section class="hero reveal">
+      <h1 data-i18n="h1">Water Quality Index</h1>
+      <p data-i18n="heroP">A report on water quality presented in a format that's easy to understand, so anyone can see
         how clean the water is at Assumption College and whether it could affect health. The index
-        combines four key factors - temperature, pH, TDS, and turbidity - into one simple reading.
-      </p>
+        combines four key factors - temperature, pH, TDS, and turbidity - into one simple reading.</p>
     </section>
  
     <section>
-      <h2 class="section-title">The Four Parameters</h2>
+      <h2 class="section-title reveal" data-i18n="fourTitle">The Four Parameters</h2>
       <div class="param-grid">
  
-        <div class="param-card">
-          <h3>Temperature</h3>
-          <p>How hot or cold the water is - a basic physical property that affects everything else in the water.</p>
+        <div class="param-card reveal">
+          <h3 data-i18n="temperature">Temperature</h3>
+          <p data-i18n="tempDesc">How hot or cold the water is - a basic physical property that affects everything else in the water.</p>
           <ul>
-            <li>Cold Water: 10 - 15 °C</li>
-            <li>Room Temperature: 20 - 25 °C</li>
-            <li>Warm Water: 40 - 50 °C</li>
+            <li data-i18n="cold">Cold Water: 10 - 15 °C</li>
+            <li data-i18n="room">Room Temperature: 20 - 25 °C</li>
+            <li data-i18n="warm">Warm Water: 40 - 50 °C</li>
           </ul>
         </div>
  
-        <div class="param-card">
-          <h3>pH Value</h3>
-          <p>A scale that shows how acidic or alkaline the water is.</p>
+        <div class="param-card reveal">
+          <h3 data-i18n="phValue">pH Value</h3>
+          <p data-i18n="phDesc">A scale that shows how acidic or alkaline the water is.</p>
           <ul>
-            <li>pH &lt; 7 → Acid</li>
-            <li>pH = 7 → Neutral</li>
-            <li>pH &gt; 7 → Base</li>
+            <li data-i18n="acid">pH &lt; 7 → Acid</li>
+            <li data-i18n="neutral">pH = 7 → Neutral</li>
+            <li data-i18n="base">pH &gt; 7 → Base</li>
           </ul>
         </div>
  
-        <div class="param-card">
-          <h3>Total Dissolved Solids (TDS)</h3>
-          <p>The total amount of dissolved organic and inorganic substances present in the water.</p>
+        <div class="param-card reveal">
+          <h3 data-i18n="tdsTitle">Total Dissolved Solids (TDS)</h3>
+          <p data-i18n="tdsDesc">The total amount of dissolved organic and inorganic substances present in the water.</p>
         </div>
  
-        <div class="param-card">
-          <h3>Turbidity</h3>
-          <p>How cloudy the water looks, caused by suspended solids or sediment particles.</p>
+        <div class="param-card reveal">
+          <h3 data-i18n="turbidity">Turbidity</h3>
+          <p data-i18n="turbDesc">How cloudy the water looks, caused by suspended solids or sediment particles.</p>
         </div>
  
       </div>
     </section>
  
-    <section class="table-block">
-      <h2 class="section-title">Standard Reference Values</h2>
+    <section class="table-block reveal">
+      <h2 class="section-title reveal" data-i18n="refTitle">Standard Reference Values</h2>
       <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>Quality Parameter</th>
-              <th>Average Clean Water Range</th>
-              <th>Why It Matters</th>
+              <th data-i18n="thParam">Quality Parameter</th>
+              <th data-i18n="thRange">Average Clean Water Range</th>
+              <th data-i18n="thWhy">Why It Matters</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Temperature</td>
+              <td data-i18n="temperature">Temperature</td>
               <td>5 - 40 °C</td>
-              <td>Affects dissolved oxygen, chemical reaction rates, microbial activity, and indirectly pH and conductivity.</td>
+              <td data-i18n="whyTemp">Affects dissolved oxygen, chemical reaction rates, microbial activity, and indirectly pH and conductivity.</td>
             </tr>
             <tr>
-              <td>pH Value</td>
+              <td data-i18n="phValue">pH Value</td>
               <td>6.5 - 8.5</td>
-              <td>Affects heavy metal solubility and acts as an early warning sign of contamination.</td>
+              <td data-i18n="whyPh">Affects heavy metal solubility and acts as an early warning sign of contamination.</td>
             </tr>
             <tr>
-              <td>TDS Value</td>
+              <td data-i18n="tdsValue">TDS Value</td>
               <td>0 - 150 ppm</td>
-              <td>Doesn't identify specific contaminants — high TDS may come from harmless minerals or harmful substances — but can affect taste.</td>
+              <td data-i18n="whyTds">Doesn't identify specific contaminants — high TDS may come from harmless minerals or harmful substances — but can affect taste.</td>
             </tr>
             <tr>
-              <td>Turbidity</td>
+              <td data-i18n="turbidity">Turbidity</td>
               <td>&lt; 1 NTU</td>
-              <td>Indicates possible microbial contamination and warns of issues before detailed testing.</td>
+              <td data-i18n="whyTurb">Indicates possible microbial contamination and warns of issues before detailed testing.</td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
  
-    <section class="table-block">
-      <h2 class="section-title">Water Assessment Criteria</h2>
+    <section class="table-block reveal">
+      <h2 class="section-title reveal" data-i18n="critTitle">Water Assessment Criteria</h2>
       <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>Water Quality</th>
+              <th data-i18n="thQuality">Water Quality</th>
               <th>WQI</th>
-              <th>Temperature</th>
+              <th data-i18n="temperature">Temperature</th>
               <th>pH</th>
               <th>TDS</th>
-              <th>Turbidity</th>
+              <th data-i18n="turbidity">Turbidity</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><span class="quality-badge quality-badge--very-clean">Very Clean</span></td>
+              <td><span class="quality-badge quality-badge--very-clean" data-i18n="q.Very Clean">Very Clean</span></td>
               <td>85 - 100</td>
               <td>5 - 40 °C</td>
               <td>6.5 - 8.5</td>
@@ -314,7 +384,7 @@
               <td>&lt; 0.5 NTU</td>
             </tr>
             <tr>
-              <td><span class="quality-badge quality-badge--clean">Clean</span></td>
+              <td><span class="quality-badge quality-badge--clean" data-i18n="q.Clean">Clean</span></td>
               <td>70 - 84</td>
               <td>5 - 40 °C</td>
               <td>6.5 - 8.5</td>
@@ -322,26 +392,26 @@
               <td>0.5 - 0.99 NTU</td>
             </tr>
             <tr>
-              <td><span class="quality-badge quality-badge--normal">Normal</span></td>
+              <td><span class="quality-badge quality-badge--normal" data-i18n="q.Normal">Normal</span></td>
               <td>50 - 69</td>
               <td>5 - 40 °C</td>
-              <td>5.5 - 6.5 or 8.5 - 9.5</td>
+              <td data-i18n="or1">5.5 - 6.5 or 8.5 - 9.5</td>
               <td>151 - 300 ppm</td>
               <td>1 - 10 NTU</td>
             </tr>
             <tr>
-              <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
+              <td><span class="quality-badge quality-badge--dirty" data-i18n="q.Dirty">Dirty</span></td>
               <td>25 - 49</td>
               <td>40 - 50 °C</td>
-              <td>4.0 - 5.5 or 9.5 - 10.5</td>
+              <td data-i18n="or2">4.0 - 5.5 or 9.5 - 10.5</td>
               <td>301 - 500 ppm</td>
               <td>11 - 20 NTU</td>
             </tr>
             <tr>
-              <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
+              <td><span class="quality-badge quality-badge--very-dirty" data-i18n="q.Very Dirty">Very Dirty</span></td>
               <td>0 - 24</td>
               <td>&gt; 50 °C</td>
-              <td>&lt; 4.0 or &gt; 10.5</td>
+              <td data-i18n="or3">&lt; 4.0 or &gt; 10.5</td>
               <td>&gt; 500 ppm</td>
               <td>&gt; 20 NTU</td>
             </tr>
@@ -351,100 +421,90 @@
     </section>
 
     <section>
-      <h2 class="section-title">Calculation of the daily air quality index</h2>
+      <h2 class="section-title reveal" data-i18n="calcTitle">Calculation of the daily air quality index</h2>
 
-      <p class="calc-intro">
-        The WQI turns the sensor readings into a single score from 0 to 100. Each parameter is first
-        converted into its own sub-index <em>q</em>, then the sub-indices are combined using weights.
-      </p>
+      <p class="calc-intro reveal" data-i18n="calcIntro">The WQI turns the sensor readings into a single score from 0 to 100. Each parameter is first
+        converted into its own sub-index <em>q</em>, then the sub-indices are combined using weights.</p>
 
       <!-- STEP 1 -->
-      <div class="calc-step">
-        <h3><span class="step-num">1</span>Combine the sub-indices</h3>
-        <p>The final WQI is the weighted sum of the sub-indices of pH, TDS, and turbidity.</p>
+      <div class="calc-step reveal">
+        <h3><span class="step-num">1</span><span data-i18n="s1">Combine the sub-indices</span></h3>
+        <p data-i18n="s1p">The final WQI is the weighted sum of the sub-indices of pH, TDS, and turbidity.</p>
         <div class="formula">
           \[ WQI = \sum \left( w_i \times q_i \right) = w_{pH}\,q_{pH} + w_{TDS}\,q_{TDS} + w_{turbidity}\,q_{turbidity} \]
         </div>
         <div class="table-scroll">
           <table>
             <thead>
-              <tr><th>Parameter</th><th>Weight (w)</th></tr>
+              <tr><th data-i18n="thParameter">Parameter</th><th data-i18n="thWeight">Weight (w)</th></tr>
             </thead>
             <tbody>
               <tr><td>pH</td><td>0.34</td></tr>
               <tr><td>TDS</td><td>0.33</td></tr>
-              <tr><td>Turbidity</td><td>0.33</td></tr>
+              <tr><td data-i18n="turbidity">Turbidity</td><td>0.33</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="calc-note">
-          Temperature is measured and displayed on the monitor, but it is not included in the WQI score.
-        </div>
+        <div class="calc-note" data-i18n="s1note">Temperature is measured and displayed on the monitor, but it is not included in the WQI score.</div>
       </div>
 
       <!-- STEP 2 -->
-      <div class="calc-step">
-        <h3><span class="step-num">2</span>Find the band of each reading</h3>
-        <p>
-          Compare each measured value with the ranges below to find which water-quality band it falls in.
-          The limits of that band are then used in the sub-index formula.
-        </p>
+      <div class="calc-step reveal">
+        <h3><span class="step-num">2</span><span data-i18n="s2">Find the band of each reading</span></h3>
+        <p data-i18n="s2p">Compare each measured value with the ranges below to find which water-quality band it falls in.
+          The limits of that band are then used in the sub-index formula.</p>
         <ul class="var-list">
-          <li><b>V<sub>actual</sub></b> = the value measured by the sensor</li>
-          <li><b>V<sub>min</sub></b> = the lowest sensor value of that band</li>
-          <li><b>V<sub>max</sub></b> = the highest sensor value of that band</li>
-          <li><b>Q<sub>min</sub></b> = the lowest WQI score of that band</li>
-          <li><b>Q<sub>max</sub></b> = the highest WQI score of that band</li>
+          <li data-i18n="vActual"><b>V<sub>actual</sub></b> = the value measured by the sensor</li>
+          <li data-i18n="vMin"><b>V<sub>min</sub></b> = the lowest sensor value of that band</li>
+          <li data-i18n="vMax"><b>V<sub>max</sub></b> = the highest sensor value of that band</li>
+          <li data-i18n="qMin"><b>Q<sub>min</sub></b> = the lowest WQI score of that band</li>
+          <li data-i18n="qMax"><b>Q<sub>max</sub></b> = the highest WQI score of that band</li>
         </ul>
-        <p>
-          Example: TDS = 120 ppm falls in the Clean band, so V<sub>min</sub> = 101 ppm, V<sub>max</sub> = 150 ppm,
-          Q<sub>min</sub> = 70, and Q<sub>max</sub> = 84.
-        </p>
+        <p data-i18n="example">Example: TDS = 120 ppm falls in the Clean band, so V<sub>min</sub> = 101 ppm, V<sub>max</sub> = 150 ppm,
+          Q<sub>min</sub> = 70, and Q<sub>max</sub> = 84.</p>
 
         <div class="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>Water Quality</th>
+                <th data-i18n="thQuality">Water Quality</th>
                 <th>Q<sub>min</sub> - Q<sub>max</sub></th>
                 <th>TDS (V<sub>min</sub> - V<sub>max</sub>)</th>
-                <th>Turbidity (V<sub>min</sub> - V<sub>max</sub>)</th>
+                <th data-i18n="thTurbV">Turbidity (V<sub>min</sub> - V<sub>max</sub>)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><span class="quality-badge quality-badge--very-clean">Very Clean</span></td>
+                <td><span class="quality-badge quality-badge--very-clean" data-i18n="q.Very Clean">Very Clean</span></td>
                 <td>85 - 100</td><td>0 - 100 ppm</td><td>0 - 0.5 NTU</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--clean">Clean</span></td>
+                <td><span class="quality-badge quality-badge--clean" data-i18n="q.Clean">Clean</span></td>
                 <td>70 - 84</td><td>101 - 150 ppm</td><td>0.5 - 0.99 NTU</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--normal">Normal</span></td>
+                <td><span class="quality-badge quality-badge--normal" data-i18n="q.Normal">Normal</span></td>
                 <td>50 - 69</td><td>151 - 300 ppm</td><td>1 - 10 NTU</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
+                <td><span class="quality-badge quality-badge--dirty" data-i18n="q.Dirty">Dirty</span></td>
                 <td>25 - 49</td><td>301 - 500 ppm</td><td>11 - 20 NTU</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
+                <td><span class="quality-badge quality-badge--very-dirty" data-i18n="q.Very Dirty">Very Dirty</span></td>
                 <td>0 - 24</td><td>500 - 750 ppm</td><td>20 - 100 NTU</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p>
-          pH is split at 7, because both too-acidic and too-alkaline water lowers the score. The Very Clean and
-          Clean rows share the same pH range (6.5 - 8.5), so they are combined into one band where pH 7 gives the best score.
-        </p>
+        <p data-i18n="phSplit">pH is split at 7, because both too-acidic and too-alkaline water lowers the score. The Very Clean and
+          Clean rows share the same pH range (6.5 - 8.5), so they are combined into one band where pH 7 gives the best score.</p>
         <div class="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>Water Quality</th>
+                <th data-i18n="thQuality">Water Quality</th>
                 <th>Q<sub>min</sub> - Q<sub>max</sub></th>
                 <th>pH &gt; 7 (V<sub>min</sub> - V<sub>max</sub>)</th>
                 <th>pH &lt; 7 (V<sub>min</sub> - V<sub>max</sub>)</th>
@@ -453,21 +513,21 @@
             <tbody>
               <tr>
                 <td>
-                  <span class="quality-badge quality-badge--very-clean">Very Clean</span>
-                  <span class="quality-badge quality-badge--clean">Clean</span>
+                  <span class="quality-badge quality-badge--very-clean" data-i18n="q.Very Clean">Very Clean</span>
+                  <span class="quality-badge quality-badge--clean" data-i18n="q.Clean">Clean</span>
                 </td>
                 <td>70 - 100</td><td>7 - 8.5</td><td>6.5 - 7</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--normal">Normal</span></td>
+                <td><span class="quality-badge quality-badge--normal" data-i18n="q.Normal">Normal</span></td>
                 <td>50 - 69</td><td>8.5 - 9.5</td><td>5.5 - 6.5</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--dirty">Dirty</span></td>
+                <td><span class="quality-badge quality-badge--dirty" data-i18n="q.Dirty">Dirty</span></td>
                 <td>25 - 49</td><td>9.5 - 10.5</td><td>4.0 - 5.5</td>
               </tr>
               <tr>
-                <td><span class="quality-badge quality-badge--very-dirty">Very Dirty</span></td>
+                <td><span class="quality-badge quality-badge--very-dirty" data-i18n="q.Very Dirty">Very Dirty</span></td>
                 <td>0 - 24</td><td>10.5 - 14</td><td>0 - 4.0</td>
               </tr>
             </tbody>
@@ -476,28 +536,26 @@
       </div>
 
       <!-- STEP 3 -->
-      <div class="calc-step">
-        <h3><span class="step-num">3</span>Calculate each sub-index (q)</h3>
-        <p>
-          Use the limits of the band to place the reading between Q<sub>min</sub> and Q<sub>max</sub>.
-          The formula depends on the parameter.
-        </p>
+      <div class="calc-step reveal">
+        <h3><span class="step-num">3</span><span data-i18n="s3">Calculate each sub-index (q)</span></h3>
+        <p data-i18n="s3p">Use the limits of the band to place the reading between Q<sub>min</sub> and Q<sub>max</sub>.
+          The formula depends on the parameter.</p>
 
-        <p class="formula-label">TDS, Turbidity, and pH &ge; 7 (a higher reading gives a lower score)</p>
+        <p class="formula-label" data-i18n="f1">TDS, Turbidity, and pH &ge; 7 (a higher reading gives a lower score)</p>
         <div class="formula">
           \[ q_i = \frac{V_{min} - V_{actual}}{V_{max} - V_{min}} \times \left( Q_{max} - Q_{min} \right) + Q_{max} \]
         </div>
 
-        <p class="formula-label">pH &lt; 7 (a reading closer to 7 gives a higher score)</p>
+        <p class="formula-label" data-i18n="f2">pH &lt; 7 (a reading closer to 7 gives a higher score)</p>
         <div class="formula">
           \[ q_i = \frac{V_{actual} - V_{min}}{V_{max} - V_{min}} \times \left( Q_{max} - Q_{min} \right) + Q_{min} \]
         </div>
 
         <div class="calc-note">
-          Special cases:
+          <span data-i18n="special">Special cases:</span>
           <ul>
-            <li>A value that falls in a small gap between two rows (for example TDS 100.5 ppm) uses the next band, and q is capped at that band's Q<sub>max</sub>.</li>
-            <li>A value beyond the highest band (TDS &gt; 750 ppm, turbidity &gt; 100 NTU, or pH outside 0 - 14) gets q = 0.</li>
+            <li data-i18n="sp1">A value that falls in a small gap between two rows (for example TDS 100.5 ppm) uses the next band, and q is capped at that band's Q<sub>max</sub>.</li>
+            <li data-i18n="sp2">A value beyond the highest band (TDS &gt; 750 ppm, turbidity &gt; 100 NTU, or pH outside 0 - 14) gets q = 0.</li>
           </ul>
         </div>
       </div>
@@ -508,7 +566,7 @@
 
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
-    <div class="footer__inner">
+    <div class="footer__inner reveal">
  
       <div class="footer__logos">
         <div class="footer__logo"><img src="Thailand.png"></div>
@@ -521,7 +579,7 @@
       </div>
  
       <div class="footer__members">
-        <h3>Project Members</h3>
+        <h3 data-i18n="members">Project Members</h3>
         <ul>
           <li>Mr.Arkkharayut Pandej</li>
           <li>Mr.Nantapat Pasukulpipat</li>
@@ -535,5 +593,327 @@
     </div>
   </footer>
  
+
+  <script>
+  /* ===== Language: English / Thai / Korean (same choice is remembered across pages) ===== */
+  (function () {
+    var STORE = 'achelous-lang';
+    var LANGS = {
+      en: { code: 'EN', flag: 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg' },
+      th: { code: 'TH', flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg' },
+      ko: { code: 'KO', flag: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg' }
+    };
+    var DICT = {
+      "en": {
+        "skip": "Skip to content",
+        "nav.home": "Home",
+        "nav.archived": "Archived Data",
+        "nav.wqi": "About Water Quality",
+        "nav.project": "About The Project",
+        "nav.filter": "Filter",
+        "login": "Login",
+        "menu": "Open menu",
+        "langTitle": "Change language",
+        "pageTitle": "About Water Quality",
+        "q.Very Clean": "Very Clean",
+        "q.Clean": "Clean",
+        "q.Normal": "Normal",
+        "q.Dirty": "Dirty",
+        "q.Very Dirty": "Very Dirty",
+        "members": "Project Members",
+        "h1": "Water Quality Index",
+        "heroP": "A report on water quality presented in a format that's easy to understand, so anyone can see how clean the water is at Assumption College and whether it could affect health. The index combines four key factors - temperature, pH, TDS, and turbidity - into one simple reading.",
+        "fourTitle": "The Four Parameters",
+        "temperature": "Temperature",
+        "tempDesc": "How hot or cold the water is - a basic physical property that affects everything else in the water.",
+        "cold": "Cold Water: 10 - 15 °C",
+        "room": "Room Temperature: 20 - 25 °C",
+        "warm": "Warm Water: 40 - 50 °C",
+        "phValue": "pH Value",
+        "phDesc": "A scale that shows how acidic or alkaline the water is.",
+        "acid": "pH &lt; 7 → Acid",
+        "neutral": "pH = 7 → Neutral",
+        "base": "pH &gt; 7 → Base",
+        "tdsTitle": "Total Dissolved Solids (TDS)",
+        "tdsDesc": "The total amount of dissolved organic and inorganic substances present in the water.",
+        "turbidity": "Turbidity",
+        "turbDesc": "How cloudy the water looks, caused by suspended solids or sediment particles.",
+        "refTitle": "Standard Reference Values",
+        "thParam": "Quality Parameter",
+        "thRange": "Average Clean Water Range",
+        "thWhy": "Why It Matters",
+        "whyTemp": "Affects dissolved oxygen, chemical reaction rates, microbial activity, and indirectly pH and conductivity.",
+        "whyPh": "Affects heavy metal solubility and acts as an early warning sign of contamination.",
+        "tdsValue": "TDS Value",
+        "whyTds": "Doesn't identify specific contaminants — high TDS may come from harmless minerals or harmful substances — but can affect taste.",
+        "whyTurb": "Indicates possible microbial contamination and warns of issues before detailed testing.",
+        "critTitle": "Water Assessment Criteria",
+        "thQuality": "Water Quality",
+        "or1": "5.5 - 6.5 or 8.5 - 9.5",
+        "or2": "4.0 - 5.5 or 9.5 - 10.5",
+        "or3": "&lt; 4.0 or &gt; 10.5",
+        "calcTitle": "Calculation of the daily air quality index",
+        "calcIntro": "The WQI turns the sensor readings into a single score from 0 to 100. Each parameter is first converted into its own sub-index <em>q</em>, then the sub-indices are combined using weights.",
+        "s1": "Combine the sub-indices",
+        "s1p": "The final WQI is the weighted sum of the sub-indices of pH, TDS, and turbidity.",
+        "thParameter": "Parameter",
+        "thWeight": "Weight (w)",
+        "s1note": "Temperature is measured and displayed on the monitor, but it is not included in the WQI score.",
+        "s2": "Find the band of each reading",
+        "s2p": "Compare each measured value with the ranges below to find which water-quality band it falls in. The limits of that band are then used in the sub-index formula.",
+        "vActual": "<b>V<sub>actual</sub></b> = the value measured by the sensor",
+        "vMin": "<b>V<sub>min</sub></b> = the lowest sensor value of that band",
+        "vMax": "<b>V<sub>max</sub></b> = the highest sensor value of that band",
+        "qMin": "<b>Q<sub>min</sub></b> = the lowest WQI score of that band",
+        "qMax": "<b>Q<sub>max</sub></b> = the highest WQI score of that band",
+        "example": "Example: TDS = 120 ppm falls in the Clean band, so V<sub>min</sub> = 101 ppm, V<sub>max</sub> = 150 ppm, Q<sub>min</sub> = 70, and Q<sub>max</sub> = 84.",
+        "thTurbV": "Turbidity (V<sub>min</sub> - V<sub>max</sub>)",
+        "phSplit": "pH is split at 7, because both too-acidic and too-alkaline water lowers the score. The Very Clean and Clean rows share the same pH range (6.5 - 8.5), so they are combined into one band where pH 7 gives the best score.",
+        "s3": "Calculate each sub-index (q)",
+        "s3p": "Use the limits of the band to place the reading between Q<sub>min</sub> and Q<sub>max</sub>. The formula depends on the parameter.",
+        "f1": "TDS, Turbidity, and pH &ge; 7 (a higher reading gives a lower score)",
+        "f2": "pH &lt; 7 (a reading closer to 7 gives a higher score)",
+        "special": "Special cases:",
+        "sp1": "A value that falls in a small gap between two rows (for example TDS 100.5 ppm) uses the next band, and q is capped at that band's Q<sub>max</sub>.",
+        "sp2": "A value beyond the highest band (TDS &gt; 750 ppm, turbidity &gt; 100 NTU, or pH outside 0 - 14) gets q = 0."
+      },
+      "th": {
+        "skip": "ข้ามไปยังเนื้อหา",
+        "nav.home": "หน้าแรก",
+        "nav.archived": "ข้อมูลย้อนหลัง",
+        "nav.wqi": "เกี่ยวกับคุณภาพน้ำ",
+        "nav.project": "เกี่ยวกับโครงงาน",
+        "nav.filter": "ไส้กรอง",
+        "login": "เข้าสู่ระบบ",
+        "menu": "เปิดเมนู",
+        "langTitle": "เปลี่ยนภาษา",
+        "pageTitle": "เกี่ยวกับคุณภาพน้ำ",
+        "q.Very Clean": "สะอาดมาก",
+        "q.Clean": "สะอาด",
+        "q.Normal": "ปานกลาง",
+        "q.Dirty": "สกปรก",
+        "q.Very Dirty": "สกปรกมาก",
+        "members": "สมาชิกโครงงาน",
+        "h1": "ดัชนีคุณภาพน้ำ",
+        "heroP": "รายงานคุณภาพน้ำที่นำเสนอในรูปแบบที่เข้าใจง่าย เพื่อให้ทุกคนเห็นได้ว่าน้ำที่โรงเรียนอัสสัมชัญสะอาดเพียงใดและอาจส่งผลต่อสุขภาพหรือไม่ ดัชนีนี้รวมปัจจัยสำคัญ 4 อย่าง ได้แก่ อุณหภูมิ ค่า pH ค่า TDS และความขุ่น ให้เป็นค่าเดียวที่อ่านง่าย",
+        "fourTitle": "ปัจจัยหลัก 4 ประการ",
+        "temperature": "อุณหภูมิ",
+        "tempDesc": "ความร้อนหรือเย็นของน้ำ ซึ่งเป็นคุณสมบัติทางกายภาพพื้นฐานที่ส่งผลต่อทุกอย่างในน้ำ",
+        "cold": "น้ำเย็น: 10 - 15 °C",
+        "room": "อุณหภูมิห้อง: 20 - 25 °C",
+        "warm": "น้ำอุ่น: 40 - 50 °C",
+        "phValue": "ค่า pH",
+        "phDesc": "ค่าที่บอกว่าน้ำเป็นกรดหรือด่างมากเพียงใด",
+        "acid": "pH &lt; 7 → กรด",
+        "neutral": "pH = 7 → กลาง",
+        "base": "pH &gt; 7 → ด่าง",
+        "tdsTitle": "ของแข็งที่ละลายในน้ำทั้งหมด (TDS)",
+        "tdsDesc": "ปริมาณรวมของสารอินทรีย์และอนินทรีย์ที่ละลายอยู่ในน้ำ",
+        "turbidity": "ความขุ่น",
+        "turbDesc": "น้ำดูขุ่นมากเพียงใด ซึ่งเกิดจากของแข็งแขวนลอยหรืออนุภาคตะกอน",
+        "refTitle": "ค่าอ้างอิงมาตรฐาน",
+        "thParam": "ตัวชี้วัดคุณภาพ",
+        "thRange": "ช่วงค่าเฉลี่ยของน้ำสะอาด",
+        "thWhy": "ทำไมจึงสำคัญ",
+        "whyTemp": "ส่งผลต่อออกซิเจนที่ละลายในน้ำ อัตราการเกิดปฏิกิริยาเคมี กิจกรรมของจุลินทรีย์ และส่งผลทางอ้อมต่อค่า pH และค่าการนำไฟฟ้า",
+        "whyPh": "ส่งผลต่อการละลายของโลหะหนัก และเป็นสัญญาณเตือนล่วงหน้าของการปนเปื้อน",
+        "tdsValue": "ค่า TDS",
+        "whyTds": "ไม่สามารถระบุสารปนเปื้อนที่เฉพาะเจาะจงได้ — ค่า TDS สูงอาจมาจากแร่ธาตุที่ไม่เป็นอันตรายหรือสารที่เป็นอันตราย — แต่อาจส่งผลต่อรสชาติ",
+        "whyTurb": "บ่งชี้ถึงการปนเปื้อนของจุลินทรีย์ที่อาจเกิดขึ้น และเตือนถึงปัญหาก่อนการตรวจละเอียด",
+        "critTitle": "เกณฑ์การประเมินคุณภาพน้ำ",
+        "thQuality": "คุณภาพน้ำ",
+        "or1": "5.5 - 6.5 หรือ 8.5 - 9.5",
+        "or2": "4.0 - 5.5 หรือ 9.5 - 10.5",
+        "or3": "&lt; 4.0 หรือ &gt; 10.5",
+        "calcTitle": "การคำนวณดัชนีคุณภาพอากาศรายวัน",
+        "calcIntro": "WQI แปลงค่าที่อ่านได้จากเซนเซอร์ให้เป็นคะแนนเดียวตั้งแต่ 0 ถึง 100 โดยแต่ละปัจจัยจะถูกแปลงเป็นดัชนีย่อย <em>q</em> ของตัวเองก่อน แล้วจึงนำดัชนีย่อยมารวมกันตามน้ำหนัก",
+        "s1": "รวมดัชนีย่อย",
+        "s1p": "WQI สุดท้ายคือผลรวมถ่วงน้ำหนักของดัชนีย่อยของ pH, TDS และความขุ่น",
+        "thParameter": "ปัจจัย",
+        "thWeight": "น้ำหนัก (w)",
+        "s1note": "อุณหภูมิถูกวัดและแสดงบนหน้าจอ แต่ไม่ได้นำมารวมในคะแนน WQI",
+        "s2": "หาช่วงคุณภาพของค่าที่วัดแต่ละค่า",
+        "s2p": "นำค่าที่วัดได้แต่ละค่าไปเทียบกับช่วงด้านล่างเพื่อหาว่าอยู่ในช่วงคุณภาพน้ำใด จากนั้นนำขอบเขตของช่วงนั้นไปใช้ในสูตรดัชนีย่อย",
+        "vActual": "<b>V<sub>actual</sub></b> = ค่าที่วัดได้จากเซนเซอร์",
+        "vMin": "<b>V<sub>min</sub></b> = ค่าเซนเซอร์ต่ำสุดของช่วงนั้น",
+        "vMax": "<b>V<sub>max</sub></b> = ค่าเซนเซอร์สูงสุดของช่วงนั้น",
+        "qMin": "<b>Q<sub>min</sub></b> = คะแนน WQI ต่ำสุดของช่วงนั้น",
+        "qMax": "<b>Q<sub>max</sub></b> = คะแนน WQI สูงสุดของช่วงนั้น",
+        "example": "ตัวอย่าง: TDS = 120 ppm อยู่ในช่วงสะอาด ดังนั้น V<sub>min</sub> = 101 ppm, V<sub>max</sub> = 150 ppm, Q<sub>min</sub> = 70 และ Q<sub>max</sub> = 84",
+        "thTurbV": "ความขุ่น (V<sub>min</sub> - V<sub>max</sub>)",
+        "phSplit": "pH ถูกแบ่งที่ 7 เพราะน้ำที่เป็นกรดเกินไปและด่างเกินไปต่างก็ทำให้คะแนนลดลง แถวสะอาดมากและสะอาดมีช่วง pH เดียวกัน (6.5 - 8.5) จึงรวมเป็นช่วงเดียว โดย pH 7 ให้คะแนนดีที่สุด",
+        "s3": "คำนวณดัชนีย่อยแต่ละตัว (q)",
+        "s3p": "ใช้ขอบเขตของช่วงเพื่อหาตำแหน่งของค่าที่วัดได้ระหว่าง Q<sub>min</sub> และ Q<sub>max</sub> โดยสูตรจะขึ้นอยู่กับปัจจัยที่วัด",
+        "f1": "TDS, ความขุ่น และ pH &ge; 7 (ค่าที่สูงขึ้นให้คะแนนต่ำลง)",
+        "f2": "pH &lt; 7 (ค่าที่ใกล้ 7 มากขึ้นให้คะแนนสูงขึ้น)",
+        "special": "กรณีพิเศษ:",
+        "sp1": "ค่าที่ตกอยู่ในช่องว่างเล็กๆ ระหว่างสองแถว (เช่น TDS 100.5 ppm) จะใช้ช่วงถัดไป และ q จะไม่เกิน Q<sub>max</sub> ของช่วงนั้น",
+        "sp2": "ค่าที่เกินช่วงสูงสุด (TDS &gt; 750 ppm, ความขุ่น &gt; 100 NTU หรือ pH อยู่นอกช่วง 0 - 14) จะได้ q = 0"
+      },
+      "ko": {
+        "skip": "본문으로 건너뛰기",
+        "nav.home": "홈",
+        "nav.archived": "보관 데이터",
+        "nav.wqi": "수질 소개",
+        "nav.project": "프로젝트 소개",
+        "nav.filter": "필터",
+        "login": "로그인",
+        "menu": "메뉴 열기",
+        "langTitle": "언어 변경",
+        "pageTitle": "수질 소개",
+        "q.Very Clean": "매우 깨끗함",
+        "q.Clean": "깨끗함",
+        "q.Normal": "보통",
+        "q.Dirty": "더러움",
+        "q.Very Dirty": "매우 더러움",
+        "members": "프로젝트 구성원",
+        "h1": "수질 지수",
+        "heroP": "누구나 어섬프션 칼리지의 물이 얼마나 깨끗한지, 건강에 영향을 줄 수 있는지 쉽게 확인할 수 있도록 이해하기 쉬운 형식으로 제공하는 수질 보고서입니다. 이 지수는 온도, pH, TDS, 탁도라는 네 가지 핵심 요소를 하나의 간단한 수치로 종합합니다.",
+        "fourTitle": "네 가지 측정 항목",
+        "temperature": "온도",
+        "tempDesc": "물이 얼마나 뜨겁거나 차가운지를 나타내는 기본적인 물리적 성질로, 물속의 모든 것에 영향을 줍니다.",
+        "cold": "찬물: 10 - 15 °C",
+        "room": "실온: 20 - 25 °C",
+        "warm": "따뜻한 물: 40 - 50 °C",
+        "phValue": "pH 값",
+        "phDesc": "물이 얼마나 산성인지 알칼리성인지를 나타내는 척도입니다.",
+        "acid": "pH &lt; 7 → 산성",
+        "neutral": "pH = 7 → 중성",
+        "base": "pH &gt; 7 → 염기성",
+        "tdsTitle": "총용존고형물 (TDS)",
+        "tdsDesc": "물속에 녹아 있는 유기물과 무기물의 총량입니다.",
+        "turbidity": "탁도",
+        "turbDesc": "물속의 부유 물질이나 침전물 입자 때문에 물이 얼마나 흐려 보이는지를 나타냅니다.",
+        "refTitle": "표준 기준값",
+        "thParam": "수질 항목",
+        "thRange": "깨끗한 물의 평균 범위",
+        "thWhy": "중요한 이유",
+        "whyTemp": "용존 산소, 화학 반응 속도, 미생물 활동에 영향을 주고 간접적으로 pH와 전도도에도 영향을 줍니다.",
+        "whyPh": "중금속의 용해도에 영향을 주며 오염의 조기 경고 신호 역할을 합니다.",
+        "tdsValue": "TDS 값",
+        "whyTds": "특정 오염 물질을 구별하지는 못합니다. TDS가 높은 것은 무해한 미네랄이나 유해 물질 때문일 수 있지만 맛에 영향을 줄 수 있습니다.",
+        "whyTurb": "미생물 오염 가능성을 나타내며 정밀 검사 전에 문제를 경고합니다.",
+        "critTitle": "수질 평가 기준",
+        "thQuality": "수질",
+        "or1": "5.5 - 6.5 또는 8.5 - 9.5",
+        "or2": "4.0 - 5.5 또는 9.5 - 10.5",
+        "or3": "&lt; 4.0 또는 &gt; 10.5",
+        "calcTitle": "일일 대기질 지수 계산",
+        "calcIntro": "WQI는 센서 측정값을 0에서 100까지의 단일 점수로 바꿉니다. 각 항목은 먼저 자체 하위 지수 <em>q</em>로 변환된 뒤, 가중치를 적용해 합산됩니다.",
+        "s1": "하위 지수 합산",
+        "s1p": "최종 WQI는 pH, TDS, 탁도의 하위 지수를 가중 합산한 값입니다.",
+        "thParameter": "항목",
+        "thWeight": "가중치 (w)",
+        "s1note": "온도는 측정되어 모니터에 표시되지만 WQI 점수에는 포함되지 않습니다.",
+        "s2": "각 측정값의 구간 찾기",
+        "s2p": "측정값을 아래 범위와 비교하여 어느 수질 구간에 속하는지 찾습니다. 그 구간의 한계값이 하위 지수 공식에 사용됩니다.",
+        "vActual": "<b>V<sub>actual</sub></b> = 센서로 측정한 값",
+        "vMin": "<b>V<sub>min</sub></b> = 해당 구간의 센서 최솟값",
+        "vMax": "<b>V<sub>max</sub></b> = 해당 구간의 센서 최댓값",
+        "qMin": "<b>Q<sub>min</sub></b> = 해당 구간의 WQI 최저 점수",
+        "qMax": "<b>Q<sub>max</sub></b> = 해당 구간의 WQI 최고 점수",
+        "example": "예시: TDS = 120 ppm은 깨끗함 구간에 속하므로 V<sub>min</sub> = 101 ppm, V<sub>max</sub> = 150 ppm, Q<sub>min</sub> = 70, Q<sub>max</sub> = 84입니다.",
+        "thTurbV": "탁도 (V<sub>min</sub> - V<sub>max</sub>)",
+        "phSplit": "산성이 너무 강하거나 알칼리성이 너무 강한 물은 모두 점수를 낮추기 때문에 pH는 7을 기준으로 나눕니다. 매우 깨끗함과 깨끗함 행은 같은 pH 범위(6.5 - 8.5)를 가지므로 하나의 구간으로 합쳤으며, pH 7에서 가장 높은 점수를 받습니다.",
+        "s3": "하위 지수(q) 계산",
+        "s3p": "구간의 한계값을 사용해 측정값을 Q<sub>min</sub>과 Q<sub>max</sub> 사이에 배치합니다. 공식은 항목에 따라 다릅니다.",
+        "f1": "TDS, 탁도, pH &ge; 7 (측정값이 높을수록 점수가 낮아짐)",
+        "f2": "pH &lt; 7 (7에 가까울수록 점수가 높아짐)",
+        "special": "특수한 경우:",
+        "sp1": "두 행 사이의 작은 간격에 해당하는 값(예: TDS 100.5 ppm)은 다음 구간을 사용하며, q는 그 구간의 Q<sub>max</sub>를 넘지 않도록 제한됩니다.",
+        "sp2": "가장 높은 구간을 넘는 값(TDS &gt; 750 ppm, 탁도 &gt; 100 NTU 또는 pH가 0 - 14 범위 밖)은 q = 0이 됩니다."
+      }
+    };
+
+    function stored() { try { return localStorage.getItem(STORE); } catch (e) { return null; } }
+    function save(l) { try { localStorage.setItem(STORE, l); } catch (e) {} }
+
+    var current = DICT[stored()] ? stored() : 'en';
+
+    function t(key) {
+      var d = DICT[current];
+      if (d && d[key] !== undefined) return d[key];
+      return DICT.en[key] !== undefined ? DICT.en[key] : key;
+    }
+
+    var btn = document.getElementById('langToggleBtn');
+    var menu = document.getElementById('langMenu');
+    var flagImg = document.getElementById('langFlagImg');
+    var langText = document.getElementById('langText');
+
+    function apply() {
+      document.documentElement.lang = current;
+      document.title = t('pageTitle');
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.innerHTML = t(el.getAttribute('data-i18n')); });
+      document.querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+      document.querySelectorAll('[data-i18n-title]').forEach(function (el) { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+      if (flagImg) flagImg.src = LANGS[current].flag;
+      if (langText) langText.textContent = LANGS[current].code;
+      if (menu) menu.querySelectorAll('button[data-lang]').forEach(function (b) {
+        b.setAttribute('aria-selected', b.getAttribute('data-lang') === current ? 'true' : 'false');
+      });
+    }
+
+    function setLang(l) {
+      if (!DICT[l]) return;
+      current = l;
+      save(l);
+      apply();
+    }
+
+    function closeMenu() {
+      if (!menu) return;
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (btn && menu) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-lang]');
+        if (!b) return;
+        setLang(b.getAttribute('data-lang'));
+        closeMenu();
+        btn.focus();
+      });
+      document.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('is-open')) { closeMenu(); btn.focus(); }
+      });
+    }
+
+    window.ACHELOUS_t = t;
+    window.ACHELOUS_setLang = setLang;
+    window.ACHELOUS_getLang = function () { return current; };
+    apply();
+  })();
+  </script>
+
+  <script>
+  /* ===== Navbar shadow on scroll + reveal-on-scroll ===== */
+  (function () {
+    var nav = document.querySelector('.navbar');
+    function onScroll() { if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 10); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+  </script>
+
 </body>
 </html>
