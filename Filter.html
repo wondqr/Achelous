@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ACHELOUS</title>
-  <title>ACHELOUS - Filter Dashboard</title>
+<title>ACHELOUS - Filter Dashboard</title>
+<script>document.documentElement.classList.add('js');</script>
 
-  <!-- Socket.IO client served by the backend -->
-  <script src="http://192.168.26.212:4000/socket.io/socket.io.js"></script> 
+  <!-- Firebase SDK (อ่านค่าสดจาก Realtime Database) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');  
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');  
     :root {
       --ink: #0e2a2f;
       --ink-soft: #4c6367;
@@ -22,9 +23,9 @@
       --line: #d7e6e4;
       --good: #2f9e6e;
       --footer-text: #cfe3e0;
-      --font-display: 'Space Grotesk', sans-serif;
-      --font-body: 'Inter', sans-serif;
-      --font-mono: 'IBM Plex Mono', monospace;
+      --font-display: 'Space Grotesk', 'Noto Sans Thai', 'Noto Sans KR', sans-serif;
+      --font-body: 'Inter', 'Noto Sans Thai', 'Noto Sans KR', sans-serif;
+      --font-mono: 'IBM Plex Mono', 'Noto Sans Thai', 'Noto Sans KR', monospace;
       --max-w: 1200px;
       --radius: 10px;
     }
@@ -55,79 +56,43 @@
       display: block;
     }
 
-    /* NAVBAR */
-    .navbar {
-      border-bottom: 2px solid var(--good);
-      background: var(--paper);
-      position: relative;
-      z-index: 100;
-    }
-
-    .navbar__inner {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .navbar__logo img {
-      height: 56px;
-      width: auto;
-    }
-
-    .navbar__links {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .navbar__links a {
-      font-family: var(--font-display);
-      font-weight: 500;
-      font-size: 15px;
-      color: var(--ink);
-    }
-
-    .navbar__links a:hover {
-      color: var(--deep);
-    }
-
-    .navbar__right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .navbar__login {
-      font-family: var(--font-display);
-      font-weight: 600;
-      color: var(--deep-2);
-    }
-
-    .navbar__toggle {
-      display: none;
-    }
-
-    .navbar__burger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 6px;
-    }
-
-    .navbar__burger span {
-      width: 24px;
-      height: 2px;
-      background: var(--ink);
-      border-radius: 2px;
-    }
+  /* ===========================================================
+   NAVBAR
+   =========================================================== */
+ 
+  .navbar { border-bottom: 2px solid var(--good); background: var(--paper); position: relative; z-index: 100; }
+  .navbar__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .navbar__logo img { height: 56px; width: auto; }
+  .navbar__links { display: flex; align-items: center; gap: 36px; list-style: none; margin: 0; padding: 0; }
+  .navbar__links a { font-family: var(--font-display); font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
+  .navbar__links a:hover { color: var(--deep); }
+  .navbar__right { display: flex; align-items: center; gap: 28px; }
+  .navbar__login { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--deep-2); }
+  .navbar__lang { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+ 
+  /* hamburger (checkbox-based, no script) */
+  .navbar__toggle { display: none; }
+  .navbar__burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+  .navbar__burger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; }
+ 
+  @media (max-width: 860px) {
+ 
+    .navbar__burger { display: flex; }
+    .navbar__inner { flex-wrap: wrap; }
+    .navbar__logo { order: 1; }
+    .navbar__links { order: 3; flex-basis: 100%; width: 100%; position: static; flex-direction: column; align-items: flex-start; gap: 0; background: var(--paper); max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+    .navbar__links li { width: 100%; }
+    .navbar__links a { display: block; width: 100%; padding: 14px 24px; border-top: 1px solid var(--line); }
+    .navbar__toggle:checked ~ .navbar__links { max-height: 320px; }
+    .navbar__right { order: 2; gap: 16px; }
+  }
+ 
+  @media (max-width: 480px) {
+ 
+    .navbar__inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+  }
+ 
 
     /* DASHBOARD */
     .dashboard {
@@ -210,108 +175,23 @@
       color: var(--good);
     }
 
-    /* FOOTER */
-    .footer {
-      background: #555;
-      color: var(--footer-text);
-      padding: 36px 0;
-      margin-top: 60px;
-    }
-
-    .footer__inner {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      justify-content: space-between;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-
-    .footer__logos {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .footer__logo {
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .footer__logo img {
-      height: 42px;
-      width: auto;
-      object-fit: contain;
-    }
-
-    .footer__members h3 {
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin: 0 0 12px;
-      color: var(--paper);
-    }
-
-    .footer__members ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .footer__members li {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--footer-text);
-    }
-
-    .footer__members li::before {
-      content: '— ';
-      color: var(--good);
-    }
-
-    @media (max-width: 900px) {
-      .navbar__inner {
-        flex-wrap: wrap;
-      }
-
-      .navbar__burger {
-        display: flex;
-      }
-
-      .navbar__links {
-        order: 3;
-        flex-basis: 100%;
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.25s ease;
-      }
-
-      .navbar__links li {
-        width: 100%;
-      }
-
-      .navbar__links a {
-        display: block;
-        padding: 12px;
-        border-top: 1px solid var(--line);
-      }
-
-      .navbar__toggle:checked ~ .navbar__links {
-        max-height: 400px;
-      }
-    }
+  /* ===========================================================
+   FOOTER
+   =========================================================== */
+ 
+  .footer { background: #555555; color: var(--footer-text); padding: 36px 0; margin-top: 60px; }
+  .footer__inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+  .footer__logos { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer__logo { height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .footer__logo img { height: 50px; }
+  .footer__members h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 12px; color: var(--paper); }
+  .footer__members ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .footer__members li { font-family: var(--font-mono); font-size: 13px; color: var(--footer-text); }
+  .footer__members li::before { content: '— '; color: var(--good); }
+ 
+  @media (max-width: 860px) {
+    .footer__inner { flex-direction: column; gap: 24px; }
+  }
 
     @media (max-width: 480px) {
       .dashboard {
@@ -335,157 +215,241 @@
         font-size: 24px;
       }
     }
+/* ===========================================================
+   UPDATE: sticky navbar, animation, accessibility, language menu
+   =========================================================== */
+html { scroll-behavior: smooth; }
+
+/* --- accessibility --- */
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 300; background: var(--deep); color: #fff; padding: 10px 18px; border-radius: 8px; font-family: var(--font-display); font-weight: 600; transition: top 0.2s ease; }
+.skip-link:focus { top: 12px; }
+a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__toggle:focus-visible ~ .navbar__right .navbar__burger { outline: 3px solid var(--deep-2); outline-offset: 3px; border-radius: 6px; }
+.navbar__toggle { display: block; position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+
+/* --- sticky navbar (follows the scroll) --- */
+.navbar { position: sticky; top: 0; background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: box-shadow 0.3s ease; animation: navIn 0.6s cubic-bezier(.2,.8,.2,1) both; }
+.navbar__inner { padding-top: 8px; padding-bottom: 8px; }
+.navbar__logo img { height: 44px; }
+.navbar.is-scrolled { box-shadow: 0 8px 24px rgba(11, 79, 92, 0.14); }
+@keyframes navIn { from { transform: translateY(-100%); } }
+
+.navbar__links a, .navbar__login { transition: color 0.2s ease; }
+.navbar__burger span { transition: transform 0.25s ease, opacity 0.25s ease; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(2) { opacity: 0; }
+.navbar__toggle:checked ~ .navbar__right .navbar__burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (min-width: 861px) {
+  .navbar__links a { position: relative; padding: 6px 0; }
+  .navbar__links a::after { content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--good); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+  .navbar__links a:hover::after, .navbar__links a[aria-current="page"]::after { transform: scaleX(1); }
+}
+
+/* --- language menu (EN / TH / KO) --- */
+.navbar__lang-wrap { position: relative; }
+.navbar__lang { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 8px; transition: background 0.2s ease, border-color 0.2s ease; }
+.navbar__lang:hover { opacity: 1; background: var(--mist); border-color: var(--deep-2); }
+.navbar__lang::after { content: '\25BE'; font-size: 12px; transition: transform 0.2s ease; }
+.navbar__lang[aria-expanded="true"]::after { transform: rotate(180deg); }
+.navbar__lang img { width: 20px; height: 20px; border-radius: 100%; object-fit: cover; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 10px); min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(11, 79, 92, 0.16); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; z-index: 200; }
+.lang-menu.is-open { opacity: 1; visibility: visible; transform: none; }
+.lang-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; font-family: var(--font-body); font-size: 15px; color: var(--ink); cursor: pointer; text-align: left; }
+.lang-menu button:hover, .lang-menu button[aria-selected="true"] { background: var(--mist); }
+.lang-menu button[aria-selected="true"] { font-weight: 600; color: var(--deep); }
+.lang-menu img { width: 22px; height: 22px; border-radius: 100%; object-fit: cover; }
+
+/* --- phones: no empty gap under the collapsed menu --- */
+@media (max-width: 860px) { .navbar__inner { row-gap: 0; } }
+
+/* --- page-load / scroll animation --- */
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.8,.2,1); }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+.metric-card:nth-child(2) { transition-delay: 0.06s; }
+.metric-card:nth-child(3) { transition-delay: 0.12s; }
+.metric-card:nth-child(4) { transition-delay: 0.18s; }
+.metric-card:nth-child(5) { transition-delay: 0.24s; }
+
+/* a value flashes when a new reading changes it */
+.flash { animation: valueFlash 0.9s ease; }
+@keyframes valueFlash { from { color: var(--good); } }
+
+/* live indicator dot */
+.status { transition: color 0.3s ease, border-color 0.3s ease; }
+.status.is-live::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: #2f9e6e; animation: livePulse 1.6s ease-in-out infinite; }
+@keyframes livePulse { 50% { opacity: 0.35; transform: scale(0.8); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
   </style>
 </head>
 
 <body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
 <!-- ===================== NAVBAR ===================== -->
   <header class="navbar">
     <div class="navbar__inner">
+ 
       <a href="index.html" class="navbar__logo">
         <img src="achelouslogo.png" alt="ACHELOUS" />
       </a>
+ 
       <input type="checkbox" id="navToggle" class="navbar__toggle" />
+ 
       <ul class="navbar__links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="archiveddata.html">Archived Data</a></li>
-        <li><a href="aboutwqi.html">About Water Quality</a></li>
-        <li><a href="aboutproject.html">About The Project</a></li>
-        <li><a href="Filter.html">Filter</a></li>
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="archiveddata.html" data-i18n="nav.archived">Archived Data</a></li>
+        <li><a href="aboutwqi.html" data-i18n="nav.wqi">About Water Quality</a></li>
+        <li><a href="aboutproject.html" data-i18n="nav.project">About The Project</a></li>
+        <li><a href="Filter.html" aria-current="page" data-i18n="nav.filter">Filter</a></li>
       </ul>
+ 
       <div class="navbar__right">
-        <a href="login.html" class="navbar__login">Login</a>
-        <div class="navbar__lang" id="langToggleBtn" title="Click to toggle display">
-          <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" style="width: 20px; height: 20px; border-radius: 100%; object-fit: cover;">
-          <span id="langText">EN</span>
+        <a href="login.html" class="navbar__login" data-i18n="login">Login</a>
+        <div class="navbar__lang-wrap">
+          <button type="button" class="navbar__lang" id="langToggleBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" title="Change language" data-i18n-title="langTitle" data-i18n-aria="langTitle" aria-label="Change language">
+            <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">
+            <span id="langText">EN</span>
+          </button>
+          <ul class="lang-menu" id="langMenu">
+            <li><button type="button" data-lang="en" aria-selected="true"><img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">English</button></li>
+            <li><button type="button" data-lang="th" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg" alt="">&#3652;&#3607;&#3618;</button></li>
+            <li><button type="button" data-lang="ko" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" alt="">&#54620;&#44397;&#50612;</button></li>
+          </ul>
         </div>
-        <label for="navToggle" class="navbar__burger" aria-label="Open menu">
-          <span></span><span></span><span></span>
+        <label for="navToggle" class="navbar__burger" aria-label="Open menu" data-i18n-aria="menu">
+          <span></span>
+          <span></span>
+          <span></span>
         </label>
       </div>
+ 
     </div>
   </header>
 
   <!-- DASHBOARD -->
-  <main class="dashboard">
-    <div class="dashboard-header">
-      <h1>ACHELOUS Water Quality</h1>
-      <p>ESP32-S3 live monitoring dashboard</p>
+  <main class="dashboard" id="main" tabindex="-1">
+    <div class="dashboard-header reveal">
+      <h1 data-i18n="h1">ACHELOUS Water Quality</h1>
+      <p data-i18n="sub">ESP32-S3 live monitoring dashboard</p>
       <div id="connectionStatus" class="status">Connecting...</div>
     </div>
 
-    <h2 class="section-title">Water Quality</h2>
+    <h2 class="section-title reveal" data-i18n="secWq">Water Quality</h2>
     <div class="dashboard-grid">
-      <div class="metric-card">
-        <h3>Temperature</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="temp">Temperature</h3>
         <div class="metric-value"><span id="temperature">--</span> °C</div>
       </div>
-      <div class="metric-card">
+      <div class="metric-card reveal">
         <h3>pH</h3>
         <div class="metric-value" id="ph">--</div>
       </div>
-      <div class="metric-card">
-        <h3>First-stage WQI</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="wqi1">First-stage WQI</h3>
         <div class="metric-value" id="wqi1">--</div>
         <div class="metric-sublevel" id="wqi1Level">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage WQI</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="wqi2">Second-stage WQI</h3>
         <div class="metric-value" id="wqi2">--</div>
         <div class="metric-sublevel" id="wqi2Level">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Overall WQI</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="wqiAll">Overall WQI</h3>
         <div class="metric-value" id="wqi">--</div>
         <div class="metric-sublevel" id="wqiLevel">--</div>
       </div>
     </div>
 
-    <h2 class="section-title">Sensor Measurements</h2>
+    <h2 class="section-title reveal" data-i18n="secSensor">Sensor Measurements</h2>
     <div class="dashboard-grid">
-      <div class="metric-card">
-        <h3>First-stage TDS</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="tds1">First-stage TDS</h3>
         <div class="metric-value"><span id="tds1">--</span> ppm</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage TDS</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="tds2">Second-stage TDS</h3>
         <div class="metric-value"><span id="tds2">--</span> ppm</div>
       </div>
-      <div class="metric-card">
-        <h3>First-stage Turbidity</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="turb1">First-stage Turbidity</h3>
         <div class="metric-value"><span id="turbidity1">--</span> NTU</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage Turbidity</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="turb2">Second-stage Turbidity</h3>
         <div class="metric-value"><span id="turbidity2">--</span> NTU</div>
       </div>
     </div>
 
-    <h2 class="section-title">Pressure</h2>
+    <h2 class="section-title reveal" data-i18n="secPressure">Pressure</h2>
     <div class="dashboard-grid">
-      <div class="metric-card">
-        <h3>First-stage Pressure (kPa)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press1" data-n="kPa">First-stage Pressure (kPa)</h3>
         <div class="metric-value" id="pressureKPa">--</div>
       </div>
-      <div class="metric-card">
-        <h3>First-stage Pressure (MPa)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press1" data-n="MPa">First-stage Pressure (MPa)</h3>
         <div class="metric-value" id="pressureMPa">--</div>
       </div>
-      <div class="metric-card">
-        <h3>First-stage Pressure (bar)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press1" data-n="bar">First-stage Pressure (bar)</h3>
         <div class="metric-value" id="pressureBar">--</div>
       </div>
-      <div class="metric-card">
-        <h3>First-stage Pressure (psi)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press1" data-n="psi">First-stage Pressure (psi)</h3>
         <div class="metric-value" id="pressurePsi">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage Pressure (kPa)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press2" data-n="kPa">Second-stage Pressure (kPa)</h3>
         <div class="metric-value" id="pressure2KPa">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage Pressure (MPa)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press2" data-n="MPa">Second-stage Pressure (MPa)</h3>
         <div class="metric-value" id="pressure2MPa">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage Pressure (bar)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press2" data-n="bar">Second-stage Pressure (bar)</h3>
         <div class="metric-value" id="pressure2Bar">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Second-stage Pressure (psi)</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="press2" data-n="psi">Second-stage Pressure (psi)</h3>
         <div class="metric-value" id="pressure2Psi">--</div>
       </div>
     </div>
 
-    <h2 class="section-title">Water Flow</h2>
+    <h2 class="section-title reveal" data-i18n="secFlow">Water Flow</h2>
     <div class="dashboard-grid">
-      <div class="metric-card">
-        <h3>Flow Rate</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="flowRate">Flow Rate</h3>
         <div class="metric-value"><span id="flowRate">--</span> L/min</div>
       </div>
-      <div class="metric-card">
-        <h3>Total Volume</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="totalVol">Total Volume</h3>
         <div class="metric-value"><span id="totalVolume">--</span> L</div>
       </div>
-      <div class="metric-card">
-        <h3>Flow Frequency</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="flowFreq">Flow Frequency</h3>
         <div class="metric-value"><span id="flowFrequency">--</span> Hz</div>
       </div>
     </div>
 
-    <h2 class="section-title">Valve Status</h2>
+    <h2 class="section-title reveal" data-i18n="secValve">Valve Status</h2>
     <div class="dashboard-grid">
-      <div class="metric-card">
-        <h3>Valve 1</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="valveN" data-n="1">Valve 1</h3>
         <div class="metric-value" id="valve1Open">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Valve 2</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="valveN" data-n="2">Valve 2</h3>
         <div class="metric-value" id="valve2Open">--</div>
       </div>
-      <div class="metric-card">
-        <h3>Valve 3</h3>
+      <div class="metric-card reveal">
+        <h3 data-i18n="valveN" data-n="3">Valve 3</h3>
         <div class="metric-value" id="valve3Open">--</div>
       </div>
     </div>
@@ -493,17 +457,20 @@
 
   <!-- FOOTER -->
   <footer class="footer">
-    <div class="footer__inner">
+    <div class="footer__inner reveal">
+ 
       <div class="footer__logos">
-        <div class="footer__logo"><img src="Thailand.png" alt="Thailand" /></div>
-        <div class="footer__logo"><img src="AClogo.png" alt="Project logo" /></div>
-        <div class="footer__logo"><img src="dreammakertransp.png" alt="Dreammaker" /></div>
-        <div class="footer__logo"><img src="achelouslogo.png" alt="ACHELOUS" /></div>
-        <div class="footer__logo"><img src="siiflogo.png" alt="SIIF" /></div>
+        <div class="footer__logo"><img src="Thailand.png"></div>
+        <div class="footer__logo"><img src="https://www.nrct.go.th/ckeditor/upload/files/id28/emblem_brand_p_1.png"></div>
+        <div class="footer__logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZge_7Up9SCQ7UN21vgUEDBApAqoM0gjsaYMNe0VvvyQ&s=10"></div>
+        <div class="footer__logo"><img src="AClogo.png"></div>
+        <div class="footer__logo"><img src="dreammakertransp.png"></div>
+        <div class="footer__logo"><img src="achelouslogo.png" alt="logo" /></div>
+        <div class="footer__logo"><img src="siiflogo.png"></div>
       </div>
-
+ 
       <div class="footer__members">
-        <h3>Project Members</h3>
+        <h3 data-i18n="members">Project Members</h3>
         <ul>
           <li>Mr.Arkkharayut Pandej</li>
           <li>Mr.Nantapat Pasukulpipat</li>
@@ -513,32 +480,237 @@
           <li>Mr.Thatkrit Amatyakul</li>
         </ul>
       </div>
+ 
     </div>
   </footer>
 
 
 
-    <script>
-      (function () {
-       var langBtn = document.getElementById('langToggleBtn');
-       var flagImg = document.getElementById('langFlagImg');
-       var langText = document.getElementById('langText');
-     if (!langBtn || !flagImg || !langText) return;
-
-      var isEnglish = true;
-      var ukFlag = 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg';
-      var thaiFlag = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg';
-
-     langBtn.addEventListener('click', function () {
-      isEnglish = !isEnglish;
-      if (isEnglish) {
-        flagImg.src = ukFlag;
-        langText.textContent = 'EN';
-      } else {
-        flagImg.src = thaiFlag;
-        langText.textContent = 'TH';
+  <script>
+  /* ===== Language: English / Thai / Korean (same choice is remembered across pages) ===== */
+  (function () {
+    var STORE = 'achelous-lang';
+    var LANGS = {
+      en: { code: 'EN', flag: 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg' },
+      th: { code: 'TH', flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg' },
+      ko: { code: 'KO', flag: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg' }
+    };
+    var DICT = {
+      "en": {
+        "skip": "Skip to content",
+        "nav.home": "Home",
+        "nav.archived": "Archived Data",
+        "nav.wqi": "About Water Quality",
+        "nav.project": "About The Project",
+        "nav.filter": "Filter",
+        "login": "Login",
+        "menu": "Open menu",
+        "langTitle": "Change language",
+        "pageTitle": "ACHELOUS - Filter Dashboard",
+        "members": "Project Members",
+        "h1": "ACHELOUS Water Quality",
+        "sub": "ESP32-S3 live monitoring dashboard",
+        "secWq": "Water Quality",
+        "secSensor": "Sensor Measurements",
+        "secPressure": "Pressure",
+        "secFlow": "Water Flow",
+        "secValve": "Valve Status",
+        "temp": "Temperature",
+        "wqi1": "First-stage WQI",
+        "wqi2": "Second-stage WQI",
+        "wqiAll": "Overall WQI",
+        "tds1": "First-stage TDS",
+        "tds2": "Second-stage TDS",
+        "turb1": "First-stage Turbidity",
+        "turb2": "Second-stage Turbidity",
+        "press1": "First-stage Pressure ({n})",
+        "press2": "Second-stage Pressure ({n})",
+        "flowRate": "Flow Rate",
+        "totalVol": "Total Volume",
+        "flowFreq": "Flow Frequency",
+        "valveN": "Valve {n}",
+        "open": "Open",
+        "closed": "Closed",
+        "q.Very Clean": "Very Clean",
+        "q.Clean": "Clean",
+        "q.Normal": "Normal",
+        "q.Dirty": "Dirty",
+        "q.Very Dirty": "Very Dirty",
+        "stConnecting": "Connecting...",
+        "stLive": "Live",
+        "stLiveAt": "Live - last data {t}",
+        "stOffline": "Device offline - last data {t}",
+        "stNoReading": "Connected - No reading available",
+        "stFirebase": "Connecting to Firebase...",
+        "stError": "Cannot read Firebase: {msg}",
+        "stPoll": "Offline - cannot reach Firebase"
+      },
+      "th": {
+        "skip": "ข้ามไปยังเนื้อหา",
+        "nav.home": "หน้าแรก",
+        "nav.archived": "ข้อมูลย้อนหลัง",
+        "nav.wqi": "เกี่ยวกับคุณภาพน้ำ",
+        "nav.project": "เกี่ยวกับโครงการ",
+        "nav.filter": "ไส้กรอง",
+        "login": "เข้าสู่ระบบ",
+        "menu": "เปิดเมนู",
+        "langTitle": "เปลี่ยนภาษา",
+        "pageTitle": "ACHELOUS - แดชบอร์ดไส้กรอง",
+        "members": "สมาชิกโครงการ",
+        "h1": "คุณภาพน้ำ ACHELOUS",
+        "sub": "แดชบอร์ดติดตามแบบเรียลไทม์จาก ESP32-S3",
+        "secWq": "คุณภาพน้ำ",
+        "secSensor": "ค่าที่วัดจากเซนเซอร์",
+        "secPressure": "ความดัน",
+        "secFlow": "การไหลของน้ำ",
+        "secValve": "สถานะวาล์ว",
+        "temp": "อุณหภูมิ",
+        "wqi1": "WQI ขั้นที่ 1",
+        "wqi2": "WQI ขั้นที่ 2",
+        "wqiAll": "WQI โดยรวม",
+        "tds1": "TDS ขั้นที่ 1",
+        "tds2": "TDS ขั้นที่ 2",
+        "turb1": "ความขุ่นขั้นที่ 1",
+        "turb2": "ความขุ่นขั้นที่ 2",
+        "press1": "ความดันขั้นที่ 1 ({n})",
+        "press2": "ความดันขั้นที่ 2 ({n})",
+        "flowRate": "อัตราการไหล",
+        "totalVol": "ปริมาตรรวม",
+        "flowFreq": "ความถี่การไหล",
+        "valveN": "วาล์ว {n}",
+        "open": "เปิด",
+        "closed": "ปิด",
+        "q.Very Clean": "สะอาดมาก",
+        "q.Clean": "สะอาด",
+        "q.Normal": "ปานกลาง",
+        "q.Dirty": "สกปรก",
+        "q.Very Dirty": "สกปรกมาก",
+        "stConnecting": "กำลังเชื่อมต่อ...",
+        "stLive": "ออนไลน์",
+        "stLiveAt": "ออนไลน์ - ข้อมูลล่าสุด {t}",
+        "stOffline": "อุปกรณ์ออฟไลน์ - ข้อมูลล่าสุด {t}",
+        "stNoReading": "เชื่อมต่อแล้ว - ยังไม่มีข้อมูลที่อ่านได้",
+        "stFirebase": "กำลังเชื่อมต่อ Firebase...",
+        "stError": "ไม่สามารถอ่านข้อมูลจาก Firebase: {msg}",
+        "stPoll": "ออฟไลน์ - ไม่สามารถเชื่อมต่อ Firebase ได้"
+      },
+      "ko": {
+        "skip": "본문으로 건너뛰기",
+        "nav.home": "홈",
+        "nav.archived": "보관 데이터",
+        "nav.wqi": "수질 소개",
+        "nav.project": "프로젝트 소개",
+        "nav.filter": "필터",
+        "login": "로그인",
+        "menu": "메뉴 열기",
+        "langTitle": "언어 변경",
+        "pageTitle": "ACHELOUS - 필터 대시보드",
+        "members": "프로젝트 구성원",
+        "h1": "ACHELOUS 수질",
+        "sub": "ESP32-S3 실시간 모니터링 대시보드",
+        "secWq": "수질",
+        "secSensor": "센서 측정값",
+        "secPressure": "압력",
+        "secFlow": "물 흐름",
+        "secValve": "밸브 상태",
+        "temp": "온도",
+        "wqi1": "1단계 WQI",
+        "wqi2": "2단계 WQI",
+        "wqiAll": "전체 WQI",
+        "tds1": "1단계 TDS",
+        "tds2": "2단계 TDS",
+        "turb1": "1단계 탁도",
+        "turb2": "2단계 탁도",
+        "press1": "1단계 압력 ({n})",
+        "press2": "2단계 압력 ({n})",
+        "flowRate": "유량",
+        "totalVol": "총 부피",
+        "flowFreq": "유량 주파수",
+        "valveN": "밸브 {n}",
+        "open": "열림",
+        "closed": "닫힘",
+        "q.Very Clean": "매우 깨끗함",
+        "q.Clean": "깨끗함",
+        "q.Normal": "보통",
+        "q.Dirty": "더러움",
+        "q.Very Dirty": "매우 더러움",
+        "stConnecting": "연결 중...",
+        "stLive": "실시간",
+        "stLiveAt": "실시간 - 마지막 데이터 {t}",
+        "stOffline": "장치 오프라인 - 마지막 데이터 {t}",
+        "stNoReading": "연결됨 - 사용 가능한 측정값 없음",
+        "stFirebase": "Firebase에 연결 중...",
+        "stError": "Firebase를 읽을 수 없습니다: {msg}",
+        "stPoll": "오프라인 - Firebase에 연결할 수 없습니다"
       }
-    });
+    };
+
+    function stored() { try { return localStorage.getItem(STORE); } catch (e) { return null; } }
+    function save(l) { try { localStorage.setItem(STORE, l); } catch (e) {} }
+
+    var current = DICT[stored()] ? stored() : 'en';
+
+    function t(key) {
+      var d = DICT[current];
+      if (d && d[key] !== undefined) return d[key];
+      return DICT.en[key] !== undefined ? DICT.en[key] : key;
+    }
+
+    var btn = document.getElementById('langToggleBtn');
+    var menu = document.getElementById('langMenu');
+    var flagImg = document.getElementById('langFlagImg');
+    var langText = document.getElementById('langText');
+
+    function apply() {
+      document.documentElement.lang = current;
+      document.title = t('pageTitle');
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.innerHTML = String(t(el.getAttribute('data-i18n'))).replace('{n}', el.getAttribute('data-n') || ''); });
+      document.querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+      document.querySelectorAll('[data-i18n-title]').forEach(function (el) { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+      if (flagImg) flagImg.src = LANGS[current].flag;
+      if (langText) langText.textContent = LANGS[current].code;
+      if (menu) menu.querySelectorAll('button[data-lang]').forEach(function (b) {
+        b.setAttribute('aria-selected', b.getAttribute('data-lang') === current ? 'true' : 'false');
+      });
+    }
+
+    function setLang(l) {
+      if (!DICT[l]) return;
+      current = l;
+      save(l);
+      apply();
+      document.dispatchEvent(new CustomEvent('achelous-langchange', { detail: { lang: l } }));
+    }
+
+    function closeMenu() {
+      if (!menu) return;
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (btn && menu) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-lang]');
+        if (!b) return;
+        setLang(b.getAttribute('data-lang'));
+        closeMenu();
+        btn.focus();
+      });
+      document.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('is-open')) { closeMenu(); btn.focus(); }
+      });
+    }
+
+    window.ACHELOUS_t = t;
+    window.ACHELOUS_setLang = setLang;
+    window.ACHELOUS_getLang = function () { return current; };
+    apply();
   })();
   </script>
   <!-- BACKEND CONNECTION -->
@@ -546,8 +718,20 @@
     (function () {
       'use strict';
 
-      var API_BASE = 'http://192.168.26.212:4000';
-      var POLL_MS = 1000;
+      function T(key, vars) {
+        var v = window.ACHELOUS_t(key);
+        if (vars) for (var k in vars) v = v.split('{' + k + '}').join(vars[k]);
+        return v;
+      }
+      var LOCALES = { en: 'en-US', th: 'th-TH', ko: 'ko-KR' };
+
+      // ใส่ค่าจาก Firebase Console > Project settings > General
+      var FIREBASE_CONFIG = {
+        apiKey: 'ใส่ Web API Key',
+        databaseURL: 'ใส่ Database URL',
+        projectId: 'ใส่ Project ID'
+      };
+      var POLL_MS = 5000;   // ใช้เฉพาะตอนโหลด Firebase SDK ไม่ได้ (ดึงทุก 5 วินาที)
 
       var FIELDS = {
         temperature: 2,
@@ -577,7 +761,12 @@
       function setText(id, value) {
         var el = document.getElementById(id);
         if (el) {
-          el.textContent = value;
+          if (el.textContent !== value) {          // flash only when the number really changed
+            el.textContent = value;
+            el.classList.remove('flash');
+            void el.offsetWidth;
+            el.classList.add('flash');
+          }
         }
       }
 
@@ -598,23 +787,23 @@
 
       function wqiLevel(value) {
         if (value === null) {
-          return { text: '--', color: '' };
+          return { key: '', color: '' };
         }
 
         if (value >= 85) {
-          return { text: 'Very Clean', color: '#2f9e6e' };
+          return { key: 'q.Very Clean', color: '#2f9e6e' };
         }
         if (value >= 70) {
-          return { text: 'Clean', color: '#2f9e6e' };
+          return { key: 'q.Clean', color: '#2f9e6e' };
         }
         if (value >= 50) {
-          return { text: 'Normal', color: '#b8860b' };
+          return { key: 'q.Normal', color: '#b8860b' };
         }
         if (value >= 25) {
-          return { text: 'Dirty', color: '#d9822b' };
+          return { key: 'q.Dirty', color: '#d9822b' };
         }
 
-        return { text: 'Very Dirty', color: '#c0392b' };
+        return { key: 'q.Very Dirty', color: '#c0392b' };
       }
 
       function render(reading) {
@@ -631,7 +820,7 @@
           var element = document.getElementById(key + 'Level');
 
           if (element) {
-            element.textContent = level.text;
+            element.textContent = level.key ? T(level.key) : '--';
             element.style.color = level.color;
           }
         });
@@ -641,107 +830,143 @@
           var textValue = '--';
 
           if (value === true || value === 'true' || value === 1 || value === '1') {
-            textValue = 'Open';
+            textValue = T('open');
           } else if (
             value === false ||
             value === 'false' ||
             value === 0 ||
             value === '0'
           ) {
-            textValue = 'Closed';
+            textValue = T('closed');
           }
 
           setText(key, textValue);
         });
       }
 
-      function setStatus(message, connected) {
+      var statusState = { key: 'stConnecting', vars: null };
+
+      function renderStatus() {
+        if (statusEl) statusEl.textContent = T(statusState.key, statusState.vars);
+      }
+
+      function setStatus(key, vars, connected) {
         if (!statusEl) return;
 
-        statusEl.textContent = message;
+        statusState = { key: key, vars: vars };
+        renderStatus();
         statusEl.style.color = connected ? '#1f7a53' : '#c0392b';
         statusEl.style.borderColor = connected ? '#2f9e6e' : '#c0392b';
+        statusEl.classList.toggle('is-live', !!connected);
       }
 
-      function fetchLatest() {
-        fetch(API_BASE + '/api/sensor/latest')
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('HTTP ' + response.status);
-            }
-            return response.json();
-          })
-          .then(function (data) {
-            if (data && data.reading) {
-              render(data.reading);
-              setStatus(
-                'Connected - Last data: ' +
-                new Date().toLocaleTimeString(),
-                true
-              );
-            } else {
-              setStatus('Connected - No reading available', true);
-            }
-          })
-          .catch(function (error) {
-            console.error('Could not fetch latest sensor reading:', error);
-            setStatus('Offline - Cannot reach backend API', false);
-          });
+      // ---------- Firebase ----------
+      var STALE_SEC = 30;      // ข้อมูลเก่ากว่านี้ = อุปกรณ์ออฟไลน์
+      var lastReading = null;
+      var serverOffset = 0;    // ผลต่างเวลาเครื่องนี้กับเซิร์ฟเวอร์ Firebase (ms)
+
+      function updateFreshness() {
+        if (!lastReading) return;
+        var ts = toNum(lastReading.timestamp);
+        if (ts === null) { setStatus('stLive', null, true); return; }
+        var age = (Date.now() + serverOffset - ts) / 1000;
+        var when = new Date(ts).toLocaleTimeString(LOCALES[window.ACHELOUS_getLang()] || undefined);
+        if (age > STALE_SEC) {
+          setStatus('stOffline', { t: when }, false);
+        } else {
+          setStatus('stLiveAt', { t: when }, true);
+        }
       }
 
-      // Load the latest stored reading immediately and poll every 2 seconds.
-      fetchLatest();
-      window.setInterval(fetchLatest, POLL_MS);
+      function showReading(reading) {
+        if (!reading || typeof reading !== 'object') {
+          setStatus('stNoReading', null, true);
+          return;
+        }
+        lastReading = reading;
+        render(reading);
+        updateFreshness();
+      }
+      window.setInterval(updateFreshness, 5000);
 
-      // Set up real-time updates only if the Socket.IO client loaded.
-      if (typeof window.io === 'function') {
-        var socket = window.io(API_BASE);
+      function startFirebase() {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        var db = firebase.database();
 
-        socket.on('connect', function () {
-          console.log('Connected to ACHELOUS backend');
-          setStatus('Socket connected - waiting for readings', true);
-          fetchLatest();
+        db.ref('.info/serverTimeOffset').on('value', function (s) {
+          serverOffset = s.val() || 0;
         });
-
-        socket.on('connect_error', function (error) {
-          console.error('Socket connection error:', error.message);
-          // HTTP polling may still work if Socket.IO fails.
+        db.ref('.info/connected').on('value', function (s) {
+          if (s.val() === true) { updateFreshness(); }
+          else { setStatus('stFirebase', null, false); }
         });
-
-        socket.on('disconnect', function () {
-          console.warn('Socket disconnected. HTTP polling continues.');
+        db.ref('latest').on('value', function (snap) {
+          showReading(snap.val());
+        }, function (error) {
+          console.error('Firebase read error:', error);
+          setStatus('stError', { msg: error.message }, false);
         });
+      }
 
-        socket.on('sensor-update', function(reading) {
+      // สำรอง: ถ้า Firebase SDK โหลดไม่ได้ ใช้ดึงผ่าน REST แทน
+      function startPolling() {
+        function poll() {
+          fetch(FIREBASE_CONFIG.databaseURL + '/latest.json', { cache: 'no-store' })
+            .then(function (r) {
+              if (!r.ok) { throw new Error('HTTP ' + r.status); }
+              return r.json();
+            })
+            .then(showReading)
+            .catch(function (error) {
+              console.error('Could not fetch latest reading:', error);
+              setStatus('stPoll', null, false);
+            });
+        }
+        poll();
+        window.setInterval(poll, POLL_MS);
+      }
 
-    console.log('========== SENSOR DATA DEBUG ==========');
+      // re-translate everything shown by this script when the language changes
+      document.addEventListener('achelous-langchange', function () {
+        if (lastReading) render(lastReading);
+        if (statusState.key === 'stLive' || statusState.key === 'stLiveAt' || statusState.key === 'stOffline') {
+          updateFreshness();
+        } else {
+          renderStatus();
+        }
+      });
+      renderStatus();
 
-    console.log(
-        'Full sensor data:',
-        JSON.stringify(reading, null, 2)
-    );
-
-    console.table(reading);
-
-    console.log('Temperature:', reading.temperature);
-    console.log('pH:', reading.ph);
-    console.log('TDS 1:', reading.tds1);
-    console.log('TDS 2:', reading.tds2);
-    console.log('WQI:', reading.wqi);
-
-    render(reading);
-
-    setStatus(
-        'Live - Real-time updated ' + new Date().toLocaleTimeString(),
-        true
-    );
-});
-
+      if (window.firebase && firebase.database) {
+        startFirebase();
       } else {
-        console.error('Socket.IO client did not load. HTTP polling remains enabled.');
+        console.warn('Firebase SDK did not load. Using REST polling.');
+        startPolling();
       }
     })();
   </script>
 
+
+  <script>
+  /* ===== Navbar shadow on scroll + reveal-on-scroll ===== */
+  (function () {
+    var nav = document.querySelector('.navbar');
+    function onScroll() { if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 10); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+  </script>
 </body>
 </html>
