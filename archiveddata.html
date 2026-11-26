@@ -200,6 +200,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
 /* --- phones: no empty gap under the collapsed menu --- */
 @media (max-width: 860px) { .navbar__inner { row-gap: 0; } }
 
+html { scroll-padding-top: 76px; }
 /* --- page-load / scroll animation --- */
 .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.8,.2,1); }
 .js .reveal.is-visible { opacity: 1; transform: none; }
@@ -381,13 +382,13 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         "nav.home": "หน้าแรก",
         "nav.archived": "ข้อมูลย้อนหลัง",
         "nav.wqi": "เกี่ยวกับคุณภาพน้ำ",
-        "nav.project": "เกี่ยวกับโครงงาน",
+        "nav.project": "เกี่ยวกับโครงการ",
         "nav.filter": "ไส้กรอง",
         "login": "เข้าสู่ระบบ",
         "menu": "เปิดเมนู",
         "langTitle": "เปลี่ยนภาษา",
         "pageTitle": "ACHELOUS",
-        "members": "สมาชิกโครงงาน",
+        "members": "สมาชิกโครงการ",
         "h1": "ข้อมูลย้อนหลัง",
         "heroP": "ระบบบันทึกและสรุปข้อมูลทุกเดือนโดยอัตโนมัติ และเก็บข้อมูลย้อนหลัง 12 เดือนล่าสุด",
         "chooseLoc": "เลือกสถานที่",
@@ -640,6 +641,8 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
     window.ACHELOUS_setLang = setLang;
     window.ACHELOUS_getLang = function () { return current; };
     apply();
+    // if this script runs before the rest of the page exists, translate again once everything is loaded
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
   })();
   </script>
 
@@ -673,6 +676,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
       <div class="chart-head">
         <h2 data-i18n="wqiTitle">Water Quality Index (WQI)</h2>
         <span class="badge" id="chartBadge">–</span>
+      </div>
         <p class="sub" data-i18n="wqiSub">Score from 0 (poor) to 100 (excellent).</p>
         <p class="status-msg" id="status" hidden></p>
 
@@ -1001,6 +1005,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
     drawChart();
     refresh(false);
     $('dirtyNum').textContent = DIRTY_WQI;
+    document.addEventListener('DOMContentLoaded', function () { $('dirtyNum').textContent = DIRTY_WQI; });
     document.addEventListener('achelous-langchange', function () {
       $('dirtyNum').textContent = DIRTY_WQI;
       showError(state.err);
@@ -1029,9 +1034,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         <h3 data-i18n="members">Project Members</h3>
         <ul>
           <li>Mr.Arkkharayut Pandej</li>
-          <li>Mr.Kumpha Tawansangaram</li>
           <li>Mr.Nantapat Pasukulpipat</li>
-          <li>Mr.Natthpat Chamnien</li>
           <li>Mr.Nutthee Vimolpattanatham</li>
           <li>Mr.Pakin Yuwawat</li>
           <li>Mr.Sippawich Kongkatonyoosakul</li>
