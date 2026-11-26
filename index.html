@@ -181,6 +181,11 @@ img { max-width: 100%; display: block; }
 .scale__seg span { display: block; margin-bottom: 8px; font-weight: 600; color: #3d4a66; }
 .scale__seg i { display: block; height: 20px; }
 
+.filter-eff { margin: 0 0 48px; border: 1px solid var(--good); border-radius: var(--radius); background: var(--mist); padding: 28px 32px; }
+.filter-eff__title { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink-soft); margin: 0 0 8px; }
+.filter-eff__value { font-family: var(--font-mono); font-weight: 600; font-size: 36px; color: var(--deep); margin: 0; }
+
+
 /* ===========================================================
    RESPONSIVE (PHONE SPECIFIC FIXES)
    =========================================================== */
@@ -220,12 +225,13 @@ img { max-width: 100%; display: block; }
     margin: 0 !important;
   }
   
-  .map-panel__metrics .wqi-droplet__value {
-    font-size: 11px !important;
-  }
+  .map-panel__metrics .wqi-droplet__value {font-size: 11px !important;}
 
   .detail-panel { padding: 22px 20px; }
   .detail-panel__metrics { gap: 18px; font-size: 14px; }
+  
+  .filter-eff { padding: 22px 20px; }
+
   .footer__inner { flex-direction: column; gap: 24px; }
 }
 
@@ -440,6 +446,10 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         <span><span data-i18n="turb">Turbidity</span>: <b>--</b> NTU</span>
       </div>
     </section>
+    <section class="filter-eff" id="filterEff" hidden>
+      <h2 class="filter-eff__title" data-i18n="filterEff">Filter Efficiency</h2>
+      <p class="filter-eff__value" id="filterEffValue">--</p>
+    </section>
   </main>
 
   <!-- ===================== FOOTER ===================== -->
@@ -458,9 +468,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         <h3 data-i18n="members">Project Members</h3>
         <ul>
           <li>Mr.Arkkharayut Pandej</li>
-          <li>Mr.Kumpha Tawansangaram</li>
           <li>Mr.Nantapat Pasukulpipat</li>
-          <li>Mr.Natthpat Chamnien</li>
           <li>Mr.Nutthee Vimolpattanatham</li>
           <li>Mr.Pakin Yuwawat</li>
           <li>Mr.Sippawich Kongkatonyoosakul</li>
@@ -487,7 +495,8 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         'nav.project': 'About The Project', 'nav.filter': 'Filter', login: 'Login', menu: 'Open menu', langTitle: 'Change language',
         mapAlt: 'Assumption Map', pinLabel: 'Floor {n} water quality', close: 'Close water quality panel',
         floorPre: 'Floor ', floorSuf: ' : ', more: 'More', temp: 'Temp', turb: 'Turbidity', mascot: 'Water quality mascot',
-        'q.Very Clean': 'Very Clean', 'q.Clean': 'Clean', 'q.Normal': 'Normal', 'q.Dirty': 'Dirty', 'q.Very Dirty': 'Very Dirty',
+        'q.Very Clean': 'Very Clean', 'q.Clean': 'Clean', 'q.Normal': 'Normal', 'q.Dirty': 'Dirty', 'q.Very Dirty': 'Very Dirty', 
+        filterEff: 'Filter Efficiency',
         yourSystem: 'Your System', loginAdd: 'Log in to add your system', system1: 'System 1', addSystem: '+ Add your system',
         quality: 'Quality', members: 'Project Members'
       },
@@ -497,6 +506,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         mapAlt: 'แผนที่โรงเรียนอัสสัมชัญ', pinLabel: 'คุณภาพน้ำชั้น {n}', close: 'ปิดแผงคุณภาพน้ำ',
         floorPre: 'ชั้น ', floorSuf: ' : ', more: 'เพิ่มเติม', temp: 'อุณหภูมิ', turb: 'ความขุ่น', mascot: 'มาสคอตคุณภาพน้ำ',
         'q.Very Clean': 'สะอาดมาก', 'q.Clean': 'สะอาด', 'q.Normal': 'ปานกลาง', 'q.Dirty': 'สกปรก', 'q.Very Dirty': 'สกปรกมาก',
+        filterEff: 'ประสิทธิภาพไส้กรอง',
         yourSystem: 'ระบบของคุณ', loginAdd: 'เข้าสู่ระบบเพื่อเพิ่มระบบของคุณ', system1: 'ระบบ 1', addSystem: '+ เพิ่มระบบของคุณ',
         quality: 'คุณภาพ', members: 'สมาชิกโครงงาน'
       },
@@ -506,6 +516,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         mapAlt: '어섬프션 칼리지 지도', pinLabel: '{n}층 수질', close: '수질 패널 닫기',
         floorPre: '', floorSuf: '층 : ', more: '더 보기', temp: '온도', turb: '탁도', mascot: '수질 마스코트',
         'q.Very Clean': '매우 깨끗함', 'q.Clean': '깨끗함', 'q.Normal': '보통', 'q.Dirty': '더러움', 'q.Very Dirty': '매우 더러움',
+        filterEff: '필터 효율' ,
         yourSystem: '내 시스템', loginAdd: '로그인하여 내 시스템 추가', system1: '시스템 1', addSystem: '+ 시스템 추가',
         quality: '수질', members: '프로젝트 구성원'
       }
@@ -777,7 +788,75 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
   })();
   </script>
 
-  
+  <script>
+(function () {
+  var API_BASE = 'ใส่ URL ของ Apps Script Web App (ลงท้ายด้วย /exec)';
+  var FILTER_INSTALLED = '2026-11-26';   // ชั่วคราว: เปลี่ยนเป็นค่าจาก backend ตอนทำ login
+  var BASE_DAYS = 3, WINDOW_MS = 5 * 60 * 1000;
+  var panel = document.getElementById('filterEff'), out = document.getElementById('filterEffValue');
+  var baseGap = null, samples = [];
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function getJSON(q) {
+    return fetch(API_BASE + (API_BASE.indexOf('?') >= 0 ? '&' : '?') + q + '&t=' + Date.now())
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+
+  function loadBaseline() {
+    var p = FILTER_INSTALLED.split('-'), start = new Date(+p[0], +p[1] - 1, +p[2]);
+    if (Date.now() < start.getTime() + BASE_DAYS * 864e5) { baseGap = null; return render(); }  // ค่าฐานยังไม่ครบ 3 วัน
+    var keys = [], months = {};
+    for (var i = 0; i < BASE_DAYS; i++) {
+      var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      var k = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      keys.push(k); months[k.slice(0, 7)] = 1;
+    }
+    Promise.all(Object.keys(months).map(function (m) { return getJSON('action=month&month=' + m); }))
+      .then(function (res) {
+        var gaps = [];
+        res.forEach(function (d) {
+          (d.daily || []).forEach(function (x) {
+            // สมมติว่า API ส่ง m.wqi1 {avg,min,max} มาด้วย — ถ้าชื่อ field ไม่ตรง แก้ตรงนี้
+            if (keys.indexOf(x.k) >= 0 && x.m && x.m.wqi1 && x.m.wqi2) gaps.push(x.m.wqi2.avg - x.m.wqi1.avg);
+          });
+        });
+        baseGap = gaps.length ? gaps.reduce(function (a, b) { return a + b; }, 0) / gaps.length : null;
+        render();
+      })
+      .catch(function (e) { console.error('Filter baseline failed:', e); baseGap = null; render(); });
+  }
+
+  function render() {
+    var eff = null;
+    if (baseGap > 0 && samples.length) {
+      var cur = samples.reduce(function (a, s) { return a + s.g; }, 0) / samples.length;
+      eff = cur / baseGap * 100;
+    }
+    out.textContent = eff === null ? '--' : '~' + Math.round(eff) + '%';
+  }
+
+  function onReading(r) {
+    // สมมติว่า socket ส่ง tds1 และ turbidity1 มาด้วย — ถ้าไม่มีจะข้ามรอบนั้น
+    if (!r || [r.temperature, r.ph, r.tds1, r.tds2, r.turbidity1, r.turbidity2].some(function (v) { return v === null || v === undefined || isNaN(v); })) return;
+    var before = window.ACHELOUS_computeWQI(r.temperature, r.ph, r.tds1, r.turbidity1).wqi;
+    var after = window.ACHELOUS_computeWQI(r.temperature, r.ph, r.tds2, r.turbidity2).wqi;
+    var now = Date.now();
+    samples.push({ t: now, g: after - before });
+    samples = samples.filter(function (s) { return now - s.t <= WINDOW_MS; });
+    render();
+  }
+
+  var prev = window.ACHELOUS_updateLivePin;
+  window.ACHELOUS_updateLivePin = function (r) { if (prev) prev(r); onReading(r); };
+
+  // จุดเชื่อมกับหน้า login: เรียก ACHELOUS_setLoggedIn(true) หลัง login สำเร็จ
+  window.ACHELOUS_setLoggedIn = function (on) {
+    panel.hidden = !on;
+    if (on) loadBaseline();
+  };
+})();
+</script>
+
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
 (function () {
