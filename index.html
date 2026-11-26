@@ -447,7 +447,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
       </div>
     </section>
     <section class="filter-eff" id="filterEff" hidden>
-      <h2 class="filter-eff__title" data-i18n="filterEff">Filter Efficiency</h2>
+      <h2 class="filter-eff__title" data-i18n="filterEff">Estimated Filter Efficiency</h2>
       <p class="filter-eff__value" id="filterEffValue">--</p>
     </section>
   </main>
@@ -496,7 +496,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         mapAlt: 'Assumption Map', pinLabel: 'Floor {n} water quality', close: 'Close water quality panel',
         floorPre: 'Floor ', floorSuf: ' : ', more: 'More', temp: 'Temp', turb: 'Turbidity', mascot: 'Water quality mascot',
         'q.Very Clean': 'Very Clean', 'q.Clean': 'Clean', 'q.Normal': 'Normal', 'q.Dirty': 'Dirty', 'q.Very Dirty': 'Very Dirty', 
-        filterEff: 'Filter Efficiency',
+        filterEff: 'Estimated Filter Efficiency',
         yourSystem: 'Your System', loginAdd: 'Log in to add your system', system1: 'System 1', addSystem: '+ Add your system',
         quality: 'Quality', members: 'Project Members'
       },
@@ -506,7 +506,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         mapAlt: 'แผนที่โรงเรียนอัสสัมชัญ', pinLabel: 'คุณภาพน้ำชั้น {n}', close: 'ปิดแผงคุณภาพน้ำ',
         floorPre: 'ชั้น ', floorSuf: ' : ', more: 'เพิ่มเติม', temp: 'อุณหภูมิ', turb: 'ความขุ่น', mascot: 'มาสคอตคุณภาพน้ำ',
         'q.Very Clean': 'สะอาดมาก', 'q.Clean': 'สะอาด', 'q.Normal': 'ปานกลาง', 'q.Dirty': 'สกปรก', 'q.Very Dirty': 'สกปรกมาก',
-        filterEff: 'ประสิทธิภาพไส้กรอง',
+        filterEff: 'ประสิทธิภาพการกรองโดยประมาณ',
         yourSystem: 'ระบบของคุณ', loginAdd: 'เข้าสู่ระบบเพื่อเพิ่มระบบของคุณ', system1: 'ระบบ 1', addSystem: '+ เพิ่มระบบของคุณ',
         quality: 'คุณภาพ', members: 'สมาชิกโครงงาน'
       },
@@ -516,7 +516,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         mapAlt: '어섬프션 칼리지 지도', pinLabel: '{n}층 수질', close: '수질 패널 닫기',
         floorPre: '', floorSuf: '층 : ', more: '더 보기', temp: '온도', turb: '탁도', mascot: '수질 마스코트',
         'q.Very Clean': '매우 깨끗함', 'q.Clean': '깨끗함', 'q.Normal': '보통', 'q.Dirty': '더러움', 'q.Very Dirty': '매우 더러움',
-        filterEff: '필터 효율' ,
+        filterEff: '예상 필터 효율' ,
         yourSystem: '내 시스템', loginAdd: '로그인하여 내 시스템 추가', system1: '시스템 1', addSystem: '+ 시스템 추가',
         quality: '수질', members: '프로젝트 구성원'
       }
@@ -726,7 +726,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         elWqi.textContent = q.wqi;
         elTemp.textContent = pin.getAttribute('data-temp');
         elPh.textContent = pin.getAttribute('data-ph');
-        elTds.textContent = fmt(q.tds);     // tds1 or tds2 (chosen by the condition)
+        elTds.textContent = fmt(q.tds);     //   tds1 or tds2 (chosen by the condition)
         elTurb.textContent = fmt(q.turb);   // turbidity1 or turbidity2 (chosen by the condition)
         if (elDroplet) elDroplet.textContent = q.wqi;
         if (elDropletImg) elDropletImg.src = q.glass;
