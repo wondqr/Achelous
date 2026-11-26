@@ -1,220 +1,3 @@
-:root {
-  --ink: #0e2a2f;
-  --ink-soft: #4c6367;
-  --deep: #0b4f5c;
-  --deep-hover: #0e6577;
-  --mist: #eaf3f2;
-  --paper: #fff;
-  --line: #d7e6e4;
-  --field-line: #839d9b;
-  --good: #2f9e6e;
-  --error: #a12722;
-  --font-display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
-  --font-body: 'Inter', 'Noto Sans Thai', sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #efeeee;
-  color: var(--ink);
-  font: 400 1rem / 1.55 var(--font-body);
-}
-
-.site-header {
-  border-bottom: 2px solid var(--good);
-  background: var(--paper);
-}
-
-.site-header__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 8px 24px;
-}
-
-.site-logo img {
-  display: block;
-  width: auto;
-  height: 44px;
-}
-
-.home-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--deep);
-  font: 600 0.9375rem / 1.4 var(--font-display);
-  text-decoration: none;
-}
-
-.home-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.login-page {
-  padding: clamp(36px, 9vh, 88px) 24px 48px;
-}
-
-.login-panel {
-  width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 32px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--paper);
-}
-
-.login-panel__heading {
-  margin-bottom: 26px;
-}
-
-.login-panel__heading h1 {
-  margin: 0 0 4px;
-  color: var(--deep);
-  font: 700 1.875rem / 1.3 var(--font-display);
-}
-
-.login-panel__heading p,
-.preview-note {
-  margin: 0;
-  color: var(--ink-soft);
-  font-size: 0.875rem;
-}
-
-.login-fields {
-  display: grid;
-  gap: 18px;
-  min-inline-size: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.field label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-
-.field input {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  min-height: 48px;
-  padding: 10px 12px;
-  border: 1px solid var(--field-line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit;
-}
-
-.field input[aria-invalid="true"] {
-  border-color: var(--error);
-}
-
-.field-error {
-  margin: 6px 0 0;
-  color: var(--error);
-  font-size: 0.875rem;
-}
-
-.password-field {
-  position: relative;
-}
-
-.password-field input {
-  padding-inline-end: 76px;
-}
-
-.password-toggle {
-  position: absolute;
-  inset-block-start: 2px;
-  inset-inline-end: 4px;
-  min-width: 64px;
-  min-height: 44px;
-  padding: 0 8px;
-  border: 0;
-  border-radius: 5px;
-  background: var(--paper);
-  color: var(--deep);
-  font: 600 0.875rem / 1.4 var(--font-body);
-  cursor: pointer;
-}
-
-.password-toggle:hover {
-  background: var(--mist);
-}
-
-.login-submit {
-  min-height: 48px;
-  margin-top: 4px;
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 8px;
-  background: var(--deep);
-  color: var(--paper);
-  font: 600 1rem / 1.4 var(--font-display);
-  cursor: pointer;
-}
-
-.login-submit:hover {
-  background: var(--deep-hover);
-}
-
-.login-submit[aria-disabled="true"] {
-  background: var(--ink-soft);
-  cursor: wait;
-}
-
-.login-fields:disabled button {
-  opacity: 0.6;
-  cursor: default;
-}
-
-:where(a, button, input):focus-visible {
-  outline: 2px solid var(--deep-hover);
-  outline-offset: 2px;
-}
-
-.login-status {
-  margin: 0;
-  color: var(--deep);
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.login-status:not(:empty) {
-  margin-top: 14px;
-}
-
-.preview-note {
-  margin-top: 16px;
-}
-
-@media (max-width: 480px) {
-  .site-header__inner {
-    padding-inline: 16px;
-  }
-
-  .login-page {
-    padding-inline: 16px;
-  }
-
-  .login-panel {
-    padding: 24px;
-  }
-}
 <!doctype html>
 <html lang="th">
 <head>
@@ -226,8 +9,676 @@ body {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./login.css">
-  <script src="./login.js" defer></script>
+
+  <style>
+    :root {
+      --ink: #0e2a2f;
+      --ink-soft: #4c6367;
+      --deep: #0b4f5c;
+      --deep-hover: #0e6577;
+      --mist: #eaf3f2;
+      --paper: #fff;
+      --line: #d7e6e4;
+      --field-line: #b9cfcd;
+      --good: #2f9e6e;
+      --error: #a12722;
+      --error-soft: #fbeceb;
+      --font-display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
+      --font-body: 'Inter', 'Noto Sans Thai', sans-serif;
+      --shadow: 0 1px 2px rgba(14, 42, 47, 0.06), 0 24px 60px -20px rgba(11, 79, 92, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(900px 500px at 12% -10%, rgba(47, 158, 110, 0.12), transparent 60%),
+        radial-gradient(800px 600px at 110% 110%, rgba(11, 79, 92, 0.14), transparent 60%),
+        #efeeee;
+      color: var(--ink);
+      font: 400 1rem / 1.55 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Header ---------- */
+
+    .site-header {
+      border-bottom: 2px solid var(--good);
+      background: var(--paper);
+    }
+
+    .site-header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8px 24px;
+    }
+
+    .site-logo img {
+      display: block;
+      width: auto;
+      height: 44px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--deep);
+      font: 600 0.9375rem / 1.4 var(--font-display);
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .home-link svg {
+      transition: transform 0.2s ease;
+    }
+
+    .home-link:hover {
+      background: var(--mist);
+    }
+
+    .home-link:hover svg {
+      transform: translateX(-3px);
+    }
+
+    /* ---------- Layout ---------- */
+
+    .login-page {
+      display: grid;
+      flex: 1;
+      place-items: center;
+      padding: clamp(28px, 7vh, 72px) 24px 48px;
+    }
+
+    .login-shell {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      width: 100%;
+      max-width: 940px;
+      overflow: hidden;
+      border: 1px solid rgba(215, 230, 228, 0.9);
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+    }
+
+    /* ---------- Water side ---------- */
+
+    .login-aside {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 32px;
+      min-height: 560px;
+      padding: 40px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #0b4f5c 0%, #0e6577 55%, #13806f 100%);
+      color: #fff;
+      isolation: isolate;
+    }
+
+    .login-aside::before {
+      content: "";
+      position: absolute;
+      inset: -40% -30% auto auto;
+      z-index: -1;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 65%);
+    }
+
+    .aside-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      font: 600 0.8125rem / 1.3 var(--font-display);
+      letter-spacing: 0.04em;
+      backdrop-filter: blur(6px);
+    }
+
+    .aside-badge__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6ee7b7;
+      box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.6);
+      animation: pulse 2.2s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      70% {
+        box-shadow: 0 0 0 10px rgba(110, 231, 183, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(110, 231, 183, 0);
+      }
+    }
+
+    .aside-copy h2 {
+      margin: 0 0 12px;
+      font: 700 clamp(1.625rem, 2.6vw, 2.125rem) / 1.25 var(--font-display);
+      text-wrap: balance;
+    }
+
+    .aside-copy p {
+      max-width: 34ch;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9375rem;
+    }
+
+    .aside-features {
+      display: grid;
+      gap: 12px;
+      margin: 0 0 72px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .aside-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9375rem;
+      font-weight: 500;
+    }
+
+    .aside-features__icon {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .waves {
+      position: absolute;
+      inset: auto 0 0;
+      z-index: -1;
+      width: 100%;
+      height: 140px;
+    }
+
+    .wave {
+      animation: drift 12s linear infinite;
+    }
+
+    .wave--2 {
+      animation-duration: 18s;
+      animation-direction: reverse;
+    }
+
+    .wave--3 {
+      animation-duration: 24s;
+    }
+
+    @keyframes drift {
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -20px;
+      z-index: -1;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      animation: float 9s ease-in infinite;
+    }
+
+    .bubble:nth-of-type(1) { left: 14%; width: 14px; height: 14px; animation-delay: 0s; }
+    .bubble:nth-of-type(2) { left: 38%; width: 9px; height: 9px; animation-delay: 2.5s; animation-duration: 7s; }
+    .bubble:nth-of-type(3) { left: 66%; width: 18px; height: 18px; animation-delay: 4s; animation-duration: 11s; }
+    .bubble:nth-of-type(4) { left: 84%; width: 11px; height: 11px; animation-delay: 1.2s; }
+
+    @keyframes float {
+      0% {
+        opacity: 0;
+        transform: translateY(0);
+      }
+      15% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-420px) translateX(14px);
+      }
+    }
+
+    /* ---------- Form side ---------- */
+
+    .login-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 44px;
+    }
+
+    .login-panel__heading {
+      margin-bottom: 28px;
+    }
+
+    .login-panel__heading h1 {
+      margin: 0 0 6px;
+      color: var(--ink);
+      font: 700 2rem / 1.25 var(--font-display);
+    }
+
+    .login-panel__heading p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.9375rem;
+    }
+
+    .login-fields {
+      display: grid;
+      gap: 18px;
+      min-inline-size: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 14px;
+      display: grid;
+      place-items: center;
+      color: #8aa3a1;
+      pointer-events: none;
+      transition: color 0.2s ease;
+    }
+
+    .field input {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 50px;
+      padding: 12px 14px 12px 44px;
+      border: 1.5px solid var(--field-line);
+      border-radius: 12px;
+      background: #f8fbfb;
+      color: var(--ink);
+      font: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .field input::placeholder {
+      color: #9bb0ae;
+    }
+
+    .field input:hover {
+      border-color: #93b2af;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--deep-hover);
+      background: var(--paper);
+      box-shadow: 0 0 0 4px rgba(14, 101, 119, 0.14);
+    }
+
+    .input-wrap:focus-within .input-icon {
+      color: var(--deep-hover);
+    }
+
+    .field input[aria-invalid="true"] {
+      border-color: var(--error);
+      background: var(--error-soft);
+    }
+
+    .field input[aria-invalid="true"]:focus {
+      box-shadow: 0 0 0 4px rgba(161, 39, 34, 0.14);
+    }
+
+    .field input[aria-invalid="true"] ~ .input-icon {
+      color: var(--error);
+    }
+
+    .field-error {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 7px 0 0;
+      color: var(--error);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+
+    .field-error[hidden] {
+      display: none;
+    }
+
+    .field-error::before {
+      content: "!";
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--error);
+      color: #fff;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .password-field input {
+      padding-inline-end: 84px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-end: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-width: 72px;
+      min-height: 40px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--deep);
+      font: 600 0.8125rem / 1.4 var(--font-body);
+      cursor: pointer;
+      transform: translateY(-50%);
+      transition: background-color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      background: var(--mist);
+    }
+
+    .login-submit {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      margin-top: 8px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--deep) 0%, var(--deep-hover) 60%, #13806f 100%);
+      color: var(--paper);
+      font: 600 1rem / 1.4 var(--font-display);
+      cursor: pointer;
+      box-shadow: 0 10px 24px -10px rgba(11, 79, 92, 0.7);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .login-submit:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 14px 28px -10px rgba(11, 79, 92, 0.75);
+      transform: translateY(-1px);
+    }
+
+    .login-submit:active {
+      transform: translateY(0);
+    }
+
+    .login-submit__arrow {
+      transition: transform 0.2s ease;
+    }
+
+    .login-submit:hover .login-submit__arrow {
+      transform: translateX(3px);
+    }
+
+    .login-submit__spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .login-submit[aria-disabled="true"] {
+      filter: saturate(0.6);
+      cursor: wait;
+      transform: none;
+    }
+
+    .login-submit[aria-disabled="true"] .login-submit__spinner {
+      display: block;
+    }
+
+    .login-submit[aria-disabled="true"] .login-submit__arrow {
+      display: none;
+    }
+
+    .login-fields:disabled button {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    :where(a, button):focus-visible {
+      outline: 2px solid var(--deep-hover);
+      outline-offset: 2px;
+    }
+
+    .login-status {
+      margin: 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .login-status:not(:empty) {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--mist);
+      color: var(--deep);
+      animation: fade-in 0.25s ease both;
+    }
+
+    .login-status.is-error:not(:empty) {
+      border-color: var(--error-soft);
+      background: var(--error-soft);
+      color: var(--error);
+    }
+
+    .login-status.is-success:not(:empty) {
+      color: var(--good);
+    }
+
+    .login-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px 16px;
+      margin-top: 4px;
+    }
+
+    .link-button {
+      padding: 4px 0;
+      border: 0;
+      background: none;
+      color: var(--deep);
+      font: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .link-button:hover {
+      color: var(--deep-hover);
+      text-decoration: underline;
+    }
+
+    .link-button[hidden] {
+      display: none;
+    }
+
+    .login-status:not(:empty)::before {
+      content: "";
+      flex: none;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+    }
+
+    .preview-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 22px 0 0;
+      padding-top: 18px;
+      border-top: 1px dashed var(--line);
+      color: var(--ink-soft);
+      font-size: 0.8125rem;
+    }
+
+    .preview-note svg {
+      flex: none;
+      color: var(--good);
+    }
+
+    .site-footer {
+      padding: 0 24px 24px;
+      color: var(--ink-soft);
+      font-size: 0.8125rem;
+      text-align: center;
+    }
+
+    /* ---------- Responsive ---------- */
+
+    @media (max-width: 820px) {
+      .login-shell {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+      }
+
+      .login-aside {
+        min-height: 0;
+        gap: 16px;
+        padding: 28px 28px 76px;
+      }
+
+      .aside-copy p,
+      .aside-features {
+        display: none;
+      }
+
+      .waves {
+        height: 90px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-header__inner,
+      .login-page {
+        padding-inline: 16px;
+      }
+
+      .login-page {
+        padding-top: 20px;
+      }
+
+      .login-shell {
+        border-radius: 18px;
+      }
+
+      .login-aside {
+        padding: 24px 22px 70px;
+      }
+
+      .login-panel {
+        padding: 28px 22px;
+      }
+
+      .login-panel__heading h1 {
+        font-size: 1.75rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .bubble {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -236,118 +687,318 @@ body {
         <img src="./achelouslogo.png" width="462" height="254" alt="ACHELOUS">
       </a>
       <nav aria-label="เมนูหลัก">
-        <a class="home-link" href="./index.html">กลับหน้าแรก</a>
+        <a class="home-link" href="./index.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          กลับหน้าแรก
+        </a>
       </nav>
     </div>
   </header>
 
   <main class="login-page">
-    <section class="login-panel" aria-labelledby="login-title">
-      <header class="login-panel__heading">
-        <h1 id="login-title">เข้าสู่ระบบ</h1>
-        <p>ระบบติดตามคุณภาพน้ำ</p>
-      </header>
+    <div class="login-shell">
+      <aside class="login-aside" aria-label="เกี่ยวกับ ACHELOUS">
+        <span class="aside-badge"><span class="aside-badge__dot" aria-hidden="true"></span>ACHELOUS</span>
 
-      <form id="login-form" novalidate>
-        <fieldset id="login-fields" class="login-fields" disabled>
-          <div class="field">
-            <label for="email">อีเมล</label>
-            <input id="email" type="email" autocomplete="username" autocapitalize="none"
-              spellcheck="false" aria-describedby="email-error" required>
-            <p class="field-error" id="email-error" hidden></p>
-          </div>
+        <div class="aside-copy">
+          <h2>ดูแลคุณภาพน้ำ<br>ได้ในที่เดียว</h2>
+          <p>เข้าสู่ระบบเพื่อติดตามค่าคุณภาพน้ำ ดูข้อมูลย้อนหลัง และจัดการระบบของคุณ</p>
+        </div>
 
-          <div class="field">
-            <label for="password">รหัสผ่าน</label>
-            <div class="password-field">
-              <input id="password" type="password" autocomplete="current-password"
-                aria-describedby="password-error" required>
-              <button id="password-toggle" class="password-toggle" type="button"
-                aria-controls="password" aria-label="แสดงรหัสผ่าน">แสดง</button>
+        <ul class="aside-features">
+          <li>
+            <span class="aside-features__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7s6 6.4 6 11.3a6 6 0 0 1-12 0c0-4.9 6-11.3 6-11.3z"/></svg>
+            </span>
+            ติดตามค่าดัชนีคุณภาพน้ำ (WQI)
+          </li>
+          <li>
+            <span class="aside-features__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+            </span>
+            ดูข้อมูลย้อนหลัง
+          </li>
+          <li>
+            <span class="aside-features__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </span>
+            เพิ่มระบบของคุณ
+          </li>
+        </ul>
+
+        <span class="bubble" aria-hidden="true"></span>
+        <span class="bubble" aria-hidden="true"></span>
+        <span class="bubble" aria-hidden="true"></span>
+        <span class="bubble" aria-hidden="true"></span>
+
+        <svg class="waves" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+          <g class="wave wave--3">
+            <path fill="rgba(255,255,255,0.08)" d="M0 60 Q150 20 300 60 T600 60 T900 60 T1200 60 T1500 60 T1800 60 T2100 60 T2400 60 V140 H0 Z"/>
+          </g>
+          <g class="wave wave--2">
+            <path fill="rgba(255,255,255,0.12)" d="M0 80 Q150 45 300 80 T600 80 T900 80 T1200 80 T1500 80 T1800 80 T2100 80 T2400 80 V140 H0 Z"/>
+          </g>
+          <g class="wave">
+            <path fill="rgba(255,255,255,0.18)" d="M0 100 Q150 75 300 100 T600 100 T900 100 T1200 100 T1500 100 T1800 100 T2100 100 T2400 100 V140 H0 Z"/>
+          </g>
+        </svg>
+      </aside>
+
+      <section class="login-panel" aria-labelledby="login-title">
+        <header class="login-panel__heading">
+          <h1 id="login-title">เข้าสู่ระบบ</h1>
+          <p id="login-subtitle">ยินดีต้อนรับกลับสู่ระบบติดตามคุณภาพน้ำ</p>
+        </header>
+
+        <form id="login-form" novalidate>
+          <fieldset id="login-fields" class="login-fields" disabled>
+            <div class="field">
+              <label for="email">อีเมล</label>
+              <div class="input-wrap">
+                <input id="email" type="email" autocomplete="username" autocapitalize="none"
+                  spellcheck="false" placeholder="name@example.com" aria-describedby="email-error" required>
+                <span class="input-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                </span>
+              </div>
+              <p class="field-error" id="email-error" hidden></p>
             </div>
-            <p class="field-error" id="password-error" hidden></p>
-          </div>
 
-          <button id="login-submit" class="login-submit" type="submit">เข้าสู่ระบบ</button>
-        </fieldset>
-      </form>
+            <div class="field">
+              <label for="password">รหัสผ่าน</label>
+              <div class="input-wrap password-field">
+                <input id="password" type="password" autocomplete="current-password"
+                  placeholder="••••••••" aria-describedby="password-error" required>
+                <span class="input-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                </span>
+                <button id="password-toggle" class="password-toggle" type="button"
+                  aria-controls="password" aria-label="แสดงรหัสผ่าน">แสดง</button>
+              </div>
+              <p class="field-error" id="password-error" hidden></p>
+            </div>
 
-      <p id="login-status" class="login-status" role="status" aria-atomic="true"></p>
-      <p id="preview-note" class="preview-note">แบบฟอร์มนี้ต้องใช้ JavaScript</p>
-    </section>
+            <button id="login-submit" class="login-submit" type="submit">
+              <span class="login-submit__spinner" aria-hidden="true"></span>
+              <span id="login-submit-label">เข้าสู่ระบบ</span>
+              <svg class="login-submit__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+
+            <div class="login-links">
+              <button id="forgot-link" class="link-button" type="button">ลืมรหัสผ่าน?</button>
+              <button id="mode-switch" class="link-button" type="button">ยังไม่มีบัญชี? สมัครสมาชิก</button>
+            </div>
+          </fieldset>
+        </form>
+
+        <p id="login-status" class="login-status" role="status" aria-atomic="true"></p>
+        <p class="preview-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+          <span id="preview-note">แบบฟอร์มนี้ต้องใช้ JavaScript</span>
+        </p>
+      </section>
+    </div>
   </main>
+
+  <footer class="site-footer">© ACHELOUS · ระบบติดตามคุณภาพน้ำ</footer>
+
+  <!-- Firebase: email + password เก็บใน Firebase Authentication (hash), โปรไฟล์เก็บที่ /users/{uid} — ดู docs/firebase-storage-design.md ข้อ 6 -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="./firebase-config.js"></script>
+
+  <script>
+    const form = document.querySelector('#login-form');
+    const fields = document.querySelector('#login-fields');
+    const email = document.querySelector('#email');
+    const password = document.querySelector('#password');
+    const toggle = document.querySelector('#password-toggle');
+    const submitButton = document.querySelector('#login-submit');
+    const submitLabel = document.querySelector('#login-submit-label');
+    const statusMessage = document.querySelector('#login-status');
+    const title = document.querySelector('#login-title');
+    const subtitle = document.querySelector('#login-subtitle');
+    const forgotLink = document.querySelector('#forgot-link');
+    const modeSwitch = document.querySelector('#mode-switch');
+    const MIN_PASSWORD = 6;            // ขั้นต่ำของ Firebase Authentication
+    const AFTER_LOGIN_URL = './index.html';
+    let mode = 'login';                // 'login' | 'signup'
+    let checking = false;
+
+    const AUTH_ERRORS = {
+      'auth/invalid-credential': 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+      'auth/wrong-password': 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+      'auth/user-not-found': 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+      'auth/invalid-email': 'รูปแบบอีเมลไม่ถูกต้อง',
+      'auth/email-already-in-use': 'อีเมลนี้ถูกใช้สมัครแล้ว',
+      'auth/weak-password': 'รหัสผ่านต้องมีอย่างน้อย ' + MIN_PASSWORD + ' ตัวอักษร',
+      'auth/user-disabled': 'บัญชีนี้ถูกระงับการใช้งาน',
+      'auth/too-many-requests': 'ลองผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่',
+      'auth/network-request-failed': 'เชื่อมต่ออินเทอร์เน็ตไม่ได้',
+      'auth/operation-not-allowed': 'ระบบยังไม่เปิดการเข้าสู่ระบบด้วยอีเมล',
+      'auth/unauthorized-domain': 'เว็บไซต์นี้ยังไม่ได้รับอนุญาตให้เข้าสู่ระบบ'
+    };
+
+    const auth = window.ACHELOUS_initFirebase && window.ACHELOUS_initFirebase() && firebase.auth
+      ? firebase.auth()
+      : null;
+    if (auth) auth.languageCode = 'th';   // อีเมลยืนยัน/รีเซ็ตรหัสเป็นภาษาไทย
+
+    function showStatus(message, kind) {
+      statusMessage.textContent = message;
+      statusMessage.classList.toggle('is-error', kind === 'error');
+      statusMessage.classList.toggle('is-success', kind === 'success');
+    }
+
+    function authMessage(error) {
+      return AUTH_ERRORS[error && error.code] || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
+    }
+
+    function validateField(field) {
+      const error = document.getElementById(field.getAttribute('aria-describedby'));
+      let message = '';
+
+      if (field.validity.valueMissing) {
+        message = field === email ? 'กรุณากรอกอีเมล' : 'กรุณากรอกรหัสผ่าน';
+      } else if (field.validity.typeMismatch) {
+        message = 'กรุณากรอกอีเมลให้ถูกต้อง เช่น name@example.com';
+      } else if (field === password && mode === 'signup' && field.value.length < MIN_PASSWORD) {
+        message = 'รหัสผ่านต้องมีอย่างน้อย ' + MIN_PASSWORD + ' ตัวอักษร';
+      }
+
+      error.textContent = message;
+      error.hidden = !message;
+      field.setAttribute('aria-invalid', String(Boolean(message)));
+
+      return !message;
+    }
+
+    function clearCheck() {
+      checking = false;
+      submitButton.removeAttribute('aria-disabled');
+      showStatus('');
+    }
+
+    function setMode(next) {
+      mode = next;
+      const signup = mode === 'signup';
+      title.textContent = signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
+      subtitle.textContent = signup
+        ? 'สร้างบัญชีเพื่อติดตามคุณภาพน้ำและจัดการระบบของคุณ'
+        : 'ยินดีต้อนรับกลับสู่ระบบติดตามคุณภาพน้ำ';
+      submitLabel.textContent = signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
+      modeSwitch.textContent = signup ? 'มีบัญชีอยู่แล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? สมัครสมาชิก';
+      password.setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+      forgotLink.hidden = signup;
+      document.title = (signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ') + ' | ACHELOUS';
+      [email, password].forEach((field) => {
+        const error = document.getElementById(field.getAttribute('aria-describedby'));
+        error.textContent = '';
+        error.hidden = true;
+        field.removeAttribute('aria-invalid');
+      });
+      clearCheck();
+    }
+
+    // โปรไฟล์ใน /users/{uid} — ไม่มี password (rules ห้ามไว้) ; ถ้าเขียนไม่ได้ก็ยังเข้าสู่ระบบได้
+    function saveProfile(user) {
+      if (!firebase.database) return Promise.resolve();
+      const ref = firebase.database().ref('users/' + user.uid);
+      const now = firebase.database.ServerValue.TIMESTAMP;
+      return ref.once('value').then((snap) => {
+        if (snap.exists()) return ref.update({ lastLoginAt: now });
+        return ref.set({ email: user.email, role: 'user', createdAt: now, lastLoginAt: now });
+      }).catch((error) => console.warn('Could not save user profile:', error));
+    }
+
+    toggle.addEventListener('click', () => {
+      const visible = password.type === 'password';
+      password.type = visible ? 'text' : 'password';
+      toggle.textContent = visible ? 'ซ่อน' : 'แสดง';
+      toggle.setAttribute('aria-label', visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+    });
+
+    form.addEventListener('input', (event) => {
+      if (!checking) clearCheck();
+      if (event.target.getAttribute('aria-invalid') === 'true') {
+        validateField(event.target);
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (checking) return;
+      clearCheck();
+
+      const emailValid = validateField(email);
+      const passwordValid = validateField(password);
+      if (!emailValid || !passwordValid) {
+        (emailValid ? password : email).focus();
+        return;
+      }
+
+      checking = true;
+      submitButton.setAttribute('aria-disabled', 'true');
+      showStatus(mode === 'signup' ? 'กำลังสร้างบัญชี…' : 'กำลังตรวจข้อมูล…');
+
+      const address = email.value.trim();
+      const request = mode === 'signup'
+        ? auth.createUserWithEmailAndPassword(address, password.value).then((cred) => {
+            cred.user.sendEmailVerification().catch((error) => console.warn('Verification email failed:', error));
+            return cred;
+          })
+        : auth.signInWithEmailAndPassword(address, password.value);
+
+      request
+        .then((cred) => saveProfile(cred.user))
+        .then(() => {
+          showStatus(mode === 'signup'
+            ? 'สมัครสมาชิกสำเร็จ ส่งอีเมลยืนยันให้แล้ว กำลังไปหน้าแรก…'
+            : 'เข้าสู่ระบบสำเร็จ กำลังไปหน้าแรก…', 'success');
+          window.setTimeout(() => { window.location.href = AFTER_LOGIN_URL; }, 900);
+        })
+        .catch((error) => {
+          console.error(error);
+          checking = false;
+          submitButton.removeAttribute('aria-disabled');
+          showStatus(authMessage(error), 'error');
+        });
+    });
+
+    forgotLink.addEventListener('click', () => {
+      if (checking) return;
+      if (!validateField(email)) {
+        email.focus();
+        return;
+      }
+      checking = true;
+      showStatus('กำลังส่งอีเมล…');
+      auth.sendPasswordResetEmail(email.value.trim())
+        .then(() => showStatus('ถ้ามีบัญชีของอีเมลนี้ ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ให้แล้ว', 'success'))
+        .catch((error) => {
+          // ไม่บอกว่าอีเมลนี้มีบัญชีหรือไม่
+          if (error && error.code === 'auth/user-not-found') {
+            showStatus('ถ้ามีบัญชีของอีเมลนี้ ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ให้แล้ว', 'success');
+          } else {
+            showStatus(authMessage(error), 'error');
+          }
+        })
+        .then(() => { checking = false; });
+    });
+
+    modeSwitch.addEventListener('click', () => {
+      setMode(mode === 'login' ? 'signup' : 'login');
+      email.focus();
+    });
+
+    if (auth) {
+      document.querySelector('#preview-note').textContent = 'รหัสผ่านถูกเข้ารหัสและเก็บอย่างปลอดภัยด้วย Firebase Authentication';
+      fields.disabled = false;
+    } else {
+      document.querySelector('#preview-note').textContent = 'เชื่อมต่อระบบสมาชิกไม่ได้ กรุณารีเฟรชหน้าแล้วลองใหม่';
+      showStatus('เชื่อมต่อระบบสมาชิกไม่ได้', 'error');
+    }
+  </script>
 </body>
 </html>
-const form = document.querySelector('#login-form');
-const fields = document.querySelector('#login-fields');
-const email = document.querySelector('#email');
-const password = document.querySelector('#password');
-const toggle = document.querySelector('#password-toggle');
-const submitButton = document.querySelector('#login-submit');
-const statusMessage = document.querySelector('#login-status');
-let checking = false;
-let resultTimer;
-
-function validateField(field) {
-  const error = document.getElementById(field.getAttribute('aria-describedby'));
-  let message = '';
-
-  if (field.validity.valueMissing) {
-    message = field === email ? 'กรุณากรอกอีเมล' : 'กรุณากรอกรหัสผ่าน';
-  } else if (field.validity.typeMismatch) {
-    message = 'กรุณากรอกอีเมลให้ถูกต้อง เช่น name@example.com';
-  }
-
-  error.textContent = message;
-  error.hidden = !message;
-  field.setAttribute('aria-invalid', String(Boolean(message)));
-
-  return !message;
-}
-
-function clearCheck() {
-  window.clearTimeout(resultTimer);
-  checking = false;
-  submitButton.removeAttribute('aria-disabled');
-  statusMessage.textContent = '';
-}
-
-toggle.addEventListener('click', () => {
-  const visible = password.type === 'password';
-  password.type = visible ? 'text' : 'password';
-  toggle.textContent = visible ? 'ซ่อน' : 'แสดง';
-  toggle.setAttribute('aria-label', visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
-});
-
-form.addEventListener('input', (event) => {
-  clearCheck();
-  if (event.target.getAttribute('aria-invalid') === 'true') {
-    validateField(event.target);
-  }
-});
-
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  if (checking) return;
-  clearCheck();
-
-  const emailValid = validateField(email);
-  const passwordValid = validateField(password);
-  if (!emailValid || !passwordValid) {
-    (emailValid ? password : email).focus();
-    return;
-  }
-
-  checking = true;
-  submitButton.setAttribute('aria-disabled', 'true');
-  statusMessage.textContent = 'กำลังตรวจข้อมูล…';
-
-  // Keep the preview status visible briefly so it can be tested in the UI.
-  resultTimer = window.setTimeout(() => {
-    clearCheck();
-    statusMessage.textContent = 'หน้านี้ยังไม่เปิดให้เข้าสู่ระบบ';
-  }, 550);
-});
-
-document.querySelector('#preview-note').textContent = 'แบบฟอร์มสำหรับทดสอบ กรุณาใช้ข้อมูลตัวอย่าง';
-fields.disabled = false;
