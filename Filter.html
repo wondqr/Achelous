@@ -452,6 +452,13 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
         <h3 data-i18n="valveN" data-n="3">Valve 3</h3>
         <div class="metric-value" id="valve3Open">--</div>
       </div>
+      <div class="metric-card reveal">
+        <h3 data-i18n="valveN" data-n="4">Valve 4</h3>
+        <div class="metric-value" id="valve4Open">--</div>
+      </div>
+    </div>
+  </main>
+      </div>
     </div>
   </main>
 
@@ -827,7 +834,7 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
           }
         });
 
-        ['valve1Open', 'valve2Open', 'valve3Open'].forEach(function (key) {
+        ['valve1Open', 'valve2Open', 'valve3Open', 'valve4Open'].forEach(function (key) {
           var value = reading[key];
           var textValue = '--';
 
