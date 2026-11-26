@@ -659,6 +659,7 @@ void setup()
 
   tempSensor.begin();
   connectWiFi();
+  configTime(7 * 3600, 0, "pool.ntp.org", "time.google.com");   // เวลาไทย (UTC+7) สำหรับ key ของข้อมูลย้อนหลัง
   startUploadTask();
 
   Serial.println("ESP32-S3 Water Quality System Initialized.");
@@ -730,6 +731,13 @@ static unsigned long lastIpPrint = 0;
   PressureReading p1 = readPressure(PRESSURE1_PIN);
   PressureReading p2 = readPressure(PRESSURE2_PIN);
 
+  // ----- HISTORY (สรุปรายชั่วโมง/รายวันลง Firebase) -----
+  HistorySample hs = {
+    { overallWQI, wqi1, wqi2, pHwater, temperature, tds1, tds2, ntu1, ntu2 },
+    digitalRead(RELAY_VALVE2) == RELAY_ON,
+    totalVolumeLiters
+  };
+  historyRecord(hs);
 
   // Upload mornitor data's speed in site pagex
   if (isfinite(overallWQI) && overallWQI < DIRTY_WQI_THRESHOLD)
