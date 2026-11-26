@@ -852,6 +852,8 @@ a:focus-visible, button:focus-visible, .navbar__lang:focus-visible, .navbar__tog
   // จุดเชื่อมกับหน้า login: เรียก ACHELOUS_setLoggedIn(true) หลัง login สำเร็จ
   window.ACHELOUS_setLoggedIn = function (on) {
     panel.hidden = !on;
+    var loginChip = document.querySelector('.system-chip--login');
+    if (loginChip) loginChip.style.display = on ? 'none' : '';
     if (on) loadBaseline();
   };
 })();
