@@ -15,6 +15,7 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include "secrets.h"
+#include "history.h"
 
 static SemaphoreHandle_t uploadMutex = nullptr;
 static String pendingJson;
@@ -81,6 +82,28 @@ static bool firebaseSignIn(WiFiClientSecure& client)
   return true;
 }
 
+// ส่งคำขอไปที่ Realtime Database เช่น ("PUT", "/latest", json) ; path ไม่ต้องมี .json
+static int firebaseRequest(HTTPClient& http, WiFiClientSecure& client, const char* method,
+                           const String& path, const String& body, String* response)
+{
+  String url = String(FIREBASE_DB_URL) + path + ".json?auth=" + idToken;
+  http.setConnectTimeout(6000);
+  http.setTimeout(8000);
+
+  int code = -1;
+  if (http.begin(client, url))
+  {
+    if (body.length()) http.addHeader("Content-Type", "application/json");
+    code = http.sendRequest(method, body);
+    if (response && code == 200) *response = http.getString();
+    http.end();
+  }
+
+  if (code == 401 || code == 403) idToken = "";   // โทเคนใช้ไม่ได้ -> ล็อกอินใหม่รอบหน้า
+  if (code < 0) client.stop();                    // connection เสีย -> เริ่มใหม่
+  return code;
+}
+
 static void uploadTask(void*)
 {
   WiFiClientSecure client;
@@ -99,37 +122,39 @@ static void uploadTask(void*)
     xSemaphoreTake(uploadMutex, portMAX_DELAY);
     if (hasPending) { json = pendingJson; hasPending = false; have = true; }
     xSemaphoreGive(uploadMutex);
-    if (!have) continue;
+
+    HistoryJob job;
+    bool haveJob = historyNextJob(job);
+    if (!have && !haveJob) continue;
 
     if (idToken.length() == 0 || millis() - tokenObtainedMs > TOKEN_LIFETIME_MS)
     {
       if (!firebaseSignIn(client))
       {
-        vTaskDelay(pdMS_TO_TICKS(5000));   // รอแล้วลองใหม่รอบถัดไป (ข้อมูลรอบนี้ทิ้ง)
+        if (haveJob) historyJobDone(job, -1, "");   // งานประวัติยังอยู่ในคิว ลองใหม่ทีหลัง
+        vTaskDelay(pdMS_TO_TICKS(5000));   // รอแล้วลองใหม่รอบถัดไป (ข้อมูล /latest รอบนี้ทิ้ง)
         continue;
       }
     }
 
-    String url = String(FIREBASE_DB_URL) + "/latest.json?auth=" + idToken;
-    http.setConnectTimeout(6000);
-    http.setTimeout(8000);
-
-    int code = -1;
-    if (http.begin(client, url))
+    if (have)
     {
-      http.addHeader("Content-Type", "application/json");
-      code = http.PUT(json);        // PUT = เขียนทับค่าเดิมที่ /latest
-      http.end();
-    }
-
-    if (code != 200)
-    {
-      if (code == 401 || code == 403) idToken = "";   // โทเคนใช้ไม่ได้ -> ล็อกอินใหม่รอบหน้า
-      if (code < 0) client.stop();                    // connection เสีย -> เริ่มใหม่
-      if (millis() - lastErrLog > 10000)
+      int code = firebaseRequest(http, client, "PUT", "/latest", json, nullptr);   // PUT = เขียนทับค่าเดิมที่ /latest
+      if (code != 200 && millis() - lastErrLog > 10000)
       {
         lastErrLog = millis();
         Serial.printf("[firebase] upload failed, HTTP %d\n", code);
+      }
+    }
+
+    if (haveJob)
+    {
+      String response;
+      int code = firebaseRequest(http, client, job.method, job.path, job.body, &response);
+      historyJobDone(job, code, response);
+      if (code != 200)
+      {
+        Serial.printf("[history] %s %s failed, HTTP %d\n", job.method, job.path.c_str(), code);
       }
     }
   }
@@ -138,6 +163,7 @@ static void uploadTask(void*)
 static void startUploadTask()
 {
   uploadMutex = xSemaphoreCreateMutex();
+  historyBegin();
   // stack 16 KB เพราะ TLS ใช้เยอะ ; ปักไว้ที่ core 0 ให้ loop() อยู่ core 1 ตามเดิม
   xTaskCreatePinnedToCore(uploadTask, "fbUpload", 16384, nullptr, 1, nullptr, 0);
 }
