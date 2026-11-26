@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="form-action 'none'">
-  <title>เข้าสู่ระบบ | ACHELOUS</title>
+  <title>Log in | ACHELOUS</title>
   <link rel="icon" href="./achelouslogo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+Thai:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -23,8 +23,9 @@
       --good: #2f9e6e;
       --error: #a12722;
       --error-soft: #fbeceb;
-      --font-display: 'Space Grotesk', 'Noto Sans Thai', sans-serif;
-      --font-body: 'Inter', 'Noto Sans Thai', sans-serif;
+      --font-display: 'Space Grotesk', 'Noto Sans Thai', 'Noto Sans KR', sans-serif;
+      --deep-2: #0e6577;
+      --font-body: 'Inter', 'Noto Sans Thai', 'Noto Sans KR', sans-serif;
       --shadow: 0 1px 2px rgba(14, 42, 47, 0.06), 0 24px 60px -20px rgba(11, 79, 92, 0.28);
     }
 
@@ -98,6 +99,30 @@
     .home-link:hover svg {
       transform: translateX(-3px);
     }
+
+    /* ---------- Language button (EN / TH / KO) ---------- */
+
+    .site-header { position: relative; z-index: 20; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .navbar__lang { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--deep); font: 600 0.9375rem / 1.4 var(--font-display); cursor: pointer; }
+    @media (max-width: 480px) { .home-link span { display: none; } .home-link { padding: 0 10px; } }
+
+    /* --- language menu (EN / TH / KO) --- */
+    .navbar__lang-wrap { position: relative; }
+    .navbar__lang { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 8px; transition: background 0.2s ease, border-color 0.2s ease; }
+    .navbar__lang:hover { opacity: 1; background: var(--mist); border-color: var(--deep-2); }
+    .navbar__lang::after { content: '\25BE'; font-size: 12px; transition: transform 0.2s ease; }
+    .navbar__lang[aria-expanded="true"]::after { transform: rotate(180deg); }
+    .navbar__lang img { width: 20px; height: 20px; border-radius: 100%; object-fit: cover; }
+    .lang-menu { position: absolute; right: 0; top: calc(100% + 10px); min-width: 170px; margin: 0; padding: 6px; list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(11, 79, 92, 0.16); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; z-index: 200; }
+    .lang-menu.is-open { opacity: 1; visibility: visible; transform: none; }
+    .lang-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; font-family: var(--font-body); font-size: 15px; color: var(--ink); cursor: pointer; text-align: left; }
+    .lang-menu button:hover, .lang-menu button[aria-selected="true"] { background: var(--mist); }
+    .lang-menu button[aria-selected="true"] { font-weight: 600; color: var(--deep); }
+    .lang-menu img { width: 22px; height: 22px; border-radius: 100%; object-fit: cover; }
+    
+    /* --- phones: no empty gap under the collapsed menu --- */
+    @media (max-width: 860px) { .navbar__inner { row-gap: 0; } }
 
     /* ---------- Layout ---------- */
 
@@ -686,23 +711,36 @@
       <a class="site-logo" href="./index.html">
         <img src="./achelouslogo.png" width="462" height="254" alt="ACHELOUS">
       </a>
-      <nav aria-label="เมนูหลัก">
-        <a class="home-link" href="./index.html">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          กลับหน้าแรก
-        </a>
-      </nav>
+      <div class="header-actions">
+        <nav aria-label="Main menu" data-i18n-aria="navAria">
+          <a class="home-link" href="./index.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span data-i18n="back">Back to home</span>
+          </a>
+        </nav>
+        <div class="navbar__lang-wrap">
+          <button type="button" class="navbar__lang" id="langToggleBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" title="Change language" data-i18n-title="langTitle" data-i18n-aria="langTitle" aria-label="Change language">
+            <img id="langFlagImg" src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">
+            <span id="langText">EN</span>
+          </button>
+          <ul class="lang-menu" id="langMenu">
+            <li><button type="button" data-lang="en" aria-selected="true"><img src="https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg" alt="">English</button></li>
+            <li><button type="button" data-lang="th" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg" alt="">&#3652;&#3607;&#3618;</button></li>
+            <li><button type="button" data-lang="ko" aria-selected="false"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" alt="">&#54620;&#44397;&#50612;</button></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </header>
 
   <main class="login-page">
     <div class="login-shell">
-      <aside class="login-aside" aria-label="เกี่ยวกับ ACHELOUS">
+      <aside class="login-aside" aria-label="About ACHELOUS" data-i18n-aria="asideAria">
         <span class="aside-badge"><span class="aside-badge__dot" aria-hidden="true"></span>ACHELOUS</span>
 
         <div class="aside-copy">
-          <h2>ดูแลคุณภาพน้ำ<br>ได้ในที่เดียว</h2>
-          <p>เข้าสู่ระบบเพื่อติดตามค่าคุณภาพน้ำ ดูข้อมูลย้อนหลัง และจัดการระบบของคุณ</p>
+          <h2 data-i18n="asideH2">Look after your water quality<br>in one place</h2>
+          <p data-i18n="asideP">Log in to follow water quality readings, view past data, and manage your systems.</p>
         </div>
 
         <ul class="aside-features">
@@ -710,19 +748,19 @@
             <span class="aside-features__icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7s6 6.4 6 11.3a6 6 0 0 1-12 0c0-4.9 6-11.3 6-11.3z"/></svg>
             </span>
-            ติดตามค่าดัชนีคุณภาพน้ำ (WQI)
+            <span data-i18n="feat1">Track the Water Quality Index (WQI)</span>
           </li>
           <li>
             <span class="aside-features__icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
             </span>
-            ดูข้อมูลย้อนหลัง
+            <span data-i18n="feat2">View past data</span>
           </li>
           <li>
             <span class="aside-features__icon" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
             </span>
-            เพิ่มระบบของคุณ
+            <span data-i18n="feat3">Add your system</span>
           </li>
         </ul>
 
@@ -746,14 +784,14 @@
 
       <section class="login-panel" aria-labelledby="login-title">
         <header class="login-panel__heading">
-          <h1 id="login-title">เข้าสู่ระบบ</h1>
-          <p id="login-subtitle">ยินดีต้อนรับกลับสู่ระบบติดตามคุณภาพน้ำ</p>
+          <h1 id="login-title">Log in</h1>
+          <p id="login-subtitle">Welcome back to the water quality monitoring system</p>
         </header>
 
         <form id="login-form" novalidate>
           <fieldset id="login-fields" class="login-fields" disabled>
             <div class="field">
-              <label for="email">อีเมล</label>
+              <label for="email" data-i18n="emailLabel">Email</label>
               <div class="input-wrap">
                 <input id="email" type="email" autocomplete="username" autocapitalize="none"
                   spellcheck="false" placeholder="name@example.com" aria-describedby="email-error" required>
@@ -765,7 +803,7 @@
             </div>
 
             <div class="field">
-              <label for="password">รหัสผ่าน</label>
+              <label for="password" data-i18n="pwLabel">Password</label>
               <div class="input-wrap password-field">
                 <input id="password" type="password" autocomplete="current-password"
                   placeholder="••••••••" aria-describedby="password-error" required>
@@ -773,20 +811,20 @@
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                 </span>
                 <button id="password-toggle" class="password-toggle" type="button"
-                  aria-controls="password" aria-label="แสดงรหัสผ่าน">แสดง</button>
+                  aria-controls="password" aria-label="Show password">Show</button>
               </div>
               <p class="field-error" id="password-error" hidden></p>
             </div>
 
             <button id="login-submit" class="login-submit" type="submit">
               <span class="login-submit__spinner" aria-hidden="true"></span>
-              <span id="login-submit-label">เข้าสู่ระบบ</span>
+              <span id="login-submit-label">Log in</span>
               <svg class="login-submit__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
             </button>
 
             <div class="login-links">
-              <button id="forgot-link" class="link-button" type="button">ลืมรหัสผ่าน?</button>
-              <button id="mode-switch" class="link-button" type="button">ยังไม่มีบัญชี? สมัครสมาชิก</button>
+              <button id="forgot-link" class="link-button" type="button" data-i18n="forgot">Forgot password?</button>
+              <button id="mode-switch" class="link-button" type="button">Don't have an account? Sign up</button>
             </div>
           </fieldset>
         </form>
@@ -794,13 +832,13 @@
         <p id="login-status" class="login-status" role="status" aria-atomic="true"></p>
         <p class="preview-note">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
-          <span id="preview-note">แบบฟอร์มนี้ต้องใช้ JavaScript</span>
+          <span id="preview-note">This form needs JavaScript</span>
         </p>
       </section>
     </div>
   </main>
 
-  <footer class="site-footer">© ACHELOUS · ระบบติดตามคุณภาพน้ำ</footer>
+  <footer class="site-footer" data-i18n="footer">© ACHELOUS · Water quality monitoring system</footer>
 
   <!-- Firebase: email + password เก็บใน Firebase Authentication (hash), โปรไฟล์เก็บที่ /users/{uid} — ดู docs/firebase-storage-design.md ข้อ 6 -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -808,6 +846,235 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="./firebase-config.js"></script>
 
+  <script>
+  /* ===== Language: English / Thai / Korean (same choice is remembered across pages) ===== */
+  (function () {
+    var STORE = 'achelous-lang';
+    var LANGS = {
+      en: { code: 'EN', flag: 'https://cdn.britannica.com/25/4825-050-977D8C5E/Flag-United-Kingdom.jpg' },
+      th: { code: 'TH', flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Thailand.svg' },
+      ko: { code: 'KO', flag: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg' }
+    };
+    var DICT = {
+      "en": {
+        "pageTitle": "Log in | ACHELOUS",
+        "langTitle": "Change language",
+        "back": "Back to home",
+        "navAria": "Main menu",
+        "asideAria": "About ACHELOUS",
+        "asideH2": "Look after your water quality<br>in one place",
+        "asideP": "Log in to follow water quality readings, view past data, and manage your systems.",
+        "feat1": "Track the Water Quality Index (WQI)",
+        "feat2": "View past data",
+        "feat3": "Add your system",
+        "emailLabel": "Email",
+        "pwLabel": "Password",
+        "footer": "© ACHELOUS · Water quality monitoring system",
+        "loginTitle": "Log in",
+        "signupTitle": "Sign up",
+        "loginSub": "Welcome back to the water quality monitoring system",
+        "signupSub": "Create an account to follow water quality and manage your systems",
+        "toLogin": "Already have an account? Log in",
+        "toSignup": "Don't have an account? Sign up",
+        "forgot": "Forgot password?",
+        "show": "Show",
+        "hide": "Hide",
+        "showPw": "Show password",
+        "hidePw": "Hide password",
+        "noteJs": "This form needs JavaScript",
+        "noteOk": "Your password is encrypted and stored securely with Firebase Authentication",
+        "noteFail": "Could not connect to the account system. Please refresh the page and try again.",
+        "stFail": "Could not connect to the account system",
+        "e.cred": "Incorrect email or password",
+        "e.invEmail": "Invalid email format",
+        "e.inUse": "This email is already registered",
+        "e.weak": "Password must be at least {n} characters",
+        "e.disabled": "This account has been suspended",
+        "e.tooMany": "Too many attempts. Please wait a moment and try again.",
+        "e.network": "Cannot connect to the internet",
+        "e.notAllowed": "Email sign-in is not enabled yet",
+        "e.domain": "This website is not yet authorised to sign in",
+        "e.generic": "Something went wrong. Please try again.",
+        "v.noEmail": "Please enter your email",
+        "v.noPw": "Please enter your password",
+        "v.badEmail": "Please enter a valid email, e.g. name@example.com",
+        "s.creating": "Creating your account…",
+        "s.checking": "Checking your details…",
+        "s.signupOk": "Account created. We sent a verification email. Taking you to the home page…",
+        "s.loginOk": "Logged in. Taking you to the home page…",
+        "s.sending": "Sending email…",
+        "s.resetSent": "If an account exists for this email, we have sent a password reset link."
+      },
+      "th": {
+        "pageTitle": "เข้าสู่ระบบ | ACHELOUS",
+        "langTitle": "เปลี่ยนภาษา",
+        "back": "กลับหน้าแรก",
+        "navAria": "เมนูหลัก",
+        "asideAria": "เกี่ยวกับ ACHELOUS",
+        "asideH2": "ดูแลคุณภาพน้ำ<br>ได้ในที่เดียว",
+        "asideP": "เข้าสู่ระบบเพื่อติดตามค่าคุณภาพน้ำ ดูข้อมูลย้อนหลัง และจัดการระบบของคุณ",
+        "feat1": "ติดตามค่าดัชนีคุณภาพน้ำ (WQI)",
+        "feat2": "ดูข้อมูลย้อนหลัง",
+        "feat3": "เพิ่มระบบของคุณ",
+        "emailLabel": "อีเมล",
+        "pwLabel": "รหัสผ่าน",
+        "footer": "© ACHELOUS · ระบบติดตามคุณภาพน้ำ",
+        "loginTitle": "เข้าสู่ระบบ",
+        "signupTitle": "สมัครสมาชิก",
+        "loginSub": "ยินดีต้อนรับกลับสู่ระบบติดตามคุณภาพน้ำ",
+        "signupSub": "สร้างบัญชีเพื่อติดตามคุณภาพน้ำและจัดการระบบของคุณ",
+        "toLogin": "มีบัญชีอยู่แล้ว? เข้าสู่ระบบ",
+        "toSignup": "ยังไม่มีบัญชี? สมัครสมาชิก",
+        "forgot": "ลืมรหัสผ่าน?",
+        "show": "แสดง",
+        "hide": "ซ่อน",
+        "showPw": "แสดงรหัสผ่าน",
+        "hidePw": "ซ่อนรหัสผ่าน",
+        "noteJs": "แบบฟอร์มนี้ต้องใช้ JavaScript",
+        "noteOk": "รหัสผ่านถูกเข้ารหัสและเก็บอย่างปลอดภัยด้วย Firebase Authentication",
+        "noteFail": "เชื่อมต่อระบบสมาชิกไม่ได้ กรุณารีเฟรชหน้าแล้วลองใหม่",
+        "stFail": "เชื่อมต่อระบบสมาชิกไม่ได้",
+        "e.cred": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+        "e.invEmail": "รูปแบบอีเมลไม่ถูกต้อง",
+        "e.inUse": "อีเมลนี้ถูกใช้สมัครแล้ว",
+        "e.weak": "รหัสผ่านต้องมีอย่างน้อย {n} ตัวอักษร",
+        "e.disabled": "บัญชีนี้ถูกระงับการใช้งาน",
+        "e.tooMany": "ลองผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่",
+        "e.network": "เชื่อมต่ออินเทอร์เน็ตไม่ได้",
+        "e.notAllowed": "ระบบยังไม่เปิดการเข้าสู่ระบบด้วยอีเมล",
+        "e.domain": "เว็บไซต์นี้ยังไม่ได้รับอนุญาตให้เข้าสู่ระบบ",
+        "e.generic": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+        "v.noEmail": "กรุณากรอกอีเมล",
+        "v.noPw": "กรุณากรอกรหัสผ่าน",
+        "v.badEmail": "กรุณากรอกอีเมลให้ถูกต้อง เช่น name@example.com",
+        "s.creating": "กำลังสร้างบัญชี…",
+        "s.checking": "กำลังตรวจข้อมูล…",
+        "s.signupOk": "สมัครสมาชิกสำเร็จ ส่งอีเมลยืนยันให้แล้ว กำลังไปหน้าแรก…",
+        "s.loginOk": "เข้าสู่ระบบสำเร็จ กำลังไปหน้าแรก…",
+        "s.sending": "กำลังส่งอีเมล…",
+        "s.resetSent": "ถ้ามีบัญชีของอีเมลนี้ ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ให้แล้ว"
+      },
+      "ko": {
+        "pageTitle": "로그인 | ACHELOUS",
+        "langTitle": "언어 변경",
+        "back": "홈으로 돌아가기",
+        "navAria": "주 메뉴",
+        "asideAria": "ACHELOUS 소개",
+        "asideH2": "수질 관리를<br>한곳에서",
+        "asideP": "로그인하여 수질 측정값을 확인하고, 과거 데이터를 보고, 내 시스템을 관리하세요.",
+        "feat1": "수질 지수(WQI) 확인",
+        "feat2": "과거 데이터 보기",
+        "feat3": "내 시스템 추가",
+        "emailLabel": "이메일",
+        "pwLabel": "비밀번호",
+        "footer": "© ACHELOUS · 수질 모니터링 시스템",
+        "loginTitle": "로그인",
+        "signupTitle": "회원가입",
+        "loginSub": "수질 모니터링 시스템에 다시 오신 것을 환영합니다",
+        "signupSub": "계정을 만들어 수질을 확인하고 내 시스템을 관리하세요",
+        "toLogin": "이미 계정이 있으신가요? 로그인",
+        "toSignup": "계정이 없으신가요? 회원가입",
+        "forgot": "비밀번호를 잊으셨나요?",
+        "show": "표시",
+        "hide": "숨기기",
+        "showPw": "비밀번호 표시",
+        "hidePw": "비밀번호 숨기기",
+        "noteJs": "이 양식은 JavaScript가 필요합니다",
+        "noteOk": "비밀번호는 Firebase Authentication으로 암호화되어 안전하게 저장됩니다",
+        "noteFail": "회원 시스템에 연결할 수 없습니다. 페이지를 새로고침한 후 다시 시도해 주세요.",
+        "stFail": "회원 시스템에 연결할 수 없습니다",
+        "e.cred": "이메일 또는 비밀번호가 올바르지 않습니다",
+        "e.invEmail": "이메일 형식이 올바르지 않습니다",
+        "e.inUse": "이미 가입된 이메일입니다",
+        "e.weak": "비밀번호는 {n}자 이상이어야 합니다",
+        "e.disabled": "이 계정은 사용이 정지되었습니다",
+        "e.tooMany": "시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+        "e.network": "인터넷에 연결할 수 없습니다",
+        "e.notAllowed": "이메일 로그인이 아직 활성화되지 않았습니다",
+        "e.domain": "이 웹사이트는 아직 로그인이 허용되지 않았습니다",
+        "e.generic": "오류가 발생했습니다. 다시 시도해 주세요.",
+        "v.noEmail": "이메일을 입력해 주세요",
+        "v.noPw": "비밀번호를 입력해 주세요",
+        "v.badEmail": "올바른 이메일을 입력해 주세요(예: name@example.com)",
+        "s.creating": "계정을 만드는 중…",
+        "s.checking": "정보를 확인하는 중…",
+        "s.signupOk": "가입이 완료되었습니다. 인증 이메일을 보냈습니다. 홈페이지로 이동합니다…",
+        "s.loginOk": "로그인되었습니다. 홈페이지로 이동합니다…",
+        "s.sending": "이메일을 보내는 중…",
+        "s.resetSent": "이 이메일로 가입된 계정이 있다면 비밀번호 재설정 링크를 보냈습니다."
+      }
+    };
+
+    function stored() { try { return localStorage.getItem(STORE); } catch (e) { return null; } }
+    function save(l) { try { localStorage.setItem(STORE, l); } catch (e) {} }
+
+    var current = DICT[stored()] ? stored() : 'en';
+
+    function t(key) {
+      var d = DICT[current];
+      if (d && d[key] !== undefined) return d[key];
+      return DICT.en[key] !== undefined ? DICT.en[key] : key;
+    }
+
+    var btn = document.getElementById('langToggleBtn');
+    var menu = document.getElementById('langMenu');
+    var flagImg = document.getElementById('langFlagImg');
+    var langText = document.getElementById('langText');
+
+    function apply() {
+      document.documentElement.lang = current;
+      document.title = t('pageTitle');
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.innerHTML = String(t(el.getAttribute('data-i18n'))).replace('{n}', el.getAttribute('data-n') || ''); });
+      document.querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+      document.querySelectorAll('[data-i18n-title]').forEach(function (el) { el.setAttribute('title', t(el.getAttribute('data-i18n-title'))); });
+      if (flagImg) flagImg.src = LANGS[current].flag;
+      if (langText) langText.textContent = LANGS[current].code;
+      if (menu) menu.querySelectorAll('button[data-lang]').forEach(function (b) {
+        b.setAttribute('aria-selected', b.getAttribute('data-lang') === current ? 'true' : 'false');
+      });
+    }
+
+    function setLang(l) {
+      if (!DICT[l]) return;
+      current = l;
+      save(l);
+      apply();
+      document.dispatchEvent(new CustomEvent('achelous-langchange', { detail: { lang: l } }));
+    }
+
+    function closeMenu() {
+      if (!menu) return;
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (btn && menu) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-lang]');
+        if (!b) return;
+        setLang(b.getAttribute('data-lang'));
+        closeMenu();
+        btn.focus();
+      });
+      document.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('is-open')) { closeMenu(); btn.focus(); }
+      });
+    }
+
+    window.ACHELOUS_t = t;
+    window.ACHELOUS_setLang = setLang;
+    window.ACHELOUS_getLang = function () { return current; };
+    apply();
+    // if this script runs before the rest of the page exists, translate again once everything is loaded
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
+  })();
+  </script>
   <script>
     const form = document.querySelector('#login-form');
     const fields = document.querySelector('#login-fields');
@@ -821,57 +1088,88 @@
     const subtitle = document.querySelector('#login-subtitle');
     const forgotLink = document.querySelector('#forgot-link');
     const modeSwitch = document.querySelector('#mode-switch');
-    const MIN_PASSWORD = 6;            // ขั้นต่ำของ Firebase Authentication
+    const previewNote = document.querySelector('#preview-note');
+    const MIN_PASSWORD = 6;            // minimum for Firebase Authentication
     const AFTER_LOGIN_URL = './index.html';
     let mode = 'login';                // 'login' | 'signup'
     let checking = false;
 
+    // text comes from the language dictionary above; these helpers keep what is on screen in step with the chosen language
+    function T(key, vars) {
+      let v = window.ACHELOUS_t(key);
+      const all = Object.assign({ n: MIN_PASSWORD }, vars || {});
+      Object.keys(all).forEach((k) => { v = v.split('{' + k + '}').join(all[k]); });
+      return v;
+    }
+
     const AUTH_ERRORS = {
-      'auth/invalid-credential': 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
-      'auth/wrong-password': 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
-      'auth/user-not-found': 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
-      'auth/invalid-email': 'รูปแบบอีเมลไม่ถูกต้อง',
-      'auth/email-already-in-use': 'อีเมลนี้ถูกใช้สมัครแล้ว',
-      'auth/weak-password': 'รหัสผ่านต้องมีอย่างน้อย ' + MIN_PASSWORD + ' ตัวอักษร',
-      'auth/user-disabled': 'บัญชีนี้ถูกระงับการใช้งาน',
-      'auth/too-many-requests': 'ลองผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่',
-      'auth/network-request-failed': 'เชื่อมต่ออินเทอร์เน็ตไม่ได้',
-      'auth/operation-not-allowed': 'ระบบยังไม่เปิดการเข้าสู่ระบบด้วยอีเมล',
-      'auth/unauthorized-domain': 'เว็บไซต์นี้ยังไม่ได้รับอนุญาตให้เข้าสู่ระบบ'
+      'auth/invalid-credential': 'e.cred',
+      'auth/wrong-password': 'e.cred',
+      'auth/user-not-found': 'e.cred',
+      'auth/invalid-email': 'e.invEmail',
+      'auth/email-already-in-use': 'e.inUse',
+      'auth/weak-password': 'e.weak',
+      'auth/user-disabled': 'e.disabled',
+      'auth/too-many-requests': 'e.tooMany',
+      'auth/network-request-failed': 'e.network',
+      'auth/operation-not-allowed': 'e.notAllowed',
+      'auth/unauthorized-domain': 'e.domain'
     };
 
     const auth = window.ACHELOUS_initFirebase && window.ACHELOUS_initFirebase() && firebase.auth
       ? firebase.auth()
       : null;
-    if (auth) auth.languageCode = 'th';   // อีเมลยืนยัน/รีเซ็ตรหัสเป็นภาษาไทย
 
-    function showStatus(message, kind) {
-      statusMessage.textContent = message;
-      statusMessage.classList.toggle('is-error', kind === 'error');
-      statusMessage.classList.toggle('is-success', kind === 'success');
+    function syncAuthLanguage() {
+      // verification / reset e-mails are sent in the language chosen on the page
+      if (auth) auth.languageCode = window.ACHELOUS_getLang();
+    }
+    syncAuthLanguage();
+
+    let statusState = { key: '', kind: '' };
+    let fieldErrors = { email: '', password: '' };
+    let noteKey = 'noteJs';
+
+    function renderStatus() {
+      statusMessage.textContent = statusState.key ? T(statusState.key) : '';
+      statusMessage.classList.toggle('is-error', statusState.kind === 'error');
+      statusMessage.classList.toggle('is-success', statusState.kind === 'success');
+    }
+
+    function showStatus(key, kind) {
+      statusState = { key: key || '', kind: kind || '' };
+      renderStatus();
     }
 
     function authMessage(error) {
-      return AUTH_ERRORS[error && error.code] || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
+      return AUTH_ERRORS[error && error.code] || 'e.generic';
+    }
+
+    function fieldName(field) { return field === email ? 'email' : 'password'; }
+
+    function renderFieldError(field) {
+      const error = document.getElementById(field.getAttribute('aria-describedby'));
+      const key = fieldErrors[fieldName(field)];
+      error.textContent = key ? T(key) : '';
+      error.hidden = !key;
     }
 
     function validateField(field) {
-      const error = document.getElementById(field.getAttribute('aria-describedby'));
-      let message = '';
+      let key = '';
 
       if (field.validity.valueMissing) {
-        message = field === email ? 'กรุณากรอกอีเมล' : 'กรุณากรอกรหัสผ่าน';
+        key = field === email ? 'v.noEmail' : 'v.noPw';
       } else if (field.validity.typeMismatch) {
-        message = 'กรุณากรอกอีเมลให้ถูกต้อง เช่น name@example.com';
+        key = 'v.badEmail';
       } else if (field === password && mode === 'signup' && field.value.length < MIN_PASSWORD) {
-        message = 'รหัสผ่านต้องมีอย่างน้อย ' + MIN_PASSWORD + ' ตัวอักษร';
+        key = 'e.weak';
       }
 
-      error.textContent = message;
-      error.hidden = !message;
-      field.setAttribute('aria-invalid', String(Boolean(message)));
+      fieldErrors[fieldName(field)] = key;
+      renderFieldError(field);
+      field.setAttribute('aria-invalid', String(Boolean(key)));
 
-      return !message;
+      return !key;
     }
 
     function clearCheck() {
@@ -880,28 +1178,40 @@
       showStatus('');
     }
 
+    function renderMode() {
+      const signup = mode === 'signup';
+      title.textContent = T(signup ? 'signupTitle' : 'loginTitle');
+      subtitle.textContent = T(signup ? 'signupSub' : 'loginSub');
+      submitLabel.textContent = T(signup ? 'signupTitle' : 'loginTitle');
+      modeSwitch.textContent = T(signup ? 'toLogin' : 'toSignup');
+      document.title = T(signup ? 'signupTitle' : 'loginTitle') + ' | ACHELOUS';
+    }
+
     function setMode(next) {
       mode = next;
       const signup = mode === 'signup';
-      title.textContent = signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
-      subtitle.textContent = signup
-        ? 'สร้างบัญชีเพื่อติดตามคุณภาพน้ำและจัดการระบบของคุณ'
-        : 'ยินดีต้อนรับกลับสู่ระบบติดตามคุณภาพน้ำ';
-      submitLabel.textContent = signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
-      modeSwitch.textContent = signup ? 'มีบัญชีอยู่แล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? สมัครสมาชิก';
+      renderMode();
       password.setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
       forgotLink.hidden = signup;
-      document.title = (signup ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ') + ' | ACHELOUS';
       [email, password].forEach((field) => {
-        const error = document.getElementById(field.getAttribute('aria-describedby'));
-        error.textContent = '';
-        error.hidden = true;
+        fieldErrors[fieldName(field)] = '';
+        renderFieldError(field);
         field.removeAttribute('aria-invalid');
       });
       clearCheck();
     }
 
-    // โปรไฟล์ใน /users/{uid} — ไม่มี password (rules ห้ามไว้) ; ถ้าเขียนไม่ได้ก็ยังเข้าสู่ระบบได้
+    function renderToggle() {
+      const visible = password.type === 'text';
+      toggle.textContent = T(visible ? 'hide' : 'show');
+      toggle.setAttribute('aria-label', T(visible ? 'hidePw' : 'showPw'));
+    }
+
+    function renderNote() {
+      previewNote.textContent = T(noteKey);
+    }
+
+    // profile in /users/{uid} — no password (rules forbid it); if it cannot be written the user can still log in
     function saveProfile(user) {
       if (!firebase.database) return Promise.resolve();
       const ref = firebase.database().ref('users/' + user.uid);
@@ -913,10 +1223,8 @@
     }
 
     toggle.addEventListener('click', () => {
-      const visible = password.type === 'password';
-      password.type = visible ? 'text' : 'password';
-      toggle.textContent = visible ? 'ซ่อน' : 'แสดง';
-      toggle.setAttribute('aria-label', visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+      password.type = password.type === 'password' ? 'text' : 'password';
+      renderToggle();
     });
 
     form.addEventListener('input', (event) => {
@@ -940,7 +1248,7 @@
 
       checking = true;
       submitButton.setAttribute('aria-disabled', 'true');
-      showStatus(mode === 'signup' ? 'กำลังสร้างบัญชี…' : 'กำลังตรวจข้อมูล…');
+      showStatus(mode === 'signup' ? 's.creating' : 's.checking');
 
       const address = email.value.trim();
       const request = mode === 'signup'
@@ -953,9 +1261,7 @@
       request
         .then((cred) => saveProfile(cred.user))
         .then(() => {
-          showStatus(mode === 'signup'
-            ? 'สมัครสมาชิกสำเร็จ ส่งอีเมลยืนยันให้แล้ว กำลังไปหน้าแรก…'
-            : 'เข้าสู่ระบบสำเร็จ กำลังไปหน้าแรก…', 'success');
+          showStatus(mode === 'signup' ? 's.signupOk' : 's.loginOk', 'success');
           window.setTimeout(() => { window.location.href = AFTER_LOGIN_URL; }, 900);
         })
         .catch((error) => {
@@ -973,13 +1279,13 @@
         return;
       }
       checking = true;
-      showStatus('กำลังส่งอีเมล…');
+      showStatus('s.sending');
       auth.sendPasswordResetEmail(email.value.trim())
-        .then(() => showStatus('ถ้ามีบัญชีของอีเมลนี้ ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ให้แล้ว', 'success'))
+        .then(() => showStatus('s.resetSent', 'success'))
         .catch((error) => {
-          // ไม่บอกว่าอีเมลนี้มีบัญชีหรือไม่
+          // do not reveal whether this e-mail has an account
           if (error && error.code === 'auth/user-not-found') {
-            showStatus('ถ้ามีบัญชีของอีเมลนี้ ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ให้แล้ว', 'success');
+            showStatus('s.resetSent', 'success');
           } else {
             showStatus(authMessage(error), 'error');
           }
@@ -992,13 +1298,28 @@
       email.focus();
     });
 
+    // switching language re-translates everything this script put on the page
+    document.addEventListener('achelous-langchange', () => {
+      syncAuthLanguage();
+      renderMode();
+      renderToggle();
+      renderStatus();
+      renderFieldError(email);
+      renderFieldError(password);
+      renderNote();
+    });
+
+    renderMode();
+    renderToggle();
+
     if (auth) {
-      document.querySelector('#preview-note').textContent = 'รหัสผ่านถูกเข้ารหัสและเก็บอย่างปลอดภัยด้วย Firebase Authentication';
+      noteKey = 'noteOk';
       fields.disabled = false;
     } else {
-      document.querySelector('#preview-note').textContent = 'เชื่อมต่อระบบสมาชิกไม่ได้ กรุณารีเฟรชหน้าแล้วลองใหม่';
-      showStatus('เชื่อมต่อระบบสมาชิกไม่ได้', 'error');
+      noteKey = 'noteFail';
+      showStatus('stFail', 'error');
     }
+    renderNote();
   </script>
 </body>
 </html>
